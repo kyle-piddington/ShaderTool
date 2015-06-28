@@ -1,0 +1,3 @@
+Future Ideas:
+   Reuse shaders if multiple program use the same shader. (IE prelink them, before calling create())?
+   
