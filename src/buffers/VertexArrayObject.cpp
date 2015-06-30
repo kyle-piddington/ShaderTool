@@ -1,4 +1,5 @@
 #include "VertexArrayObject.h"
+
 #include "../logger/GL_Logger.h"
 VertexArrayObject::VertexArrayObject()
 {
@@ -12,12 +13,12 @@ VertexArrayObject::~VertexArrayObject()
    GL_Logger::LogError("Delete VAO", glGetError());
 }
 
-void VertexArrayObject::addAttribute(GLuint location, VertexBuffer & bfr, GLint size, GLint stride, GLboolean normalized)
+void VertexArrayObject::addAttribute(GLuint location, VertexBuffer & bfr, GLint stride, GLint offset,  GLint size, GLboolean normalized)
 {
    //bind VAO
    glBindVertexArray(vaoID);
    bfr.bind();
-   glVertexAttribPointer(location, size, GL_FLOAT, normalized, stride * sizeof(float), (GLvoid *) 0);
+   glVertexAttribPointer(location, size, GL_FLOAT, normalized, stride, (GLvoid *) offset);
    glEnableVertexAttribArray(location);
    glBindVertexArray(0);
    GL_Logger::LogError("Initialize VAO", glGetError());
@@ -26,6 +27,15 @@ void VertexArrayObject::addAttribute(GLuint location, VertexBuffer & bfr, GLint 
    locations.push_back(location);
 }
 
+
+
+void VertexArrayObject::addElementArray(ElementBufferObject & ebo)
+{
+   glBindVertexArray(vaoID);
+   ebo.bind();
+   GL_Logger::LogError("Add Element Array Object" ,glGetError());
+   glBindVertexArray(0);
+}
 void VertexArrayObject::enableLocation(GLuint location)
 {
    glBindVertexArray(vaoID);
@@ -41,6 +51,7 @@ void VertexArrayObject::disableLocation(GLuint location)
    glDisableVertexAttribArray(location);
    glBindVertexArray(0);
 }
+
 
 
 void VertexArrayObject::bind()

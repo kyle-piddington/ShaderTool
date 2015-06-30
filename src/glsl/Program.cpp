@@ -2,6 +2,7 @@
 #include "../logger/GL_Logger.h"
 #include "../io/TextLoader.h"
 #include <easyLogging++.h>
+
 Program::Program(std::string name):
    name(name),
    shaderProgram(0),
@@ -113,11 +114,112 @@ int Program::create()
    }
 }
 
+int Program::addAttribute(std::string attribName)
+{
+   if(!created)
+   {
+      LOG(ERROR) << "Program" + name + " has not been created. Call .create()";
+      return -1;
+   }
+   GLint atrbId = glGetAttribLocation(shaderProgram, attribName.c_str());
+   GL_Logger::LogError("Could not search program " + name, glGetError());
+   if(atrbId == -1)
+   {
+      LOG(WARNING) << "Program " + name +  "Could not bind attribute " + attribName + " (It may not exist, or has been optimized away)";
+      return -1;
+   }
+   else
+   {
+      attributes[attribName] = atrbId;
+   }
+   return 0;
+}
+
+int Program::addUniform(std::string uniformName)
+{
+   if(!created)
+   {
+      LOG(ERROR) << "Program" + name + " has not been created. Call .create()";
+      return -1;
+   }
+   GLint unifId = glGetUniformLocation(shaderProgram, uniformName.c_str());
+   GL_Logger::LogError("Could not search program " + name, glGetError());
+   if(unifId == -1)
+   {
+      LOG(WARNING) << "Program " + name +  "Could not bind uniform " + uniformName + " (It may not exist, or has been optimized away)";
+      return -1;
+   }
+   else
+   {
+      uniforms[uniformName] = unifId;
+   }
+   return 0;
+}
+
+GLint Program::getAttribute(std::string attribName)
+{
+   if(!created)
+   {
+      LOG(ERROR) << "Program" + name + " has not been created. Call .create()";
+      return -1;
+   }
+   auto attributeId = attributes.find(attribName);
+   if(attributeId == attributes.end())
+   {
+      LOG(WARNING) << "Program " + name + " has no attribute named " + attribName + " (Did you forget to add it to the program?)";
+      return -1;
+   }
+   else
+   {
+      boundAttributes[attribName] = true;
+      return attributeId->second;
+   }
+
+}
+
+GLint Program::getUniform(std::string unifName)
+{
+   if(!created)
+   {
+      LOG(ERROR) << "Program" + name + " has not been created. Call .create()";
+      return -1;
+   }
+   auto unifId = uniforms.find(unifName);
+   if(unifId == uniforms.end())
+   {
+      LOG(WARNING) << "Program " + name + " has no attribute named " + unifName + " (Did you forget to add it to the program?)";
+      return -1;
+   }
+   else
+   {
+      boundUniforms[unifName] = true;
+      return unifId->second;
+   }
+}
+
+bool Program::checkBoundVariables()
+{
+   if(!created)
+   {
+      LOG(ERROR) << "Program" + name + " has not been created. Call .create()";
+      return -1;
+   }
+   bool allBound = true;
+   for (auto i = attributes.begin(); i != attributes.end(); ++i)
+   {
+      allBound &= (boundAttributes.find((*i).first) != boundAttributes.end());
+   }
+   for (auto i = uniforms.begin(); i != uniforms.end(); ++i)
+   {
+      allBound &= (boundUniforms.find((*i).first) != boundUniforms.end());
+   }
+   return allBound;
+}
+
 void Program::enable()
 {
    glUseProgram(shaderProgram);
    GL_Logger::LogError("Could not enable program " + name, glGetError());
-   
 }
 void Program::disable()
 {
