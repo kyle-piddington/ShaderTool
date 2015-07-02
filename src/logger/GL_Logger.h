@@ -7,6 +7,7 @@
 class GL_Logger
 {
 public:
+
    static int LogError(std::string description, GLenum error);
    static int CheckShader(std::string description, GLuint shader);
    static int CheckProgram(std::string description, GLuint shader);

@@ -2,7 +2,8 @@
 #include "GL_Logger.h"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-int GL_Logger::LogError( std::string description, GLenum error)
+
+inline int GL_Logger::LogError( std::string description, GLenum error)
 {
 
    switch(error){
@@ -80,11 +81,12 @@ int GL_Logger::CheckProgram(std::string description, GLuint shader)
 
 
    glGetProgramiv(shader, GL_LINK_STATUS, &success);
-   GL_Logger::LogError("Get shader compilation status", glGetError());
+   GL_Logger::LogError("Get shader program creation", glGetError());
    if(success == GL_FALSE)
    {
+      LOG(ERROR) << "Could not link program";
       glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLen);
-      GL_Logger::LogError("get info log", glGetError());
+      GL_Logger::LogError("get program info log", glGetError());
 
       if(infoLogLen > 0)
       {

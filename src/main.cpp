@@ -9,6 +9,8 @@
 #include "buffers/VertexBuffer.h"
 #include "buffers/VertexArrayObject.h"
 #include "buffers/ElementBufferObject.h"
+#include "assetWrappers/Texture2d.h"
+
 INITIALIZE_EASYLOGGINGPP
 
 void key_callback(GLFWwindow * window, int key, int scancode, int action, int mode)
@@ -59,29 +61,37 @@ int main()
 
    program.addAttribute("position");
    program.addAttribute("color");
-   program.addUniform("offset");
+   program.addAttribute("vertTexCoords");
+   program.addUniform("tex0");
+   program.addUniform("tex1");
    
    GLfloat vertices[] = {
-    // Positions         // Colors
-     0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // Bottom Right
-    -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // Bottom Left
-     0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // Top 
-   };
-   GLuint indices[] = {  // Note that we start from 0!
-      0, 1, 2
-   };
+        // Positions          // Colors           // Texture Coords
+         0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // Top Right
+         0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // Bottom Right
+        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // Bottom Left
+        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // Top Left 
+    };
+    GLuint indices[] = {  // Note that we start from 0!
+        0, 1, 3, // First Triangle
+        1, 2, 3  // Second Triangle
+    };
 
    VertexBuffer vbo;
    ElementBufferObject ebo;
-   vbo.setData(vertices,24);
-   ebo.setData(indices,3);
+   vbo.setData(vertices,36);
+   ebo.setData(indices,6);
    VertexArrayObject vao;
-   vao.addAttribute(program.getAttribute("position"),vbo, 6 * sizeof(GLfloat));
-   vao.addAttribute(program.getAttribute("color"),vbo, 6 * sizeof(GLfloat),  3*sizeof(GLfloat));
+   vao.addAttribute(program.getAttribute("position"),vbo, 8 * sizeof(GLfloat));
+   vao.addAttribute(program.getAttribute("color"),vbo, 8 * sizeof(GLfloat),  3*sizeof(GLfloat));
+   vao.addAttribute(program.getAttribute("vertTexCoords"),vbo, 8 * sizeof(GLfloat),  6*sizeof(GLfloat), 2);
    vao.addElementArray(ebo);
    program.enable();
    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-
+   Texture2D boxTexture("assets/textures/container.jpg");
+   Texture2D faceTexture("assets/textures/awesomeface.png");
+   boxTexture.enable(program.getUniform("tex0"));
+   faceTexture.enable(program.getUniform("tex1"));
 
    while(!glfwWindowShouldClose(window))
    {
@@ -90,7 +100,6 @@ int main()
       glClear(GL_COLOR_BUFFER_BIT);
       
       GLfloat timeValue = glfwGetTime();
-      glUniform3f(program.getUniform("offset"),cos(timeValue),sin(timeValue),0);
 
       vao.bind();
       glDrawElements(GL_TRIANGLES,6, GL_UNSIGNED_INT,0);
@@ -98,6 +107,8 @@ int main()
       glfwSwapBuffers(window);
 
    }
+   faceTexture.disable();
+   boxTexture.disable();
 
 
    /**

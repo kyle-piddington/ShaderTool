@@ -32,13 +32,17 @@ INCLUDE_DIRECTORIES(${GLFW_INCLUDE_DIRS})
 
 
 FIND_LIBRARY(GLEW_LIB GLEW)
-list(APPEND EXTRA_LIBS ${GLFW_LIBRARIES} ${GLEW_LIB})
+FIND_LIBRARY(SOIL_LIB SOIL)
+list(APPEND EXTRA_LIBS ${GLFW_LIBRARIES} ${GLEW_LIB} ${SOIL_LIB})
+
 IF(APPLE)
    FIND_LIBRARY(OpenGL_LIBRARY OpenGL)
    FIND_LIBRARY(GLUT_LIBRARY GLUT)
+   FIND_LIBRARY(CF_LIBRARY CoreFoundation)
    MARK_AS_ADVANCED (OpenGL_LIBRARY
-                     GLUT_LIBRARY)
-   SET(APPEND EXTRA_LIBS ${OpenGL_LIBRARY} ${GLUT_LIBRARY})
+                     GLUT_LIBRARY
+                     CF_LIBRARY)
+   SET(APPEND EXTRA_LIBS ${OpenGL_LIBRARY} ${GLUT_LIBRARY} ${CF_LIBRARY})
 
 ELSE()
    FIND_LIBRARY(GL_LIBRARY GL)
@@ -53,7 +57,7 @@ add_executable (GraphicsEngine ${GraphicsEngine_SOURCES})
 target_link_libraries(GraphicsEngine ${EXTRA_LIBS})
 
 if (APPLE)
-  target_link_libraries(GraphicsEngine "-framework OpenGL")
+  target_link_libraries(GraphicsEngine "-framework OpenGL -framework CoreFoundation")
 endif()
 
 
