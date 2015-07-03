@@ -85,7 +85,7 @@ int GL_Logger::CheckProgram(std::string description, GLuint shader)
    if(success == GL_FALSE)
    {
       LOG(ERROR) << "Could not link program";
-      glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &infoLogLen);
+      glGetProgramiv(shader, GL_INFO_LOG_LENGTH, &infoLogLen);
       GL_Logger::LogError("get program info log", glGetError());
 
       if(infoLogLen > 0)

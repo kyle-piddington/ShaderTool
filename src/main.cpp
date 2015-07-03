@@ -64,13 +64,13 @@ int main()
    program.addAttribute("vertTexCoords");
    program.addUniform("tex0");
    program.addUniform("tex1");
-   
+
    GLfloat vertices[] = {
         // Positions          // Colors           // Texture Coords
          0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // Top Right
          0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // Bottom Right
         -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // Bottom Left
-        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // Top Left 
+        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // Top Left
     };
     GLuint indices[] = {  // Note that we start from 0!
         0, 1, 3, // First Triangle
@@ -88,17 +88,20 @@ int main()
    vao.addElementArray(ebo);
    program.enable();
    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+
+
    Texture2D boxTexture("assets/textures/container.jpg");
    Texture2D faceTexture("assets/textures/awesomeface.png");
    boxTexture.enable(program.getUniform("tex0"));
    faceTexture.enable(program.getUniform("tex1"));
+
 
    while(!glfwWindowShouldClose(window))
    {
 
       glfwPollEvents();
       glClear(GL_COLOR_BUFFER_BIT);
-      
+
       GLfloat timeValue = glfwGetTime();
 
       vao.bind();
