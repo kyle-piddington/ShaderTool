@@ -20,10 +20,10 @@ Texture2D::Texture2D(const std::string textureName):
 void Texture2D::enable(GLint samplerID)
 {
    texUnit = std::make_shared<TextureUnit>(TextureUnitManager::requestTextureUnit());
-   glActiveTexture(texUnit->glUnit);
-   GL_Logger::LogError("Could not activate texture " + std::to_string(texUnit->texUnit), glGetError());
+   glActiveTexture(texUnit->getGlUnit());
+   GL_Logger::LogError("Could not activate texture", glGetError());
    bfr.bind();
-   glUniform1i(samplerID, texUnit->texUnit);
+   glUniform1i(samplerID, texUnit->getTexUnit());
    GL_Logger::LogError("Could not set texture uniform", glGetError());
    
 }

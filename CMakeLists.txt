@@ -1,7 +1,10 @@
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 3.0)
 
 project (GraphicsEngine)
+enable_testing()
 
+
+#Get Source variables
 include_directories ("${PROJECT_SOURCE_DIR}/lib")
 SET( EIGEN3_INCLUDE_DIR "$ENV{EIGEN3_INCLUDE_DIR}" )
 IF( NOT EIGEN3_INCLUDE_DIR )
@@ -21,7 +24,7 @@ foreach (_headerFile ${GraphicsEngine_HEADERS})
     list (APPEND GraphicsEngine_INCLUDE_DIRS ${_dir})
 endforeach()
 list(REMOVE_DUPLICATES GraphicsEngine_INCLUDE_DIRS)
-
+include_directories(${GraphicsEngine_INCLUDE_DIRS})
 #Required flags
 #LIB=-DGL_GLEXT_PROTOTYPES -lglut -lGL -lGLU
 #LIB_OSX=-framework GLUT -framework OpenGL
@@ -51,13 +54,39 @@ ELSE()
    SET(EXTRA_LIBS ${GLUT_LIBRARY} ${GL_LIBRARY} ${GLU_LIBRARY})
 ENDIF()
 
+
+#GoogleTest Support
+add_subdirectory("lib/gtest")
+
+SET(GraphicsEngine_Test_SOURCES ${GraphicsEngine_SOURCES})
+list(REMOVE_ITEM GraphicsEngine_Test_SOURCES ${PROJECT_SOURCE_DIR}/src/main.cpp)
+
+enable_testing()
+include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR}) 
+set(GraphicsEngine_Test GraphicsEngine_test)
+include_directories(${GTEST_INCLUDE_DIRS})
+
+file(GLOB_RECURSE TEST_SRC_FILES "test/*.cpp")
+
+
+
+add_executable(${GraphicsEngine_Test} ${GraphicsEngine_Test_SOURCES} ${TEST_SRC_FILES})
+if (APPLE)
+  target_link_libraries(${GraphicsEngine_Test} "-framework OpenGL -framework CoreFoundation")
+endif()
+
+target_link_libraries(${GraphicsEngine_Test} ${EXTRA_LIBS} gtest)
+add_test( ${GraphicsEngine_Test} ${GraphicsEngine_Test} )
+
 #Add C++ 11
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g ") 
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g ")
 add_executable (GraphicsEngine ${GraphicsEngine_SOURCES})
 target_link_libraries(GraphicsEngine ${EXTRA_LIBS})
 
 if (APPLE)
   target_link_libraries(GraphicsEngine "-framework OpenGL -framework CoreFoundation")
 endif()
+
+
 
 

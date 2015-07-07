@@ -2,14 +2,39 @@
 #include "../logger/GL_Logger.h"
 #include <easyLogging++.h>
 
-int TextureUnitManager::texIdx = 0;
 bool TextureUnitManager::initted = false;
-std::vector<TextureUnit> TextureUnitManager::unitQueue;
-
+std::priority_queue<TextureUnit, std::vector<TextureUnit>, Compare> TextureUnitManager::unitQueue = std::priority_queue<TextureUnit, std::vector<TextureUnit>, Compare> ();
 
 void TextureUnit::release()
 {
-   TextureUnitManager::texIdx++;
+   if(active)
+   {
+      active = false;
+      TextureUnitManager::unitQueue.push(TextureUnit(*this));
+
+   }
+   else
+   {
+      LOG(WARNING) << "Texture unit " + std::to_string(texUnit) + " Has already been released!";
+   }
+}
+const int TextureUnit::getTexUnit()
+{
+   if(!active)
+   {
+      LOG(WARNING) << "Texture unit " + std::to_string(texUnit)  + "Is not avaliable";
+      return -1;
+   }
+   return texUnit;
+}
+const GLenum TextureUnit::getGlUnit()
+{
+   if(!active)
+   {
+      LOG(WARNING) << "Texture unit " + std::to_string(texUnit)  + "Is not avaliable";
+      return GL_TEXTURE0;
+   }
+   return glUnit;
 }
 void TextureUnitManager::init()
 {
@@ -21,11 +46,10 @@ void TextureUnitManager::init()
    {
       texUnits = 15;
    }
-   TextureUnitManager::texIdx = texUnits;
    while(texUnits >= 0)
    {
       TextureUnit unit(texUnits, GL_TEXTURE0 + texUnits);
-      unitQueue.push_back(unit);
+      unitQueue.push(unit);
       texUnits--;
    }
    TextureUnitManager::initted = true;
@@ -39,8 +63,10 @@ TextureUnit TextureUnitManager::requestTextureUnit()
    }
    if(!unitQueue.empty())
    {
-      TextureUnit ret = unitQueue[texIdx];
-      texIdx--;
+      TextureUnit ret = unitQueue.top();
+      unitQueue.pop();
+      ret.active = true;
+
       return ret;
    }
    else
