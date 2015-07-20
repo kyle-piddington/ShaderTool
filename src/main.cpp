@@ -13,6 +13,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "util/Camera.h"
 INITIALIZE_EASYLOGGINGPP
 
 
@@ -44,7 +45,7 @@ int main()
    glfwMakeContextCurrent(window);
    int width, height;
    glfwGetFramebufferSize(window, &width, &height);
-
+   Camera camera((float)width, (float)height);
    glViewport(0, 0, width, height);
    GL_Logger::LogError("Error in setup", glGetError());
 
@@ -138,8 +139,7 @@ int main()
    V = glm::translate(V, glm::vec3(0.0f, 0.0f, -3.0f));
    P = glm::perspective(45.0f, screenWidth / screenHeight, 0.1f, 100.0f);
 
-   glUniformMatrix4fv(program.getUniform("V"), 1, GL_FALSE, glm::value_ptr(V));
-   glUniformMatrix4fv(program.getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
+   glUniformMatrix4fv(program.getUniform("P"), 1, GL_FALSE, glm::value_ptr(camera.getPerspectiveMatrix()));
 
 
 
@@ -169,7 +169,10 @@ int main()
       glfwPollEvents();
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       vao.bind();
-
+      GLfloat timeValue = glfwGetTime();
+      camera.setPosition(glm::vec3(10*sin(timeValue), 0, 10*cos(timeValue)));
+      camera.lookAt(glm::vec3(0.0));
+      glUniformMatrix4fv(program.getUniform("V"),1,GL_FALSE,glm::value_ptr(camera.getViewMatrix()));
       for(int i = 0; i < 10; i++)
       {
          M = glm::translate(glm::mat4(),cubePositions[i]);
@@ -181,8 +184,8 @@ int main()
 
       }
 
-      GLfloat timeValue = glfwGetTime();
 
+     
       vao.unbind();
       glfwSwapBuffers(window);
 

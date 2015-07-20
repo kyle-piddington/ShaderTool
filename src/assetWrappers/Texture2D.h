@@ -23,7 +23,7 @@ public:
    void disable();
    const std::string getName();
 private:
-   const std::string textureName;
+   std::string textureName;
    int width;
    int height;
    TextureBuffer bfr;

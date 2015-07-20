@@ -22,7 +22,7 @@ const int TextureUnit::getTexUnit()
 {
    if(!active)
    {
-      LOG(WARNING) << "Texture unit " + std::to_string(texUnit)  + "Is not avaliable";
+      LOG(WARNING) << "Texture unit " + std::to_string(texUnit)  + " Is not avaliable";
       return -1;
    }
    return texUnit;
@@ -31,7 +31,7 @@ const GLenum TextureUnit::getGlUnit()
 {
    if(!active)
    {
-      LOG(WARNING) << "Texture unit " + std::to_string(texUnit)  + "Is not avaliable";
+      LOG(WARNING) << "Texture unit " + std::to_string(texUnit)  + " Is not avaliable";
       return GL_TEXTURE0;
    }
    return glUnit;

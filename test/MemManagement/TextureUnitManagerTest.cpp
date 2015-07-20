@@ -20,3 +20,16 @@ TEST(TextureUnitManager,testGetUnits)
    unit3.release();
    unit4.release();
 }
+
+TEST(TextureUnitManager, testUnitRelease)
+{
+   TextureUnit unit1 = TextureUnitManager::requestTextureUnit();
+   EXPECT_EQ(unit1.getTexUnit(), 0);
+   unit1.release();
+   EXPECT_EQ(unit1.getTexUnit(), -1);
+   unit1.release();
+   EXPECT_EQ(unit1.getTexUnit(), -1);
+   unit1 = TextureUnitManager::requestTextureUnit();
+   TextureUnit unit2 = TextureUnitManager::requestTextureUnit();
+   EXPECT_EQ(unit2.getTexUnit(), 1);
+}  

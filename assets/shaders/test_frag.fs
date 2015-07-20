@@ -9,5 +9,5 @@ void main()
 {
    vec2 texCoords = vec2(fragTexCoords.x, -fragTexCoords.y);
    color =  mix(texture(tex1,texCoords) ,texture(tex0, texCoords), 0.5);
-            
+
 }
