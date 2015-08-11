@@ -14,18 +14,15 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "util/Camera.h"
+#include "io/Keyboard.h"
+#include "io/GLFWHandler.h"
+
 INITIALIZE_EASYLOGGINGPP
 
 
 const float screenWidth =800.0;
 const float screenHeight = 600.0;
-void key_callback(GLFWwindow * window, int key, int scancode, int action, int mode)
-{
-   if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-   {
-      glfwSetWindowShouldClose(window, GL_TRUE);
-   }
-}
+
 
 int main()
 {
@@ -57,7 +54,7 @@ int main()
       return -1;
    }
    GL_Logger::LogError("Error in GLEW startup (Safe to ignore)", glGetError());
-   glfwSetKeyCallback(window, key_callback);
+   glfwSetKeyCallback(window, GLFWHandler::key_callback);
 
 
    /**
@@ -78,7 +75,7 @@ int main()
    program.addUniform("M");
    program.addUniform("V");
    program.addUniform("P");
-  GLfloat vertices[] = {
+   GLfloat vertices[] = {
     -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
      0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
      0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
@@ -167,6 +164,8 @@ int main()
    {
 
       glfwPollEvents();
+      Keyboard::update();
+
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       vao.bind();
       GLfloat timeValue = glfwGetTime();
