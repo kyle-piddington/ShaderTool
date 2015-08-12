@@ -16,7 +16,7 @@
 #include "util/Camera.h"
 #include "io/Keyboard.h"
 #include "io/GLFWHandler.h"
-
+#include "Transform.h"
 INITIALIZE_EASYLOGGINGPP
 
 
@@ -60,6 +60,8 @@ int main()
    /**
     * TEST CODE
     */
+   
+   Transform testTransform;
    Program program("Test Program");
    program.addVertexShader("assets/shaders/test_vert.vs");
    program.addFragmentShader("assets/shaders/test_frag.fs");
