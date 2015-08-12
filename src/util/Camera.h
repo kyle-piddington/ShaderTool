@@ -24,8 +24,7 @@ private:
    float width;
    float height;
 
-   glm::vec3 position;
-   glm::mat4 transform;
+   Transform transform;
    glm::mat4 currentPerspectiveMtx;
    glm::mat4 currentViewMatrix;
    glm::mat4 currentOrthographicsMtx;

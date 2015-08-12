@@ -43,6 +43,11 @@ public:
     */
    void rotate(float angle, const glm::vec3 & axis);
    
+   /**
+    * Orient the transform to point towards a target
+    * @param target the target position
+    */
+   void lookAt(glm::vec3 target);
 
    /**
     * Get the current position expressed as a 3d vector
@@ -79,9 +84,9 @@ public:
 private:
    void updateFrame();
    glm::vec3 position;
-   glm::vec4 localUp;
-   glm::vec4 localRight;
-   glm::vec4 localForward;
+   glm::vec3 localUp;
+   glm::vec3 localRight;
+   glm::vec3 localForward;
    
    glm::quat rotation;
 

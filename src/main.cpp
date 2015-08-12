@@ -60,8 +60,7 @@ int main()
    /**
     * TEST CODE
     */
-   
-   Transform testTransform;
+
    Program program("Test Program");
    program.addVertexShader("assets/shaders/test_vert.vs");
    program.addFragmentShader("assets/shaders/test_frag.fs");
@@ -146,7 +145,7 @@ int main()
    Texture2D faceTexture("assets/textures/awesomeface.png");
    boxTexture.enable(program.getUniform("tex0"));
    faceTexture.enable(program.getUniform("tex1"));
-
+   Transform testTransform;
    glm::vec3 cubePositions[] = {
      glm::vec3( 0.0f,  0.0f,  0.0f),
      glm::vec3( 2.0f,  5.0f, -15.0f),
@@ -162,6 +161,8 @@ int main()
 
 
    glEnable(GL_DEPTH_TEST);
+   GLfloat theta = 0;
+   GLfloat phi = 0;
    while(!glfwWindowShouldClose(window))
    {
 
@@ -170,23 +171,48 @@ int main()
 
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       vao.bind();
-      GLfloat timeValue = glfwGetTime();
-      camera.setPosition(glm::vec3(10*sin(timeValue), 0, 10*cos(timeValue)));
+
+      if(Keyboard::isKeyDown(GLFW_KEY_A))
+      {
+        theta += 1/60.0;
+
+      }
+      if(Keyboard::isKeyDown(GLFW_KEY_D))
+      {
+        theta -= 1/60.0;
+
+      }
+      if(Keyboard::isKeyDown(GLFW_KEY_W))
+      {
+        phi += 1/60.0;
+
+      }
+      if(Keyboard::isKeyDown(GLFW_KEY_S))
+      {
+        phi -= 1/60.0;
+      }
+      camera.setPosition(glm::vec3(5*sin(theta)*cos(phi),5*sin(phi),5*cos(theta)*cos(phi)));
       camera.lookAt(glm::vec3(0.0));
+
       glUniformMatrix4fv(program.getUniform("V"),1,GL_FALSE,glm::value_ptr(camera.getViewMatrix()));
       for(int i = 0; i < 10; i++)
       {
          M = glm::translate(glm::mat4(),cubePositions[i]);
-
+         testTransform.setPosition(cubePositions[i]);
+         testTransform.lookAt(glm::vec3(5*sin(theta)*cos(phi),5*sin(phi),5*cos(theta)*cos(phi)));
+         M=testTransform.getMatrix();
+         /*
          float angle = 20.0f * i;
-         M = glm::rotate(M, ((GLfloat)glfwGetTime() * 50.0f * (i%3 == 0)) + angle, glm::vec3(1.0f, 0.3f, 0.5f));
+         M = glm::rotate(M, ((GLfloat)glfwGetTime() * 0.5f * (i%3 == 0)) + angle, glm::vec3(1.0f, 0.3f, 0.5f));
+         */
          glUniformMatrix4fv(program.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
          glDrawArrays(GL_TRIANGLES,0,36);
+
 
       }
 
 
-     
+
       vao.unbind();
       glfwSwapBuffers(window);
 

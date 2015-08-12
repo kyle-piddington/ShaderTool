@@ -75,11 +75,42 @@ glm::quat Transform::getRotation() const
 }
 glm::mat4  Transform::getMatrix() const
 {
-   glm::mat4 t =    glm::mat4(1,0,0,this->position.x,
-                                     0,1,0,this->position.y,
-                                     0,0,1,this->position.z,
-                                     0,0,0,1);
-   return  glm::mat4_cast(rotation) * t;
+   glm::mat4 t =    glm::mat4(1,0,0,0,
+                              0,1,0,0,
+                              0,0,1,0,
+                              this->position.x,this->position.y,this->position.z,1);
+   return  t * glm::mat4_cast(rotation);
+}
+
+void Transform::lookAt(glm::vec3 target)
+{
+   glm::vec3 newForward = glm::normalize(target-position); 
+   glm::quat nextQuat;
+   //Case 1, already oriented
+   if(fabs(glm::dot(newForward,this->forward())-1) < 1.0e-6)
+   {
+      nextQuat = glm::quat();
+      std::cout << "Same orientation" << std::endl;
+   }
+   //Case 2, 180 degrees
+   else if(fabs(glm::dot(newForward,this->forward()) + 1)  < 1.0e-6)
+   {
+      nextQuat = glm::angleAxis((float)M_PI,this->up());
+      std::cout << "Opposite orientation" << std::endl;
+   }
+   else
+   {
+
+      glm::vec3 rotAxis = glm::normalize(
+            glm::cross(forward(),newForward));
+      float rotAngle = acos(glm::dot(forward(),newForward));
+      //std::cout << rotAngle << std::endl;
+      nextQuat = glm::angleAxis(rotAngle, rotAxis);
+   }
+   this->rotation = this->rotation * nextQuat;
+   localForward = newForward;
+   updateFrame();
+
 
 }
 
@@ -100,14 +131,8 @@ glm::vec3 Transform::forward() const
 
 void Transform::updateFrame()
 {
-   glm::mat4 rotMat = glm::mat4_cast(rotation);
-   glm::vec4 wUp(World::Up,0.0);
-   glm::vec4 wRt(World::Right,0.0);
-   glm::vec4 wFw(World::Forward,0.0);
-
-   localUp = glm::normalize(wUp * rotMat) ;
-   localRight = glm::normalize(wRt * rotMat) ;
-   localForward = glm::normalize(wFw * rotMat) ;
 
 
+   localRight =  glm::normalize(glm::cross(localForward,World::Up));
+   localUp = glm::normalize(glm::cross(localForward,localRight));
 }
