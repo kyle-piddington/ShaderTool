@@ -60,9 +60,13 @@ void Transform::rotate(float angle, const glm::vec3 & axis)
       LOG(ERROR) << "Zero length axis used in angle axis rotation";
       assert(false);
    }
-   glm::normalize(axis);
-   glm::quat newQuat = glm::angleAxis(angle,axis);
-   this->rotation = this->rotation * newQuat;
+   //Convert world axis to local axis
+   glm::mat4 rotMtx = glm::mat4_cast(rotation);
+   glm::vec3 localAxis = glm::vec3(rotMtx * glm::vec4(axis,0.0));
+   glm::normalize(localAxis);
+
+   glm::quat newQuat = glm::angleAxis(angle,localAxis);
+   this->rotation = glm::normalize(this->rotation * newQuat);
    updateFrame();
 }
 
@@ -100,15 +104,15 @@ void Transform::lookAt(glm::vec3 target)
    rotMat[3] = glm::vec4(0,0,0,1);
    //Create a quaternion from the three vectors above.
    glm::quat ret = glm::quat_cast(rotMat);
-  
+
 
    this->rotation = ret;
    updateFrame();
    //Also reorient the up axis
-   
+
 
    //localForward = newForward;
-   
+
 
 }
 

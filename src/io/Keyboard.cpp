@@ -1,31 +1,39 @@
 #include "Keyboard.h"
 #include <GLFW/glfw3.h>
+#include <iostream>
 
-char Keyboard::keyStatus[NUM_KEYS];
-char Keyboard::bfrKeyStatus[NUM_KEYS];
+enum Keystatus
+{
+   PRESS = 1,
+   HOLD = 2,
+   RELEASE = -1
+};
+
+short Keyboard::keyStatus[NUM_KEYS];
+short Keyboard::bfrKeyStatus[NUM_KEYS];
 
 bool Keyboard::isKeyDown(int key)
 {
-   return keyStatus[key] > 0;
+   return keyStatus[key] >= PRESS;
 }
 bool Keyboard::isKeyUp(int key)
 {
-   return keyStatus[key] == 0;
+   return keyStatus[key] == RELEASE;
 }
 bool Keyboard::key(int key)
 {
-   return keyStatus[key] == 1;
+   return keyStatus[key] == PRESS;
 }
 
 void Keyboard::setKeyStatus(int key, int action)
 {
    if(action == GLFW_PRESS)
    {
-      bfrKeyStatus[key] = 1;
+      bfrKeyStatus[key] = PRESS;
    }
    else if(action == GLFW_RELEASE)
    {
-      bfrKeyStatus[key] = 0;
+      bfrKeyStatus[key] = RELEASE;
    }
 }
 
@@ -33,21 +41,23 @@ void Keyboard::update()
 {
    for(int i = 0; i < NUM_KEYS; i++)
    {
-      if(bfrKeyStatus[i] == 1)
+      if(bfrKeyStatus[i] == PRESS)
       {
-         if(keyStatus[i] == 1)
+         if(keyStatus[i] == PRESS)
          {
-            keyStatus[i] = 2;
+            keyStatus[i] = HOLD;
+            bfrKeyStatus[i] = HOLD;
          }
          else
          {
-            keyStatus[i] = 1;
+            keyStatus[i] = PRESS;
          }
       }
-      else
+      else if(bfrKeyStatus[i] == RELEASE)
       {
-         keyStatus[i] = 0;
+         keyStatus[i] = RELEASE;
       }
+
    }
 }
 

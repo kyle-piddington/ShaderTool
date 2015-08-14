@@ -54,7 +54,6 @@ TEST(Transform, angleAxis)
    EXPECT_NEAR(glm::vec3(0.0,1.0,0.0).z,t.up().z,1.0e-6);
 
    t.rotate(M_PI/2.0,t.forward());
-
    EXPECT_NEAR(glm::vec3(0.0,0.0,1.0).x,t.up().x,1.0e-6);
    EXPECT_NEAR(glm::vec3(0.0,0.0,1.0).y,t.up().y,1.0e-6);
    EXPECT_NEAR(glm::vec3(0.0,0.0,1.0).z,t.up().z,1.0e-6);

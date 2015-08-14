@@ -5,8 +5,8 @@ class Keyboard
 {
 private:
    //Could store addl data such as modification
-   static char keyStatus[NUM_KEYS];
-   static char bfrKeyStatus[NUM_KEYS];
+   static short keyStatus[NUM_KEYS];
+   static short bfrKeyStatus[NUM_KEYS];
 public:
    /**
     * Test if a key is held
