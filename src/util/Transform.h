@@ -84,9 +84,9 @@ public:
 private:
    void updateFrame();
    glm::vec3 position;
-   glm::vec3 localUp;
-   glm::vec3 localRight;
-   glm::vec3 localForward;
+   glm::vec4 localUp;
+   glm::vec4 localRight;
+   glm::vec4 localForward;
    
    glm::quat rotation;
 

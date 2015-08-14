@@ -22,6 +22,11 @@ void Camera::lookAt(glm::vec3 target)
   this->currentViewMatrix = glm::inverse(transform.getMatrix());
 }
 
+glm::vec3 Camera::getPosition()
+{
+  return transform.getPosition();
+}
+
 glm::mat4 Camera::getViewMatrix()
 {
    return currentViewMatrix;

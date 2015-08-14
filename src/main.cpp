@@ -199,7 +199,7 @@ int main()
       {
          M = glm::translate(glm::mat4(),cubePositions[i]);
          testTransform.setPosition(cubePositions[i]);
-         testTransform.lookAt(glm::vec3(5*sin(theta)*cos(phi),5*sin(phi),5*cos(theta)*cos(phi)));
+         testTransform.lookAt(camera.getPosition());
          M=testTransform.getMatrix();
          /*
          float angle = 20.0f * i;

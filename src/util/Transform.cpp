@@ -2,7 +2,8 @@
 #include "World.h"
 #include <iostream>
 #include <easylogging++.h>
-
+#include <glm/gtx/orthonormalize.hpp>
+#define GLM_FORCE_RADIANS
 
 Transform::Transform():
    position(glm::vec3(0)),
@@ -84,33 +85,30 @@ glm::mat4  Transform::getMatrix() const
 
 void Transform::lookAt(glm::vec3 target)
 {
-   glm::vec3 newForward = glm::normalize(target-position); 
-   glm::quat nextQuat;
-   //Case 1, already oriented
-   if(fabs(glm::dot(newForward,this->forward())-1) < 1.0e-6)
-   {
-      nextQuat = glm::quat();
-      std::cout << "Same orientation" << std::endl;
-   }
-   //Case 2, 180 degrees
-   else if(fabs(glm::dot(newForward,this->forward()) + 1)  < 1.0e-6)
-   {
-      nextQuat = glm::angleAxis((float)M_PI,this->up());
-      std::cout << "Opposite orientation" << std::endl;
-   }
-   else
-   {
+   /*Vector forward = lookAt.Normalized();
+   Vector right = Vector::Cross(up.Normalized(), forward);
+   Vector up = Vector::Cross(forward, right);*/
 
-      glm::vec3 rotAxis = glm::normalize(
-            glm::cross(forward(),newForward));
-      float rotAngle = acos(glm::dot(forward(),newForward));
-      //std::cout << rotAngle << std::endl;
-      nextQuat = glm::angleAxis(rotAngle, rotAxis);
-   }
-   this->rotation = this->rotation * nextQuat;
-   localForward = newForward;
+   glm::vec3 forward = glm::normalize(target-position);
+   glm::vec3 up = glm::orthonormalize(World::Up, forward); // Keeps up the same, make forward orthogonal to up
+   glm::vec3 right = glm::normalize(glm::cross(forward, up));
+
+   glm::mat4 rotMat;
+   rotMat[0] = glm::vec4(right.x,right.y,right.z,0);
+   rotMat[1] = glm::vec4(up.x, up.y, up.z, 0);
+   rotMat[2] = glm::vec4(-forward.x, -forward.y, -forward.z, 0);
+   rotMat[3] = glm::vec4(0,0,0,1);
+   //Create a quaternion from the three vectors above.
+   glm::quat ret = glm::quat_cast(rotMat);
+  
+
+   this->rotation = ret;
    updateFrame();
+   //Also reorient the up axis
+   
 
+   //localForward = newForward;
+   
 
 }
 
@@ -132,7 +130,13 @@ glm::vec3 Transform::forward() const
 void Transform::updateFrame()
 {
 
+   glm::vec4 wUp(World::Up,0.0);
+   glm::vec4 wRt(World::Right,0.0);
+   glm::vec4 wFw(World::Forward,0.0);
+   glm::mat4 rotMtx = glm::mat4_cast(rotation);
+   localRight = glm::normalize(rotMtx * wRt);
+   localUp = glm::normalize(rotMtx * wUp);
+   localForward = glm::normalize(rotMtx * wFw);
 
-   localRight =  glm::normalize(glm::cross(localForward,World::Up));
-   localUp = glm::normalize(glm::cross(localForward,localRight));
+
 }

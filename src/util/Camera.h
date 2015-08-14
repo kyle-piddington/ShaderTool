@@ -18,6 +18,7 @@ public:
    glm::mat4 getPerspectiveMatrix();
    glm::mat4 getOrthographicMatrix();
    glm::mat4 getViewMatrix();
+   glm::vec3 getPosition();
 private:
    float fov;
    float aspectRatio;
