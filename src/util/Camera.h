@@ -19,13 +19,14 @@ public:
    glm::mat4 getOrthographicMatrix();
    glm::mat4 getViewMatrix();
    glm::vec3 getPosition();
+   Transform transform;
+
 private:
    float fov;
    float aspectRatio;
    float width;
    float height;
 
-   Transform transform;
    glm::mat4 currentPerspectiveMtx;
    glm::mat4 currentViewMatrix;
    glm::mat4 currentOrthographicsMtx;

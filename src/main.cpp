@@ -16,13 +16,22 @@
 #include "util/Camera.h"
 #include "io/Keyboard.h"
 #include "io/GLFWHandler.h"
+#include "io/Mouse.h"
 #include "Transform.h"
+
 INITIALIZE_EASYLOGGINGPP
 
 
 const float screenWidth =800.0;
 const float screenHeight = 600.0;
 
+
+
+
+void mouseCallback(GLFWwindow * window, double x, double y)
+{
+   
+}
 
 int main()
 {
@@ -55,7 +64,8 @@ int main()
    }
    GL_Logger::LogError("Error in GLEW startup (Safe to ignore)", glGetError());
    glfwSetKeyCallback(window, GLFWHandler::key_callback);
-
+   glfwSetCursorPosCallback(window, GLFWHandler::mousePositionCallback);
+   
 
    /**
     * TEST CODE
@@ -167,8 +177,9 @@ int main()
    {
 
       glfwPollEvents();
-      Keyboard::update();
-
+      GLFWHandler::update();
+      double mouseX = (Mouse::getX()-screenWidth/2)/(screenWidth/4);
+      double mouseY = -(Mouse::getY()-screenHeight/2)/(screenHeight/4);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       vao.bind();
 
@@ -187,11 +198,11 @@ int main()
         phi += 1/60.0;
 
       }
-      if(Keyboard::isKeyDown(GLFW_KEY_S))
+      if(Keyboard::key(GLFW_KEY_S))
       {
         phi -= 1/60.0;
       }
-      camera.setPosition(glm::vec3(5*sin(theta)*cos(phi),5*sin(phi),5*cos(theta)*cos(phi)));
+      camera.setPosition(glm::vec3(0,cos(phi),5));
       camera.lookAt(glm::vec3(0.0));
 
       glUniformMatrix4fv(program.getUniform("V"),1,GL_FALSE,glm::value_ptr(camera.getViewMatrix()));
@@ -199,7 +210,7 @@ int main()
       {
          M = glm::translate(glm::mat4(),cubePositions[i]);
          testTransform.setPosition(cubePositions[i]);
-         testTransform.lookAt(camera.getPosition());
+         testTransform.lookAt(glm::vec3(mouseX,mouseY,5));
          M=testTransform.getMatrix();
          /*
          float angle = 20.0f * i;
