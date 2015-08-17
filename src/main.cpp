@@ -24,7 +24,8 @@ INITIALIZE_EASYLOGGINGPP
 
 const float screenWidth =800.0;
 const float screenHeight = 600.0;
-
+float pitch = 0;
+float yaw = 0;
 
 
 
@@ -50,10 +51,14 @@ void handleCameraInput(Camera & camera)
    {
       translate+= camera.transform.right() * Cam_Speed;
    }
+
    rotate.x = (Mouse::getLastY() - Mouse::getY())/screenHeight/2.0 * Cam_Rot_Speed;
    rotate.y = (Mouse::getLastX() - Mouse::getX())/screenHeight/2.0 * Cam_Rot_Speed;
+   pitch += rotate.x;
+   yaw += rotate.y;
+   rotate.z = 0;
    camera.translate(translate);
-   camera.rotate(rotate);
+   camera.setRotation(glm::vec3(pitch,yaw,0));
 }
 
 int main()
@@ -88,27 +93,37 @@ int main()
    GL_Logger::LogError("Error in GLEW startup (Safe to ignore)", glGetError());
    glfwSetKeyCallback(window, GLFWHandler::key_callback);
    glfwSetCursorPosCallback(window, GLFWHandler::mousePositionCallback);
-   
+
 
    /**
     * TEST CODE
     */
 
    Program program("Test Program");
-   program.addVertexShader("assets/shaders/test_vert.vs");
-   program.addFragmentShader("assets/shaders/test_frag.fs");
+   program.addVertexShader("assets/shaders/debug_vert.vs");
+   program.addFragmentShader("assets/shaders/basic_color_frag.fs");
    program.create();
 
+   Program lampProg("Debug Light Program");
+   lampProg.addVertexShader("assets/shaders/debug_vert.vs");
+   lampProg.addFragmentShader("assets/shaders/debug_frag.fs");
+   lampProg.create();
    /**
     * Add program introspection to gether attribute names and uniforms later.
     */
    program.addAttribute("position");
-   program.addAttribute("vertTexCoords");
-   program.addUniform("tex0");
-   program.addUniform("tex1");
    program.addUniform("M");
    program.addUniform("V");
    program.addUniform("P");
+   program.addUniform("objColor");
+   program.addUniform("lightColor");
+
+
+   lampProg.addAttribute("position");
+   lampProg.addUniform("M");
+   lampProg.addUniform("V");
+   lampProg.addUniform("P");
+   /*
    GLfloat vertices[] = {
     -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
      0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
@@ -151,54 +166,92 @@ int main()
      0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
     -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
     -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-};
+   };
+   */
+   GLfloat lightVertices[]
+   {
+    -0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f,  0.5f, -0.5f,
+     0.5f,  0.5f, -0.5f,
+    -0.5f,  0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
+
+    -0.5f, -0.5f,  0.5f,
+     0.5f, -0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f,
+    -0.5f, -0.5f,  0.5f,
+
+    -0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
+    -0.5f, -0.5f, -0.5f,
+    -0.5f, -0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f,
+
+     0.5f,  0.5f,  0.5f,
+     0.5f,  0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+
+    -0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f, -0.5f,
+     0.5f, -0.5f,  0.5f,
+     0.5f, -0.5f,  0.5f,
+    -0.5f, -0.5f,  0.5f,
+    -0.5f, -0.5f, -0.5f,
+
+    -0.5f,  0.5f, -0.5f,
+     0.5f,  0.5f, -0.5f,
+     0.5f,  0.5f,  0.5f,
+     0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f,  0.5f,
+    -0.5f,  0.5f, -0.5f
+   };
 
    VertexBuffer vbo;
    ElementBufferObject ebo;
-   vbo.setData(vertices,36*5);
+   vbo.setData(lightVertices,36*3);
    //ebo.setData(indices,6);
    VertexArrayObject vao;
-   vao.addAttribute(program.getAttribute("position"),vbo, 5 * sizeof(GLfloat));
-   vao.addAttribute(program.getAttribute("vertTexCoords"),vbo, 5 * sizeof(GLfloat),  3*sizeof(GLfloat), 2);
-   //vao.addElementArray(ebo);
-   program.enable();
-   glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+   vao.addAttribute(program.getAttribute("position"),vbo);
 
+   VertexArrayObject lightVAO;
+   lightVAO.addAttribute(program.getAttribute("position"),vbo);
+
+   //vao.addElementArray(ebo);
    glm::mat4 M;
    glm::mat4 V;
    glm::mat4 P;
-   V = glm::translate(V, glm::vec3(0.0f, 0.0f, -3.0f));
    P = glm::perspective(45.0f, screenWidth / screenHeight, 0.1f, 100.0f);
 
-   glUniformMatrix4fv(program.getUniform("P"), 1, GL_FALSE, glm::value_ptr(camera.getPerspectiveMatrix()));
+   lampProg.enable();
+   glUniformMatrix4fv(lampProg.getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
+   GL_Logger::LogError("Could not set uniform perspective 2", glGetError());
+   
+   program.enable();
+   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
+   
+   glUniformMatrix4fv(program.getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
+   GL_Logger::LogError("Could not set uniform perspective 1", glGetError());
+   glUniform3f(program.getUniform("objColor"), 1.0f, 0.5f, 0.31f);
+   glUniform3f(program.getUniform("lightColor"),  1.0f, 1.0f, 1.0f); // Also set light's color (white)
 
-
-   Texture2D boxTexture("assets/textures/container.jpg");
-   Texture2D faceTexture("assets/textures/awesomeface.png");
-   boxTexture.enable(program.getUniform("tex0"));
-   faceTexture.enable(program.getUniform("tex1"));
-   Transform testTransform;
-   glm::vec3 cubePositions[] = {
-     glm::vec3( 0.0f,  0.0f,  0.0f),
-     glm::vec3( 2.0f,  5.0f, -15.0f),
-     glm::vec3(-1.5f, -2.2f, -2.5f),
-     glm::vec3(-3.8f, -2.0f, -12.3f),
-     glm::vec3( 2.4f, -0.4f, -3.5f),
-     glm::vec3(-1.7f,  3.0f, -7.5f),
-     glm::vec3( 1.3f, -2.0f, -2.5f),
-     glm::vec3( 1.5f,  2.0f, -2.5f),
-     glm::vec3( 1.5f,  0.2f, -1.5f),
-     glm::vec3(-1.3f,  1.0f, -1.5f)
-   };
-
-
+   
+   Transform cubeTransform, lightTransform;
+   glm::vec3 cubePos(0.0f,  0.0f,  0.0f);
+   glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+   cubeTransform.setPosition(cubePos);
+   lightTransform.setPosition(lightPos);
+   lightTransform.setScale(glm::vec3(0.2));
+   
    glEnable(GL_DEPTH_TEST);
-   GLfloat theta = 0;
-   GLfloat phi = 0;
-   camera.setPosition(glm::vec3(0,cos(phi),5));
-   camera.lookAt(glm::vec3(0.0));
-
+   camera.setPosition(glm::vec3(0,0,5));
    while(!glfwWindowShouldClose(window))
    {
 
@@ -207,47 +260,33 @@ int main()
       handleCameraInput(camera);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       vao.bind();
-
-      if(Keyboard::isKeyDown(GLFW_KEY_A))
-      {
-        theta += 1/60.0;
-
-      }
-      if(Keyboard::isKeyDown(GLFW_KEY_D))
-      {
-        theta -= 1/60.0;
-
-      }
-      if(Keyboard::isKeyDown(GLFW_KEY_W))
-      {
-        phi += 1/60.0;
-
-      }
-      if(Keyboard::key(GLFW_KEY_S))
-      {
-        phi -= 1/60.0;
-      }
+      program.enable();
+      V = camera.getViewMatrix();
+      glUniformMatrix4fv(program.getUniform("V"), 1, GL_FALSE, glm::value_ptr(V));
       
-      glUniformMatrix4fv(program.getUniform("V"),1,GL_FALSE,glm::value_ptr(camera.getViewMatrix()));
-      for(int i = 0; i < 10; i++)
-      {
-         M = glm::translate(glm::mat4(),cubePositions[i]); 
-         float angle = 20.0f * i;
-         M = glm::rotate(M, ((GLfloat)glfwGetTime() * 0.5f * (i%3 == 0)) + angle, glm::vec3(1.0f, 0.3f, 0.5f));
-         glUniformMatrix4fv(program.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
-         glDrawArrays(GL_TRIANGLES,0,36);
+      M = cubeTransform.getMatrix();
+      glUniformMatrix4fv(program.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
+      glDrawArrays(GL_TRIANGLES,0,36);
+      
+      //Draw lamp
+      
+      lampProg.enable();
+      lightVAO.bind();
+      M = lightTransform.getMatrix();
+      glUniformMatrix4fv(lampProg.getUniform("V"), 1, GL_FALSE, glm::value_ptr(V));
+      glUniformMatrix4fv(lampProg.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
+      glDrawArrays(GL_TRIANGLES,0,36);
+      lampProg.disable();
+      
+      
 
 
-      }
 
-
-
-      vao.unbind();
+      lightVAO.unbind();
+      
       glfwSwapBuffers(window);
 
    }
-   faceTexture.disable();
-   boxTexture.disable();
 
 
    /**

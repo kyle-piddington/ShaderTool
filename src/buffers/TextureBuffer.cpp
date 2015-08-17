@@ -16,7 +16,7 @@ TextureBuffer::TextureBuffer(GLenum textureType):
    borderColor[3] = 1.0;
    glGenTextures(1, &textureID);
    glBindTexture(textureType, textureID);
-   GL_Logger::LogError("Could not generate mipmaps", glGetError());
+   GL_Logger::LogError("Could not bind texture", glGetError());
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, SWrapType);
    GL_Logger::LogError("Could not set S wrap ", glGetError());
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, TWrapType);
@@ -49,6 +49,8 @@ int TextureBuffer::setData(const void * img, int width, int height, GLint dataFm
    if(generateMipMaps)
    {
       glGenerateMipmap(textureType);
+      check |= GL_Logger::LogError("Could not generate mipmap data", glGetError());
+   
    }
    glBindTexture(textureType, 0);
    return check;

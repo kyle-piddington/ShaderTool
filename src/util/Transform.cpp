@@ -8,6 +8,7 @@
 Transform::Transform():
    position(glm::vec3(0)),
    rotation(glm::vec3(0.0)),
+   scale(glm::vec3(1.0)),
    localUp(glm::vec4(World::Up,0.0)),
    localRight(glm::vec4(World::Right,0.0)),
    localForward(glm::vec4(World::Forward,0.0))
@@ -49,6 +50,7 @@ void Transform::translate(const glm::vec3 & pos)
 
 void Transform::rotate(const glm::vec3 eulerAngles)
 {
+   
    this->rotation = glm::normalize(this->rotation * glm::quat(eulerAngles));
    updateFrame();
 }
@@ -80,11 +82,15 @@ glm::quat Transform::getRotation() const
 }
 glm::mat4  Transform::getMatrix() const
 {
+   glm::mat4 s =    glm::mat4(this->scale.x,0,0,0,
+                              0,this->scale.y,0,0,
+                              0,0,this->scale.z,0,
+                              0,0,0,1);
    glm::mat4 t =    glm::mat4(1,0,0,0,
                               0,1,0,0,
                               0,0,1,0,
                               this->position.x,this->position.y,this->position.z,1);
-   return  t * glm::mat4_cast(rotation);
+   return  t * glm::mat4_cast(rotation) * s;
 }
 
 void Transform::lookAt(glm::vec3 target)
@@ -106,14 +112,16 @@ void Transform::lookAt(glm::vec3 target)
    glm::quat ret = glm::quat_cast(rotMat);
 
 
-   this->rotation = ret;
+   this->rotation = glm::normalize(ret);
    updateFrame();
-   //Also reorient the up axis
 
 
-   //localForward = newForward;
 
+}
 
+void Transform::setScale(glm::vec3 scale)
+{
+   this->scale = scale;
 }
 
 glm::vec3 Transform::up() const

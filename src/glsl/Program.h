@@ -82,9 +82,11 @@ public:
    void disable();
 
 private:
-   std::string name;
    int addShader(GLuint & whichShader, std::string shaderName, GLenum shaderType);
+   
+   std::string name;
    bool created;
+   
    GLuint shaderProgram;
 
    GLuint vertShader;

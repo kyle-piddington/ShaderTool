@@ -13,7 +13,8 @@ Program::Program(std::string name):
    geomShader(0),
    geomShaderName(""),
    tessalationShader(0),
-   tessShaderName("")
+   tessShaderName(""),
+   created(false)
 {
    //No initialization yet for program
 }

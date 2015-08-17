@@ -7,12 +7,12 @@ enum Keystatus
    RELEASE = -1
 };
 
-int Mouse::x = 0;
-int Mouse::y = 0;
-int Mouse::lastX = 0;
-int Mouse::lastY = 0;
-int Mouse::bfrX = 0;
-int Mouse::bfrY = 0;
+int Mouse::x = -1;
+int Mouse::y = -1;
+int Mouse::lastX = -1;
+int Mouse::lastY = -1;
+int Mouse::bfrX = -1;
+int Mouse::bfrY = -1;
 short Mouse::mouseButtons[GLFW_MOUSE_BUTTON_LAST]={RELEASE};
 short Mouse::bufferButtons[GLFW_MOUSE_BUTTON_LAST]={RELEASE};
 
@@ -67,11 +67,23 @@ void Mouse::setButtonStatus(int button, int action)
 
 void Mouse::update()
 {
-
-   Mouse::lastX = Mouse::x;
-   Mouse::lastY = Mouse::y;
-   Mouse::x = bfrX;
-   Mouse::y = bfrY;
+   //If Mouse has never been updated
+   if(bfrX != -1 && bfrY != -1)
+   {
+      if(Mouse::lastX != -1)
+         Mouse::lastX = Mouse::x;
+      else
+         Mouse::lastX = bfrX;
+      //If mouse has never been updated
+      if(Mouse::lastY != -1)
+         Mouse::lastY = Mouse::y;
+      else
+         Mouse::lastY = bfrY;
+      Mouse::x = bfrX;
+      Mouse::y = bfrY;
+      //Wait for next update
+ 
+   }
    for(int i = 0; i < GLFW_MOUSE_BUTTON_LAST; i++)
    {
       if(bufferButtons[i] == PRESS)

@@ -50,6 +50,10 @@ public:
    void lookAt(glm::vec3 target);
 
    /**
+    * Scale the transform
+    */
+   void setScale(glm::vec3 scale);
+   /**
     * Get the current position expressed as a 3d vector
     */
    glm::vec3 getPosition() const;
@@ -87,6 +91,7 @@ private:
    glm::vec4 localUp;
    glm::vec4 localRight;
    glm::vec4 localForward;
+   glm::vec3 scale;
    
    glm::quat rotation;
 
