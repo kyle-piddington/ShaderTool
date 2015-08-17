@@ -28,9 +28,32 @@ const float screenHeight = 600.0;
 
 
 
-void mouseCallback(GLFWwindow * window, double x, double y)
+void handleCameraInput(Camera & camera)
 {
-   
+   const float Cam_Speed = 1.0/30.0;
+   const float Cam_Rot_Speed = M_PI;
+   glm::vec3 translate(0.0);
+   glm::vec3 rotate(0.0);
+   if(Keyboard::isKeyDown(GLFW_KEY_W))
+   {
+      translate += camera.transform.forward() * Cam_Speed;
+   }
+   if(Keyboard::isKeyDown(GLFW_KEY_S))
+   {
+      translate -= camera.transform.forward() * Cam_Speed;
+   }
+   if(Keyboard::isKeyDown(GLFW_KEY_A))
+   {
+      translate-= camera.transform.right() * Cam_Speed;
+   }
+   if(Keyboard::isKeyDown(GLFW_KEY_D))
+   {
+      translate+= camera.transform.right() * Cam_Speed;
+   }
+   rotate.x = (Mouse::getLastY() - Mouse::getY())/screenHeight/2.0 * Cam_Rot_Speed;
+   rotate.y = (Mouse::getLastX() - Mouse::getX())/screenHeight/2.0 * Cam_Rot_Speed;
+   camera.translate(translate);
+   camera.rotate(rotate);
 }
 
 int main()
@@ -173,13 +196,15 @@ int main()
    glEnable(GL_DEPTH_TEST);
    GLfloat theta = 0;
    GLfloat phi = 0;
+   camera.setPosition(glm::vec3(0,cos(phi),5));
+   camera.lookAt(glm::vec3(0.0));
+
    while(!glfwWindowShouldClose(window))
    {
 
       glfwPollEvents();
       GLFWHandler::update();
-      double mouseX = (Mouse::getX()-screenWidth/2)/(screenWidth/4);
-      double mouseY = -(Mouse::getY()-screenHeight/2)/(screenHeight/4);
+      handleCameraInput(camera);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       vao.bind();
 
@@ -202,20 +227,13 @@ int main()
       {
         phi -= 1/60.0;
       }
-      camera.setPosition(glm::vec3(0,cos(phi),5));
-      camera.lookAt(glm::vec3(0.0));
-
+      
       glUniformMatrix4fv(program.getUniform("V"),1,GL_FALSE,glm::value_ptr(camera.getViewMatrix()));
       for(int i = 0; i < 10; i++)
       {
-         M = glm::translate(glm::mat4(),cubePositions[i]);
-         testTransform.setPosition(cubePositions[i]);
-         testTransform.lookAt(glm::vec3(mouseX,mouseY,5));
-         M=testTransform.getMatrix();
-         /*
+         M = glm::translate(glm::mat4(),cubePositions[i]); 
          float angle = 20.0f * i;
          M = glm::rotate(M, ((GLfloat)glfwGetTime() * 0.5f * (i%3 == 0)) + angle, glm::vec3(1.0f, 0.3f, 0.5f));
-         */
          glUniformMatrix4fv(program.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
          glDrawArrays(GL_TRIANGLES,0,36);
 

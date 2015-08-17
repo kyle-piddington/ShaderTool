@@ -12,6 +12,9 @@ class Camera
 public:
    Camera(float width, float height);
    void setPosition(glm::vec3 position);
+   void translate(glm::vec3 translation);
+   void setRotation(glm::vec3 rotation);
+   void rotate(glm::vec3 rotation);
    void lookAt(glm::vec3 position);
    void setFOV(float fov);
    void setAspectRatio(float aspectRatio);
@@ -19,6 +22,7 @@ public:
    glm::mat4 getOrthographicMatrix();
    glm::mat4 getViewMatrix();
    glm::vec3 getPosition();
+   
    Transform transform;
 
 private:
@@ -26,6 +30,7 @@ private:
    float aspectRatio;
    float width;
    float height;
+   bool dirty;
 
    glm::mat4 currentPerspectiveMtx;
    glm::mat4 currentViewMatrix;

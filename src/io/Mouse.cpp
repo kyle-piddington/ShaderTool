@@ -1,7 +1,5 @@
 #include "Mouse.h"
 
-
-
 enum Keystatus
 {
    PRESS = 1,
@@ -13,6 +11,8 @@ int Mouse::x = 0;
 int Mouse::y = 0;
 int Mouse::lastX = 0;
 int Mouse::lastY = 0;
+int Mouse::bfrX = 0;
+int Mouse::bfrY = 0;
 short Mouse::mouseButtons[GLFW_MOUSE_BUTTON_LAST]={RELEASE};
 short Mouse::bufferButtons[GLFW_MOUSE_BUTTON_LAST]={RELEASE};
 
@@ -49,10 +49,8 @@ bool Mouse::released(int button)
 }
 void Mouse::updateMousePos(int nextX, int nextY)
 {
-   Mouse::lastX = Mouse::x;
-   Mouse::lastY = Mouse::y;
-   Mouse::x = nextX;
-   Mouse::y = nextY;
+   Mouse::bfrX = nextX;
+   Mouse::bfrY = nextY;
 }
 
 void Mouse::setButtonStatus(int button, int action)
@@ -69,6 +67,11 @@ void Mouse::setButtonStatus(int button, int action)
 
 void Mouse::update()
 {
+
+   Mouse::lastX = Mouse::x;
+   Mouse::lastY = Mouse::y;
+   Mouse::x = bfrX;
+   Mouse::y = bfrY;
    for(int i = 0; i < GLFW_MOUSE_BUTTON_LAST; i++)
    {
       if(bufferButtons[i] == PRESS)

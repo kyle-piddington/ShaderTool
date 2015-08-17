@@ -30,7 +30,7 @@ public:
    //Update the mouse button status
    static void update();
 private:
-   static int x, y, lastX, lastY;
+   static int x, y, lastX, lastY, bfrX, bfrY;
    static short mouseButtons[GLFW_MOUSE_BUTTON_LAST];
    static short bufferButtons[GLFW_MOUSE_BUTTON_LAST];
 
