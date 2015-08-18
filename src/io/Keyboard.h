@@ -6,6 +6,8 @@ class Keyboard
 private:
    //Could store addl data such as modification
    static short keyStatus[NUM_KEYS];
+   static bool keyToggles[NUM_KEYS];
+   
    static short bfrKeyStatus[NUM_KEYS];
 public:
    /**
@@ -27,6 +29,12 @@ public:
     */
    static bool key(int key);
 
+   /**
+    * See if a key has been toggled on or off
+    * @param the key to check the toggle for
+    * @return true if state is toggled, false otherwise
+    */
+   static bool isKeyToggled(int key);
    /**
     * Set a key status for lookup later
     * @param key    [description]

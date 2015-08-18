@@ -11,7 +11,8 @@ enum Keystatus
 
 short Keyboard::keyStatus[NUM_KEYS] = {RELEASE};
 short Keyboard::bfrKeyStatus[NUM_KEYS] = {RELEASE};
-
+bool  Keyboard::keyToggles[NUM_KEYS] = {false};
+ 
 bool Keyboard::isKeyDown(int key)
 {
    return keyStatus[key] >= PRESS;
@@ -25,11 +26,17 @@ bool Keyboard::key(int key)
    return keyStatus[key] == PRESS;
 }
 
+bool Keyboard::isKeyToggled(int key)
+{
+   return keyToggles[key];
+}
+
 void Keyboard::setKeyStatus(int key, int action)
 {
    if(action == GLFW_PRESS)
    {
       bfrKeyStatus[key] = PRESS;
+      keyToggles[key]  = !keyToggles[key];
    }
    else if(action == GLFW_RELEASE)
    {

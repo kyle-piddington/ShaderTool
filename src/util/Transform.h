@@ -65,10 +65,9 @@ public:
    glm::quat getRotation() const;
 
    /**
-    * Get a 4x4 transform matrix
-    * @return [description]
+    * Get a 4x4 transform matrix representing this transform
     */
-   glm::mat4 getMatrix() const;
+   glm::mat4 getMatrix();
 
    /**
     * Get the local up facing vector
@@ -92,7 +91,8 @@ private:
    glm::vec4 localRight;
    glm::vec4 localForward;
    glm::vec3 scale;
-   
+   bool isDirty;
+   glm::mat4 currentMatrix;
    glm::quat rotation;
 
 };

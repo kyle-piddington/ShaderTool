@@ -11,19 +11,23 @@ Transform::Transform():
    scale(glm::vec3(1.0)),
    localUp(glm::vec4(World::Up,0.0)),
    localRight(glm::vec4(World::Right,0.0)),
-   localForward(glm::vec4(World::Forward,0.0))
+   localForward(glm::vec4(World::Forward,0.0)),
+   currentMatrix(glm::mat4(1.0)),
+   isDirty(false)
    {
 
    }
 void Transform::setPosition(const glm::vec3 & position)
 {
    this->position = position;
+   isDirty = true;
 }
 
 void Transform::setRotation(const glm::vec3 & eulerAngles)
 {
 
    this->rotation = glm::normalize(glm::quat(glm::vec3(0.0)) * glm::quat(eulerAngles));
+   isDirty = true;
    updateFrame();
 }
 void Transform::setRotation(float angle, const glm::vec3 & axis)
@@ -38,6 +42,7 @@ void Transform::setRotation(float angle, const glm::vec3 & axis)
 
    this->rotation = glm::angleAxis(angle,axis);
 
+   isDirty = true;
    //glm::normalize(this->rotation);
    updateFrame();
 }
@@ -45,6 +50,8 @@ void Transform::setRotation(float angle, const glm::vec3 & axis)
 void Transform::translate(const glm::vec3 & pos)
 {
    this->position += pos;
+   isDirty = true;
+ 
 
 }
 
@@ -52,6 +59,8 @@ void Transform::rotate(const glm::vec3 eulerAngles)
 {
    
    this->rotation = glm::normalize(this->rotation * glm::quat(eulerAngles));
+   isDirty = true;
+ 
    updateFrame();
 }
 
@@ -69,6 +78,8 @@ void Transform::rotate(float angle, const glm::vec3 & axis)
 
    glm::quat newQuat = glm::angleAxis(angle,localAxis);
    this->rotation = glm::normalize(this->rotation * newQuat);
+   isDirty = true;
+ 
    updateFrame();
 }
 
@@ -80,17 +91,26 @@ glm::quat Transform::getRotation() const
 {
    return rotation;
 }
-glm::mat4  Transform::getMatrix() const
+glm::mat4  Transform::getMatrix()
 {
-   glm::mat4 s =    glm::mat4(this->scale.x,0,0,0,
-                              0,this->scale.y,0,0,
-                              0,0,this->scale.z,0,
-                              0,0,0,1);
-   glm::mat4 t =    glm::mat4(1,0,0,0,
-                              0,1,0,0,
-                              0,0,1,0,
-                              this->position.x,this->position.y,this->position.z,1);
-   return  t * glm::mat4_cast(rotation) * s;
+   if(isDirty)
+   {
+
+
+      glm::mat4 s =    glm::mat4(this->scale.x,0,0,0,
+                                 0,this->scale.y,0,0,
+                                 0,0,this->scale.z,0,
+                                 0,0,0,1);
+
+      glm::mat4 t =    glm::mat4(1,0,0,0,
+                                 0,1,0,0,
+                                 0,0,1,0,
+                                 this->position.x,this->position.y,this->position.z,1);
+      currentMatrix =   t * glm::mat4_cast(rotation) * s;
+      isDirty = false;
+
+   }
+   return currentMatrix;
 }
 
 void Transform::lookAt(glm::vec3 target)
@@ -113,6 +133,7 @@ void Transform::lookAt(glm::vec3 target)
 
 
    this->rotation = glm::normalize(ret);
+   isDirty = true;
    updateFrame();
 
 
@@ -122,6 +143,7 @@ void Transform::lookAt(glm::vec3 target)
 void Transform::setScale(glm::vec3 scale)
 {
    this->scale = scale;
+   isDirty = true;
 }
 
 glm::vec3 Transform::up() const

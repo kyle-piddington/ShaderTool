@@ -19,6 +19,7 @@
 #include "io/Mouse.h"
 #include "Transform.h"
 #include "Material.h"
+#include "TexturedMaterial.h"
 #include "Light.h"
 
 INITIALIZE_EASYLOGGINGPP
@@ -108,8 +109,8 @@ int main()
     */
    bool programsOK = true;
    Program phongProg("Test Program");
-   phongProg.addVertexShader("assets/shaders/phong_vert.vs");
-   phongProg.addFragmentShader("assets/shaders/phong_frag.fs");
+   phongProg.addVertexShader("assets/shaders/phong_vert_textured.vs");
+   phongProg.addFragmentShader("assets/shaders/phong_frag_textured.fs");
    programsOK &= (phongProg.create() >= 0);
 
    Program lampProg("Debug Light Program");
@@ -121,24 +122,25 @@ int main()
     */
    phongProg.addAttribute("position");
    phongProg.addAttribute("normal");
-
+   phongProg.addAttribute("vertTexCoords");
+   
    phongProg.addUniform("M");
    phongProg.addUniform("V");
    phongProg.addUniform("P");
    phongProg.addUniform("N");
-   phongProg.addUniform("material.ambient");
    phongProg.addUniform("material.diffuse");
    phongProg.addUniform("material.specular");
    phongProg.addUniform("material.shininess");
+   phongProg.addUniform("material.emission");
    phongProg.addUniform("light.position");
    phongProg.addUniform("light.ambient");
    phongProg.addUniform("light.diffuse");
    phongProg.addUniform("light.specular");
 
-   Material cubeMaterial(
-      glm::vec3(1.0,0.5,0.31),
-      glm::vec3(1.0,0.5,0.31),
-      glm::vec3(0.5),
+   TexturedMaterial cubeMaterial(
+      "assets/textures/container2.png",
+      "assets/textures/container2_specular.png",
+      "assets/textures/solid_black.png",
       32.0f);
 
    Light lamp(
@@ -153,66 +155,69 @@ int main()
    lampProg.addUniform("debugColor");
 
    GLfloat vertices[] = {
-    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+    // Positions           // Normals           // Texture Coords
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
 
-    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
 
-    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 
-     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 
-    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
 
-    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-     0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
-   };
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
+};
 
 
    VertexBuffer vbo;
    ElementBufferObject ebo;
-   vbo.setData(vertices,36*6);
+   vbo.setData(vertices,36*8);
    //ebo.setData(indices,6);
    VertexArrayObject vao;
-   vao.addAttribute(phongProg.getAttribute("position"),vbo,6*sizeof(GLfloat));
-   vao.addAttribute(phongProg.getAttribute("normal"),vbo,6*sizeof(GLfloat),3*sizeof(GLfloat));
+   vao.addAttribute(phongProg.getAttribute("position"),vbo,8*sizeof(GLfloat));
+   vao.addAttribute(phongProg.getAttribute("normal"),vbo,8*sizeof(GLfloat),3*sizeof(GLfloat));
+   vao.addAttribute(phongProg.getAttribute("vertTexCoords"),vbo,8*sizeof(GLfloat),6*sizeof(GLfloat),2);
 
    VertexArrayObject lightVAO;
-   lightVAO.addAttribute(phongProg.getAttribute("position"),vbo, 6*sizeof(GLfloat));
+   lightVAO.addAttribute(phongProg.getAttribute("position"),vbo, 8*sizeof(GLfloat));
 
    //vao.addElementArray(ebo);
    glm::mat4 M;
    glm::mat4 V;
    glm::mat4 P;
    glm::mat3 NORM;
+   
    P = glm::perspective(45.0f, screenWidth / screenHeight, 0.1f, 100.0f);
 
    lampProg.enable();
@@ -220,17 +225,18 @@ int main()
    GL_Logger::LogError("Could not set uniform perspective 2", glGetError());
 
    phongProg.enable();
-   glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 
    glUniformMatrix4fv(phongProg.getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
    GL_Logger::LogError("Could not set uniform perspective 1", glGetError());
    cubeMaterial.bind(
-         phongProg.getUniform("material.ambient"),
          phongProg.getUniform("material.diffuse"),
          phongProg.getUniform("material.specular"),
+         phongProg.getUniform("material.emission"),
          phongProg.getUniform("material.shininess")
-         );
+   
+   );
    Transform cubeTransform;
    glm::vec3 cubePos(0.0f,  0.0f,  0.0f);
    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
@@ -245,15 +251,28 @@ int main()
 
       glfwPollEvents();
       GLFWHandler::update();
+      //Toggle Inputs
       handleCameraInput(camera);
+      if(Keyboard::isKeyToggled(GLFW_KEY_O))
+      {
+         P = camera.getOrthographicMatrix();
+      }
+      else
+      {
+         P = camera.getPerspectiveMatrix();
+      }
+      //Draw loop starts
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       vao.bind();
       phongProg.enable();
       V = camera.getViewMatrix();
       glUniformMatrix4fv(phongProg.getUniform("V"), 1, GL_FALSE, glm::value_ptr(V));
+      glUniformMatrix4fv(phongProg.getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
 
       M = cubeTransform.getMatrix();
       NORM = createNormalMatrix(V, M);
+      
+
       
       lamp.bind(
          phongProg.getUniform("light.position"),
@@ -270,6 +289,7 @@ int main()
       lampProg.enable();
       lightVAO.bind();
       M = lamp.transform.getMatrix();
+      glUniformMatrix4fv(lampProg.getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
       glUniformMatrix4fv(lampProg.getUniform("V"), 1, GL_FALSE, glm::value_ptr(V));
       glUniformMatrix4fv(lampProg.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
       glUniform3fv(lampProg.getUniform("debugColor"),1,glm::value_ptr(lamp.diffuse));
@@ -279,21 +299,18 @@ int main()
       lightVAO.unbind();
 
       //Update lamp
+      
       lamp.transform.setPosition(
          glm::vec3(2*cos(glfwGetTime()), cos(0.5*glfwGetTime()), 2*sin(glfwGetTime())));
       lamp.transform.lookAt(cubeTransform.getPosition());
-      glm::vec3 lightColor;
-      lightColor.x = fabs(sin(glfwGetTime() * 2.0f)) + 0.2f;
-      lightColor.y = fabs(sin(glfwGetTime() * 0.7f)) + 0.2f;
-      lightColor.z = fabs(sin(glfwGetTime() * 1.3f)) + 0.2f;
-      lamp.diffuse = lightColor * glm::vec3(0.5);
-      lamp.ambient = lamp.diffuse * glm::vec3(0.2f);
-
+      
+      
 
       glfwSwapBuffers(window);
 
    }
-
+   //Release textures
+   cubeMaterial.unbind();
 
    /**
     * END TEST CODE
