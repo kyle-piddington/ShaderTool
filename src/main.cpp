@@ -18,6 +18,8 @@
 #include "io/GLFWHandler.h"
 #include "io/Mouse.h"
 #include "Transform.h"
+#include "Material.h"
+#include "Light.h"
 
 INITIALIZE_EASYLOGGINGPP
 
@@ -104,16 +106,16 @@ int main()
    /**
     * TEST CODE
     */
-
+   bool programsOK = true;
    Program phongProg("Test Program");
    phongProg.addVertexShader("assets/shaders/phong_vert.vs");
    phongProg.addFragmentShader("assets/shaders/phong_frag.fs");
-   phongProg.create();
+   programsOK &= (phongProg.create() >= 0);
 
    Program lampProg("Debug Light Program");
    lampProg.addVertexShader("assets/shaders/debug_vert.vs");
    lampProg.addFragmentShader("assets/shaders/debug_frag.fs");
-   lampProg.create();
+   programsOK &= (lampProg.create() >= 0);
    /**
     * Add program introspection to gether attribute names and uniforms later.
     */
@@ -124,16 +126,32 @@ int main()
    phongProg.addUniform("V");
    phongProg.addUniform("P");
    phongProg.addUniform("N");
-   phongProg.addUniform("objColor");
-   phongProg.addUniform("lightColor");
-   phongProg.addUniform("lightPos");
-   phongProg.addUniform("specularStrength");
+   phongProg.addUniform("material.ambient");
+   phongProg.addUniform("material.diffuse");
+   phongProg.addUniform("material.specular");
+   phongProg.addUniform("material.shininess");
+   phongProg.addUniform("light.position");
+   phongProg.addUniform("light.ambient");
+   phongProg.addUniform("light.diffuse");
+   phongProg.addUniform("light.specular");
 
+   Material cubeMaterial(
+      glm::vec3(1.0,0.5,0.31),
+      glm::vec3(1.0,0.5,0.31),
+      glm::vec3(0.5),
+      32.0f);
+
+   Light lamp(
+      glm::vec3(0.2),
+      glm::vec3(0.5),
+      glm::vec3(1.0));
 
    lampProg.addAttribute("position");
    lampProg.addUniform("M");
    lampProg.addUniform("V");
    lampProg.addUniform("P");
+   lampProg.addUniform("debugColor");
+
    GLfloat vertices[] = {
     -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
      0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
@@ -202,25 +220,27 @@ int main()
    GL_Logger::LogError("Could not set uniform perspective 2", glGetError());
 
    phongProg.enable();
-   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+   glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 
 
    glUniformMatrix4fv(phongProg.getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
    GL_Logger::LogError("Could not set uniform perspective 1", glGetError());
-   glUniform3f(phongProg.getUniform("objColor"), 1.0f, 0.5f, 0.31f);
-   glUniform3f(phongProg.getUniform("lightColor"),  1.0f, 1.0f, 1.0f); // Also set light's color (white)
-   glUniform1f(phongProg.getUniform("specularStrength"),0.5f);
-
-   Transform cubeTransform, lightTransform;
+   cubeMaterial.bind(
+         phongProg.getUniform("material.ambient"),
+         phongProg.getUniform("material.diffuse"),
+         phongProg.getUniform("material.specular"),
+         phongProg.getUniform("material.shininess")
+         );
+   Transform cubeTransform;
    glm::vec3 cubePos(0.0f,  0.0f,  0.0f);
    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
    cubeTransform.setPosition(cubePos);
-   lightTransform.setPosition(lightPos);
-   lightTransform.setScale(glm::vec3(0.2));
+   lamp.transform.setPosition(lightPos);
+   lamp.transform.setScale(glm::vec3(0.2));
 
    glEnable(GL_DEPTH_TEST);
    camera.setPosition(glm::vec3(0,0,5));
-   while(!glfwWindowShouldClose(window))
+   while(!glfwWindowShouldClose(window) && programsOK)
    {
 
       glfwPollEvents();
@@ -234,8 +254,13 @@ int main()
 
       M = cubeTransform.getMatrix();
       NORM = createNormalMatrix(V, M);
-      glm::vec3 lightPos = lightTransform.getPosition();
-      glUniform3fv(phongProg.getUniform("lightPos"),1,glm::value_ptr(lightPos));
+      
+      lamp.bind(
+         phongProg.getUniform("light.position"),
+         phongProg.getUniform("light.ambient"),
+         phongProg.getUniform("light.diffuse"),
+         phongProg.getUniform("light.specular"));
+
       glUniformMatrix3fv(phongProg.getUniform("N"), 1, GL_FALSE, glm::value_ptr(NORM));
       glUniformMatrix4fv(phongProg.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
       glDrawArrays(GL_TRIANGLES,0,36);
@@ -244,17 +269,27 @@ int main()
 
       lampProg.enable();
       lightVAO.bind();
-      M = lightTransform.getMatrix();
+      M = lamp.transform.getMatrix();
       glUniformMatrix4fv(lampProg.getUniform("V"), 1, GL_FALSE, glm::value_ptr(V));
       glUniformMatrix4fv(lampProg.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
+      glUniform3fv(lampProg.getUniform("debugColor"),1,glm::value_ptr(lamp.diffuse));
       glDrawArrays(GL_TRIANGLES,0,36);
       lampProg.disable();
 
       lightVAO.unbind();
 
-      lightTransform.setPosition(
+      //Update lamp
+      lamp.transform.setPosition(
          glm::vec3(2*cos(glfwGetTime()), cos(0.5*glfwGetTime()), 2*sin(glfwGetTime())));
-      lightTransform.lookAt(cubeTransform.getPosition());
+      lamp.transform.lookAt(cubeTransform.getPosition());
+      glm::vec3 lightColor;
+      lightColor.x = fabs(sin(glfwGetTime() * 2.0f)) + 0.2f;
+      lightColor.y = fabs(sin(glfwGetTime() * 0.7f)) + 0.2f;
+      lightColor.z = fabs(sin(glfwGetTime() * 1.3f)) + 0.2f;
+      lamp.diffuse = lightColor * glm::vec3(0.5);
+      lamp.ambient = lamp.diffuse * glm::vec3(0.2f);
+
+
       glfwSwapBuffers(window);
 
    }

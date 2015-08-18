@@ -100,8 +100,18 @@ int Program::create()
             err |= GL_Logger::LogError("Could not delete " + tessShaderName + "in " +name, glGetError());
 
          }
-         created = true;
-         return err == 0;
+         if(err == 0)
+         {
+
+
+            created = true;
+            return 0;
+         }
+         else
+         {
+            return -1;
+         }
+
       }
       else
       {

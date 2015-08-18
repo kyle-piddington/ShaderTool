@@ -9,8 +9,8 @@ enum Keystatus
    RELEASE = -1
 };
 
-short Keyboard::keyStatus[NUM_KEYS];
-short Keyboard::bfrKeyStatus[NUM_KEYS];
+short Keyboard::keyStatus[NUM_KEYS] = {RELEASE};
+short Keyboard::bfrKeyStatus[NUM_KEYS] = {RELEASE};
 
 bool Keyboard::isKeyDown(int key)
 {
