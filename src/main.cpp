@@ -27,7 +27,10 @@ const float screenHeight = 600.0;
 float pitch = 0;
 float yaw = 0;
 
-
+glm::mat3 createNormalMatrix(const glm::mat4 & view, const glm::mat4 & model)
+{
+   return glm::mat3(glm::transpose(glm::inverse(view * model)));
+}
 
 void handleCameraInput(Camera & camera)
 {
@@ -51,12 +54,14 @@ void handleCameraInput(Camera & camera)
    {
       translate+= camera.transform.right() * Cam_Speed;
    }
-
-   rotate.x = (Mouse::getLastY() - Mouse::getY())/screenHeight/2.0 * Cam_Rot_Speed;
-   rotate.y = (Mouse::getLastX() - Mouse::getX())/screenHeight/2.0 * Cam_Rot_Speed;
-   pitch += rotate.x;
-   yaw += rotate.y;
-   rotate.z = 0;
+   if(Mouse::pressed(GLFW_MOUSE_BUTTON_LEFT))
+   {
+      rotate.x = (Mouse::getLastY() - Mouse::getY())/screenHeight/2.0 * Cam_Rot_Speed;
+      rotate.y = (Mouse::getLastX() - Mouse::getX())/screenHeight/2.0 * Cam_Rot_Speed;
+      pitch += rotate.x;
+      yaw += rotate.y;
+      rotate.z = 0;
+   }
    camera.translate(translate);
    camera.setRotation(glm::vec3(pitch,yaw,0));
 }
@@ -93,16 +98,17 @@ int main()
    GL_Logger::LogError("Error in GLEW startup (Safe to ignore)", glGetError());
    glfwSetKeyCallback(window, GLFWHandler::key_callback);
    glfwSetCursorPosCallback(window, GLFWHandler::mousePositionCallback);
+   glfwSetMouseButtonCallback(window, GLFWHandler::mouseButtonCallback);
 
 
    /**
     * TEST CODE
     */
 
-   Program program("Test Program");
-   program.addVertexShader("assets/shaders/debug_vert.vs");
-   program.addFragmentShader("assets/shaders/basic_color_frag.fs");
-   program.create();
+   Program phongProg("Test Program");
+   phongProg.addVertexShader("assets/shaders/phong_vert.vs");
+   phongProg.addFragmentShader("assets/shaders/phong_frag.fs");
+   phongProg.create();
 
    Program lampProg("Debug Light Program");
    lampProg.addVertexShader("assets/shaders/debug_vert.vs");
@@ -111,145 +117,107 @@ int main()
    /**
     * Add program introspection to gether attribute names and uniforms later.
     */
-   program.addAttribute("position");
-   program.addUniform("M");
-   program.addUniform("V");
-   program.addUniform("P");
-   program.addUniform("objColor");
-   program.addUniform("lightColor");
+   phongProg.addAttribute("position");
+   phongProg.addAttribute("normal");
+
+   phongProg.addUniform("M");
+   phongProg.addUniform("V");
+   phongProg.addUniform("P");
+   phongProg.addUniform("N");
+   phongProg.addUniform("objColor");
+   phongProg.addUniform("lightColor");
+   phongProg.addUniform("lightPos");
+   phongProg.addUniform("specularStrength");
 
 
    lampProg.addAttribute("position");
    lampProg.addUniform("M");
    lampProg.addUniform("V");
    lampProg.addUniform("P");
-   /*
    GLfloat vertices[] = {
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
 
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+     0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
 
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
 
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-     0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
    };
-   */
-   GLfloat lightVertices[]
-   {
-    -0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f, -0.5f,
-     0.5f,  0.5f, -0.5f,
-     0.5f,  0.5f, -0.5f,
-    -0.5f,  0.5f, -0.5f,
-    -0.5f, -0.5f, -0.5f,
 
-    -0.5f, -0.5f,  0.5f,
-     0.5f, -0.5f,  0.5f,
-     0.5f,  0.5f,  0.5f,
-     0.5f,  0.5f,  0.5f,
-    -0.5f,  0.5f,  0.5f,
-    -0.5f, -0.5f,  0.5f,
-
-    -0.5f,  0.5f,  0.5f,
-    -0.5f,  0.5f, -0.5f,
-    -0.5f, -0.5f, -0.5f,
-    -0.5f, -0.5f, -0.5f,
-    -0.5f, -0.5f,  0.5f,
-    -0.5f,  0.5f,  0.5f,
-
-     0.5f,  0.5f,  0.5f,
-     0.5f,  0.5f, -0.5f,
-     0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f,  0.5f,
-     0.5f,  0.5f,  0.5f,
-
-    -0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f, -0.5f,
-     0.5f, -0.5f,  0.5f,
-     0.5f, -0.5f,  0.5f,
-    -0.5f, -0.5f,  0.5f,
-    -0.5f, -0.5f, -0.5f,
-
-    -0.5f,  0.5f, -0.5f,
-     0.5f,  0.5f, -0.5f,
-     0.5f,  0.5f,  0.5f,
-     0.5f,  0.5f,  0.5f,
-    -0.5f,  0.5f,  0.5f,
-    -0.5f,  0.5f, -0.5f
-   };
 
    VertexBuffer vbo;
    ElementBufferObject ebo;
-   vbo.setData(lightVertices,36*3);
+   vbo.setData(vertices,36*6);
    //ebo.setData(indices,6);
    VertexArrayObject vao;
-   vao.addAttribute(program.getAttribute("position"),vbo);
+   vao.addAttribute(phongProg.getAttribute("position"),vbo,6*sizeof(GLfloat));
+   vao.addAttribute(phongProg.getAttribute("normal"),vbo,6*sizeof(GLfloat),3*sizeof(GLfloat));
 
    VertexArrayObject lightVAO;
-   lightVAO.addAttribute(program.getAttribute("position"),vbo);
+   lightVAO.addAttribute(phongProg.getAttribute("position"),vbo, 6*sizeof(GLfloat));
 
    //vao.addElementArray(ebo);
    glm::mat4 M;
    glm::mat4 V;
    glm::mat4 P;
+   glm::mat3 NORM;
    P = glm::perspective(45.0f, screenWidth / screenHeight, 0.1f, 100.0f);
 
    lampProg.enable();
    glUniformMatrix4fv(lampProg.getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
    GL_Logger::LogError("Could not set uniform perspective 2", glGetError());
-   
-   program.enable();
+
+   phongProg.enable();
    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-   
-   glUniformMatrix4fv(program.getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
-   GL_Logger::LogError("Could not set uniform perspective 1", glGetError());
-   glUniform3f(program.getUniform("objColor"), 1.0f, 0.5f, 0.31f);
-   glUniform3f(program.getUniform("lightColor"),  1.0f, 1.0f, 1.0f); // Also set light's color (white)
 
-   
+   glUniformMatrix4fv(phongProg.getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
+   GL_Logger::LogError("Could not set uniform perspective 1", glGetError());
+   glUniform3f(phongProg.getUniform("objColor"), 1.0f, 0.5f, 0.31f);
+   glUniform3f(phongProg.getUniform("lightColor"),  1.0f, 1.0f, 1.0f); // Also set light's color (white)
+   glUniform1f(phongProg.getUniform("specularStrength"),0.5f);
+
    Transform cubeTransform, lightTransform;
    glm::vec3 cubePos(0.0f,  0.0f,  0.0f);
    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
    cubeTransform.setPosition(cubePos);
    lightTransform.setPosition(lightPos);
    lightTransform.setScale(glm::vec3(0.2));
-   
+
    glEnable(GL_DEPTH_TEST);
    camera.setPosition(glm::vec3(0,0,5));
    while(!glfwWindowShouldClose(window))
@@ -260,16 +228,20 @@ int main()
       handleCameraInput(camera);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       vao.bind();
-      program.enable();
+      phongProg.enable();
       V = camera.getViewMatrix();
-      glUniformMatrix4fv(program.getUniform("V"), 1, GL_FALSE, glm::value_ptr(V));
-      
+      glUniformMatrix4fv(phongProg.getUniform("V"), 1, GL_FALSE, glm::value_ptr(V));
+
       M = cubeTransform.getMatrix();
-      glUniformMatrix4fv(program.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
+      NORM = createNormalMatrix(V, M);
+      glm::vec3 lightPos = lightTransform.getPosition();
+      glUniform3fv(phongProg.getUniform("lightPos"),1,glm::value_ptr(lightPos));
+      glUniformMatrix3fv(phongProg.getUniform("N"), 1, GL_FALSE, glm::value_ptr(NORM));
+      glUniformMatrix4fv(phongProg.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
       glDrawArrays(GL_TRIANGLES,0,36);
-      
+
       //Draw lamp
-      
+
       lampProg.enable();
       lightVAO.bind();
       M = lightTransform.getMatrix();
@@ -277,13 +249,12 @@ int main()
       glUniformMatrix4fv(lampProg.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
       glDrawArrays(GL_TRIANGLES,0,36);
       lampProg.disable();
-      
-      
-
-
 
       lightVAO.unbind();
-      
+
+      lightTransform.setPosition(
+         glm::vec3(2*cos(glfwGetTime()), cos(0.5*glfwGetTime()), 2*sin(glfwGetTime())));
+      lightTransform.lookAt(cubeTransform.getPosition());
       glfwSwapBuffers(window);
 
    }

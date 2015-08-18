@@ -41,6 +41,7 @@ bool Mouse::clicked(int button)
 
 bool Mouse::pressed(int button)
 {
+
    return mouseButtons[button] >= PRESS;
 }
 bool Mouse::released(int button)
