@@ -13,7 +13,7 @@ struct Material{
    float shininess;
 };
 
-struct Light{
+struct PointLight{
    vec3 position;
 
    vec3 ambient;
@@ -23,8 +23,14 @@ struct Light{
    float constant;
    float linear;
    float quadratic;
+};
 
+struct DirectionalLight{
+   vec3 direction;
 
+   vec3 ambient;
+   vec3 diffuse;
+   vec3 specular
 };
 
 uniform Material material;

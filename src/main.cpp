@@ -29,6 +29,7 @@ const float screenWidth =800.0;
 const float screenHeight = 600.0;
 float pitch = 0;
 float yaw = 0;
+float attenuation = 50;
 
 glm::mat3 createNormalMatrix(const glm::mat4 & view, const glm::mat4 & model)
 {
@@ -120,25 +121,38 @@ int main()
    /**
     * Add program introspection to gether attribute names and uniforms later.
     */
+   
+   GL_Structure template_light;
+   template_light.addAttribute("position");
+   template_light.addAttribute("ambient");
+   template_light.addAttribute("diffuse");
+   template_light.addAttribute("specular");
+   template_light.addAttribute("constant");
+   template_light.addAttribute("linear");
+   template_light.addAttribute("quadratic");
+
+   GL_Structure template_material;
+   template_material.addAttribute("diffuse");
+   template_material.addAttribute("specular");
+   template_material.addAttribute("emission");
+   template_material.addAttribute("shininess");
+   
+   GL_Structure lampStruct(template_light);
+   GL_Structure matStruct(template_material);
+   
    phongProg.addAttribute("position");
    phongProg.addAttribute("normal");
    phongProg.addAttribute("vertTexCoords");
-   
+
    phongProg.addUniform("M");
    phongProg.addUniform("V");
    phongProg.addUniform("P");
    phongProg.addUniform("N");
-   phongProg.addUniform("material.diffuse");
-   phongProg.addUniform("material.specular");
-   phongProg.addUniform("material.shininess");
-   phongProg.addUniform("material.emission");
-   phongProg.addUniform("light.position");
-   phongProg.addUniform("light.ambient");
-   phongProg.addUniform("light.diffuse");
-   phongProg.addUniform("light.specular");
-   phongProg.addUniform("light.constant");
-   phongProg.addUniform("light.linear");
-   phongProg.addUniform("light.quadratic");
+   
+   phongProg.addUniformStruct("pointLight",lampStruct);
+   phongProg.addUniformStruct("material",matStruct);
+
+
    TexturedMaterial cubeMaterial(
       "assets/textures/container2.png",
       "assets/textures/container2_specular.png",
@@ -203,16 +217,16 @@ int main()
   };
 
   glm::vec3 cubePositions[] = {
-    glm::vec3( 0.0f,  0.0f,  0.0f), 
-    glm::vec3( 2.0f,  5.0f, -15.0f), 
-    glm::vec3(-1.5f, -2.2f, -2.5f),  
-    glm::vec3(-3.8f, -2.0f, -12.3f),  
-    glm::vec3( 2.4f, -0.4f, -3.5f),  
-    glm::vec3(-1.7f,  3.0f, -7.5f),  
-    glm::vec3( 1.3f, -2.0f, -2.5f),  
-    glm::vec3( 1.5f,  2.0f, -2.5f), 
-    glm::vec3( 1.5f,  0.2f, -1.5f), 
-    glm::vec3(-1.3f,  1.0f, -1.5f)  
+    glm::vec3( 0.0f,  0.0f,  0.0f),
+    glm::vec3( 2.0f,  5.0f, -15.0f),
+    glm::vec3(-1.5f, -2.2f, -2.5f),
+    glm::vec3(-3.8f, -2.0f, -12.3f),
+    glm::vec3( 2.4f, -0.4f, -3.5f),
+    glm::vec3(-1.7f,  3.0f, -7.5f),
+    glm::vec3( 1.3f, -2.0f, -2.5f),
+    glm::vec3( 1.5f,  2.0f, -2.5f),
+    glm::vec3( 1.5f,  0.2f, -1.5f),
+    glm::vec3(-1.3f,  1.0f, -1.5f)
   };
    VertexBuffer vbo;
    ElementBufferObject ebo;
@@ -231,7 +245,7 @@ int main()
    glm::mat4 V;
    glm::mat4 P;
    glm::mat3 NORM;
-   
+
    P = glm::perspective(45.0f, screenWidth / screenHeight, 0.1f, 100.0f);
 
    lampProg.enable();
@@ -239,17 +253,17 @@ int main()
    GL_Logger::LogError("Could not set uniform perspective 2", glGetError());
 
    phongProg.enable();
-   glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 
    glUniformMatrix4fv(phongProg.getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
    GL_Logger::LogError("Could not set uniform perspective 1", glGetError());
    cubeMaterial.bind(
-         phongProg.getUniform("material.diffuse"),
-         phongProg.getUniform("material.specular"),
-         phongProg.getUniform("material.emission"),
-         phongProg.getUniform("material.shininess")
-   
+         matStruct.get("diffuse"),
+         matStruct.get("specular"),
+         matStruct.get("emission"),
+         matStruct.get("shininess")
+
    );
    Transform cubeTransform;
    glm::vec3 cubePos(0.0f,  0.0f,  0.0f);
@@ -282,15 +296,15 @@ int main()
       V = camera.getViewMatrix();
       glUniformMatrix4fv(phongProg.getUniform("V"), 1, GL_FALSE, glm::value_ptr(V));
       glUniformMatrix4fv(phongProg.getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
-      
+
       lamp.bind(
-         phongProg.getUniform("light.position"),
-         phongProg.getUniform("light.ambient"),
-         phongProg.getUniform("light.diffuse"),
-         phongProg.getUniform("light.specular"),
-         phongProg.getUniform("light.constant"),
-         phongProg.getUniform("light.linear"),
-         phongProg.getUniform("light.quadratic"));
+         lampStruct.get("position"),
+         lampStruct.get("ambient"),
+         lampStruct.get("diffuse"),
+         lampStruct.get("specular"),
+         lampStruct.get("constant"),
+         lampStruct.get("linear"),
+         lampStruct.get("quadratic"));
 
       for(int i = 0; i < 10; i++)
       {
@@ -303,13 +317,13 @@ int main()
         glDrawArrays(GL_TRIANGLES,0,36);
 
       }
-    
-      
 
-      
-      
 
-      
+
+
+
+
+
       //Draw lamp
 
       lampProg.enable();
@@ -325,11 +339,21 @@ int main()
       lightVAO.unbind();
 
       //Update lamp
-      
-      //lamp.transform.setPosition(
-      //   glm::vec3(2*cos(glfwGetTime()), cos(0.5*glfwGetTime()), 2*sin(glfwGetTime())));
-      //lamp.transform.lookAt(cubeTransform.getPosition());
-      lamp.setRange(200 * (sin(glfwGetTime()* 0.25)*0.5 + 0.5) + 50);
+
+      lamp.transform.setPosition(
+         glm::vec3(2*cos(glfwGetTime()), cos(0.5*glfwGetTime()), 2*sin(glfwGetTime())));
+      lamp.transform.lookAt(cubeTransform.getPosition());
+      lamp.setRange(attenuation);
+
+      if(Keyboard::isKeyDown(GLFW_KEY_M))
+      {
+        attenuation+=3;
+      }
+      if(Keyboard::isKeyDown(GLFW_KEY_N))
+      {
+        attenuation = fmax(0,attenuation-3);
+      }
+
 
       glfwSwapBuffers(window);
 

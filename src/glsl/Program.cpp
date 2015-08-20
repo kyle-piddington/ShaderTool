@@ -129,14 +129,14 @@ int Program::addAttribute(std::string attribName)
 {
    if(!created)
    {
-      LOG(ERROR) << "Program" + name + " has not been created. Call .create()";
+      LOG(ERROR) << "Program " + name + " has not been created. Call .create()";
       return -1;
    }
    GLint atrbId = glGetAttribLocation(shaderProgram, attribName.c_str());
    GL_Logger::LogError("Could not search program " + name, glGetError());
    if(atrbId == -1)
    {
-      LOG(WARNING) << "Program " + name +  "Could not bind attribute " + attribName + " (It may not exist, or has been optimized away)";
+      LOG(WARNING) << "Program " + name +  " Could not bind attribute " + attribName + " (It may not exist, or has been optimized away)";
       return -1;
    }
    else
@@ -150,14 +150,14 @@ int Program::addUniform(std::string uniformName)
 {
    if(!created)
    {
-      LOG(ERROR) << "Program" + name + " has not been created. Call .create()";
+      LOG(ERROR) << "Program " + name + " has not been created. Call .create()";
       return -1;
    }
    GLint unifId = glGetUniformLocation(shaderProgram, uniformName.c_str());
    GL_Logger::LogError("Could not search program " + name, glGetError());
    if(unifId == -1)
    {
-      LOG(WARNING) << "Program " + name +  "Could not bind uniform " + uniformName + " (It may not exist, or has been optimized away)";
+      LOG(WARNING) << "Program " + name +  " Could not bind uniform " + uniformName + " (It may not exist, or has been optimized away)";
       return -1;
    }
    else
@@ -171,7 +171,7 @@ GLint Program::getAttribute(std::string attribName)
 {
    if(!created)
    {
-      LOG(ERROR) << "Program" + name + " has not been created. Call .create()";
+      LOG(ERROR) << "Program " + name + " has not been created. Call .create()";
       return -1;
    }
    auto attributeId = attributes.find(attribName);
@@ -226,7 +226,29 @@ bool Program::checkBoundVariables()
    }
    return allBound;
 }
-
+int Program::addUniformStruct(std::string name, GL_Structure &  glStruct)
+{
+   std::vector<std::string> uniformNames = glStruct.getUniformNames();
+   int canAddUniform = 0;
+   for (std::vector<std::string>::iterator i = uniformNames.begin(); i != uniformNames.end(); ++i)
+   {
+      canAddUniform |= addUniform(name + "." +*i);
+   }
+   //If all uniforms were successfully added
+   if(canAddUniform == 0)
+   {
+      for (std::vector<std::string>::iterator i = uniformNames.begin(); i != uniformNames.end(); ++i)
+      {
+         glStruct.setUniformLocation(*i,getUniform(name + "." +*i));
+      }
+      return 0;
+   }
+   else
+   {
+      LOG(ERROR) << "Struct " + name + " Could not find all attributes!"; 
+      return -1;
+   }
+}
 void Program::enable()
 {
    glUseProgram(shaderProgram);

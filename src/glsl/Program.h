@@ -5,7 +5,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-
+#include "GL_Structure.h"
 #include <unordered_map>
 class Program
 {
@@ -55,6 +55,28 @@ public:
    int addUniform(std::string uniform);
 
    /**
+    * Add a GLStruct uniform to the program
+    * @param  name   [description]
+    * @param  struct [description]
+    * @return        [description]
+    */
+   int addUniformStruct(std::string name, GL_Structure & glStruct);
+   /**
+    * Add a uniform array tp the program
+    * @param arr the array base name
+    * @param len the maximum length
+
+    */
+    int addUniformArray(std::string base, int len);
+
+    /**
+     * Add a uniform array of structs to the program
+     * @param arr the array base name
+     * @param len the maximum length
+     * @param struct the structure
+     */
+
+   /**
     * Get an attribute from the program
     * @param  name attribute name.
     * @return      the GLint of the attribute, -1 if not found.
@@ -70,6 +92,11 @@ public:
    /**
     * Create the program. Call one of the above methods before doing this. Programs with no shaders attached will throw errors.
     */
+   
+    int removeUniform(std::string name);
+   
+
+   
    int create();
 
    /**
@@ -78,15 +105,15 @@ public:
    bool checkBoundVariables();
 
    void enable();
-   
+
    void disable();
 
 private:
    int addShader(GLuint & whichShader, std::string shaderName, GLenum shaderType);
-   
+
    std::string name;
    bool created;
-   
+
    GLuint shaderProgram;
 
    GLuint vertShader;
@@ -103,6 +130,8 @@ private:
 
    std::unordered_map<std::string, GLuint> attributes;
    std::unordered_map<std::string, GLint> uniforms;
+   std::unordered_map<std::string, GL_Structure> structs;
+   
    std::unordered_map<std::string, bool> boundAttributes;
    std::unordered_map<std::string, bool> boundUniforms;
 
