@@ -21,7 +21,13 @@ struct Light{
    vec3 diffuse;
    vec3 specular;
 
+   float constant;
+   float linear;
+   float quadratic;
+
+
 };
+
 
 uniform TexturedMaterial material;
 uniform Light light;
@@ -50,7 +56,11 @@ void main()
    
    vec3 emission = vec3(texture(material.emission,fragTexCoords));
    //Compute final result
-   vec3 result = (diffuse + ambient + specular + emission);
+   float dist    = length(light.position - fragPos);
+   float attenuation = 1.0f / (light.constant + light.linear * dist +
+             light.quadratic * (dist * dist));
+
+   vec3 result = (diffuse + ambient + specular) * attenuation + emission;
 
    color = vec4(result,1.0);
 }

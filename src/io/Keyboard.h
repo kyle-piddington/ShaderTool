@@ -35,6 +35,7 @@ public:
     * @return true if state is toggled, false otherwise
     */
    static bool isKeyToggled(int key);
+   
    /**
     * Set a key status for lookup later
     * @param key    [description]

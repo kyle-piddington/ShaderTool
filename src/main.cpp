@@ -136,7 +136,9 @@ int main()
    phongProg.addUniform("light.ambient");
    phongProg.addUniform("light.diffuse");
    phongProg.addUniform("light.specular");
-
+   phongProg.addUniform("light.constant");
+   phongProg.addUniform("light.linear");
+   phongProg.addUniform("light.quadratic");
    TexturedMaterial cubeMaterial(
       "assets/textures/container2.png",
       "assets/textures/container2_specular.png",
@@ -146,7 +148,8 @@ int main()
    Light lamp(
       glm::vec3(0.2),
       glm::vec3(0.5),
-      glm::vec3(1.0));
+      glm::vec3(1.0),
+      50.0f);
 
    lampProg.addAttribute("position");
    lampProg.addUniform("M");
@@ -197,9 +200,20 @@ int main()
      0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
     -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
     -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
-};
+  };
 
-
+  glm::vec3 cubePositions[] = {
+    glm::vec3( 0.0f,  0.0f,  0.0f), 
+    glm::vec3( 2.0f,  5.0f, -15.0f), 
+    glm::vec3(-1.5f, -2.2f, -2.5f),  
+    glm::vec3(-3.8f, -2.0f, -12.3f),  
+    glm::vec3( 2.4f, -0.4f, -3.5f),  
+    glm::vec3(-1.7f,  3.0f, -7.5f),  
+    glm::vec3( 1.3f, -2.0f, -2.5f),  
+    glm::vec3( 1.5f,  2.0f, -2.5f), 
+    glm::vec3( 1.5f,  0.2f, -1.5f), 
+    glm::vec3(-1.3f,  1.0f, -1.5f)  
+  };
    VertexBuffer vbo;
    ElementBufferObject ebo;
    vbo.setData(vertices,36*8);
@@ -225,7 +239,7 @@ int main()
    GL_Logger::LogError("Could not set uniform perspective 2", glGetError());
 
    phongProg.enable();
-   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+   glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
 
    glUniformMatrix4fv(phongProg.getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
@@ -268,22 +282,34 @@ int main()
       V = camera.getViewMatrix();
       glUniformMatrix4fv(phongProg.getUniform("V"), 1, GL_FALSE, glm::value_ptr(V));
       glUniformMatrix4fv(phongProg.getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
-
-      M = cubeTransform.getMatrix();
-      NORM = createNormalMatrix(V, M);
-      
-
       
       lamp.bind(
          phongProg.getUniform("light.position"),
          phongProg.getUniform("light.ambient"),
          phongProg.getUniform("light.diffuse"),
-         phongProg.getUniform("light.specular"));
+         phongProg.getUniform("light.specular"),
+         phongProg.getUniform("light.constant"),
+         phongProg.getUniform("light.linear"),
+         phongProg.getUniform("light.quadratic"));
 
-      glUniformMatrix3fv(phongProg.getUniform("N"), 1, GL_FALSE, glm::value_ptr(NORM));
-      glUniformMatrix4fv(phongProg.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
-      glDrawArrays(GL_TRIANGLES,0,36);
+      for(int i = 0; i < 10; i++)
+      {
+        cubeTransform.setPosition(cubePositions[i]);
+        cubeTransform.setRotation(glm::vec3(M_PI/12 * i, M_PI/6 * i, 0.0));
+        M = cubeTransform.getMatrix();
+        NORM = createNormalMatrix(V, M);
+        glUniformMatrix3fv(phongProg.getUniform("N"), 1, GL_FALSE, glm::value_ptr(NORM));
+        glUniformMatrix4fv(phongProg.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
+        glDrawArrays(GL_TRIANGLES,0,36);
 
+      }
+    
+      
+
+      
+      
+
+      
       //Draw lamp
 
       lampProg.enable();
@@ -300,11 +326,10 @@ int main()
 
       //Update lamp
       
-      lamp.transform.setPosition(
-         glm::vec3(2*cos(glfwGetTime()), cos(0.5*glfwGetTime()), 2*sin(glfwGetTime())));
-      lamp.transform.lookAt(cubeTransform.getPosition());
-      
-      
+      //lamp.transform.setPosition(
+      //   glm::vec3(2*cos(glfwGetTime()), cos(0.5*glfwGetTime()), 2*sin(glfwGetTime())));
+      //lamp.transform.lookAt(cubeTransform.getPosition());
+      lamp.setRange(200 * (sin(glfwGetTime()* 0.25)*0.5 + 0.5) + 50);
 
       glfwSwapBuffers(window);
 
