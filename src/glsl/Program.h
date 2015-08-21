@@ -56,16 +56,15 @@ public:
 
    /**
     * Add a GLStruct uniform to the program
-    * @param  name   [description]
-    * @param  struct [description]
-    * @return        [description]
+    * @param  name   name of the instance in the program
+    * @param  struct struct to bind the instance to
+    * @return        0 if OK, -1 otherwise
     */
    int addUniformStruct(std::string name, GL_Structure & glStruct);
    /**
-    * Add a uniform array tp the program
+    * Add a uniform array to the program
     * @param arr the array base name
     * @param len the maximum length
-
     */
     int addUniformArray(std::string base, int len);
 
@@ -75,6 +74,7 @@ public:
      * @param len the maximum length
      * @param struct the structure
      */
+    int addStructArray(std::string arrName, int len, GL_Structure & glStruct);
 
    /**
     * Get an attribute from the program
@@ -92,11 +92,6 @@ public:
    /**
     * Create the program. Call one of the above methods before doing this. Programs with no shaders attached will throw errors.
     */
-   
-    int removeUniform(std::string name);
-   
-
-   
    int create();
 
    /**
@@ -130,7 +125,6 @@ private:
 
    std::unordered_map<std::string, GLuint> attributes;
    std::unordered_map<std::string, GLint> uniforms;
-   std::unordered_map<std::string, GL_Structure> structs;
    
    std::unordered_map<std::string, bool> boundAttributes;
    std::unordered_map<std::string, bool> boundUniforms;

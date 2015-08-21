@@ -23,8 +23,9 @@ TEST(Mouse, testPosition)
    Mouse::updateMousePos(10,20);
    Mouse::update();
  
-   EXPECT_EQ(0,Mouse::getLastX());
-   EXPECT_EQ(0,Mouse::getLastY());
+   //First move of the mouse generates no differnce in lastX 
+   EXPECT_EQ(10,Mouse::getLastX());
+   EXPECT_EQ(20,Mouse::getLastY());
    EXPECT_EQ(10,Mouse::getX());
    EXPECT_EQ(20,Mouse::getY());
    Mouse::updateMousePos(20,30);

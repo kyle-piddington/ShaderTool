@@ -3,20 +3,20 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <easylogging++.h>
-#include "buffers/VertexBuffer.h"
+#include "VertexBuffer.h"
 #include "glsl/Program.h"
 #include "logger/GL_Logger.h"
-#include "buffers/VertexBuffer.h"
-#include "buffers/VertexArrayObject.h"
-#include "buffers/ElementBufferObject.h"
+#include "VertexBuffer.h"
+#include "VertexArrayObject.h"
+#include "ElementBufferObject.h"
 #include "assetWrappers/Texture2d.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "util/Camera.h"
-#include "io/Keyboard.h"
-#include "io/GLFWHandler.h"
-#include "io/Mouse.h"
+#include "Camera.h"
+#include "Keyboard.h"
+#include "GLFWHandler.h"
+#include "Mouse.h"
 #include "Transform.h"
 #include "Material.h"
 #include "TexturedMaterial.h"
@@ -130,7 +130,6 @@ int main()
    template_light.addAttribute("constant");
    template_light.addAttribute("linear");
    template_light.addAttribute("quadratic");
-
    GL_Structure template_material;
    template_material.addAttribute("diffuse");
    template_material.addAttribute("specular");
@@ -305,7 +304,6 @@ int main()
          lampStruct.get("constant"),
          lampStruct.get("linear"),
          lampStruct.get("quadratic"));
-
       for(int i = 0; i < 10; i++)
       {
         cubeTransform.setPosition(cubePositions[i]);
