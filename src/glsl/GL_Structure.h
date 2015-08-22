@@ -2,7 +2,6 @@
 #define __GL_STRUCTURE_H__
 #include <vector>
 #include <string>
-#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <unordered_map>
 class GL_Structure

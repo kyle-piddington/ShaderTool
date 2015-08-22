@@ -21,6 +21,7 @@
 #include "Material.h"
 #include "TexturedMaterial.h"
 #include "Light.h"
+#include "DirectionalLight.h"
 
 INITIALIZE_EASYLOGGINGPP
 
@@ -121,24 +122,17 @@ int main()
    /**
     * Add program introspection to gether attribute names and uniforms later.
     */
-   
-   GL_Structure template_light;
-   template_light.addAttribute("position");
-   template_light.addAttribute("ambient");
-   template_light.addAttribute("diffuse");
-   template_light.addAttribute("specular");
-   template_light.addAttribute("constant");
-   template_light.addAttribute("linear");
-   template_light.addAttribute("quadratic");
+
+
+ 
+
    GL_Structure template_material;
-   template_material.addAttribute("diffuse");
-   template_material.addAttribute("specular");
-   template_material.addAttribute("emission");
-   template_material.addAttribute("shininess");
-   
-   GL_Structure lampStruct(template_light);
-   GL_Structure matStruct(template_material);
-   
+ 
+   GL_Structure lampStruct = Light::getStruct();
+   GL_Structure matStruct = Material::getStruct();
+   GL_Structure dirLightStruct = DirectionalLight::getStruct();
+
+
    phongProg.addAttribute("position");
    phongProg.addAttribute("normal");
    phongProg.addAttribute("vertTexCoords");
@@ -147,10 +141,10 @@ int main()
    phongProg.addUniform("V");
    phongProg.addUniform("P");
    phongProg.addUniform("N");
-   
+
    phongProg.addUniformStruct("pointLight",lampStruct);
    phongProg.addUniformStruct("material",matStruct);
-
+   phongProg.addUniformStruct("dirLight",dirLightStruct);
 
    TexturedMaterial cubeMaterial(
       "assets/textures/container2.png",
@@ -163,6 +157,12 @@ int main()
       glm::vec3(0.5),
       glm::vec3(1.0),
       50.0f);
+   lamp.setRange(0);
+
+   DirectionalLight dirLight(glm::vec3(0.2f, -1.0f, -0.3f),
+                             glm::vec3(0.2),
+                             glm::vec3(0.5),
+                             glm::vec3(1.0));
 
    lampProg.addAttribute("position");
    lampProg.addUniform("M");
@@ -273,6 +273,12 @@ int main()
 
    glEnable(GL_DEPTH_TEST);
    camera.setPosition(glm::vec3(0,0,5));
+
+   dirLight.bind(dirLightStruct.get("direction"),
+                 dirLightStruct.get("ambient"),
+                 dirLightStruct.get("diffuse"),
+                 dirLightStruct.get("specular"));
+
    while(!glfwWindowShouldClose(window) && programsOK)
    {
 
@@ -304,6 +310,8 @@ int main()
          lampStruct.get("constant"),
          lampStruct.get("linear"),
          lampStruct.get("quadratic"));
+
+
       for(int i = 0; i < 10; i++)
       {
         cubeTransform.setPosition(cubePositions[i]);

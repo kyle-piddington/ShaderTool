@@ -48,5 +48,9 @@ GLint GL_Structure::get(std::string name)
       LOG(WARNING) << "Structure has no attribute named " + name + " (Did you forget to add it to the structure?)";
       return -1;
    }
+   if(uniformID->second == -1)
+   {
+      LOG(WARNING) << "Attribute " + name +" is in strucutre, but not bound.";
+   }
    return uniformID->second;
 }

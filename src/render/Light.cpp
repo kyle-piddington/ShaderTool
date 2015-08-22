@@ -27,6 +27,10 @@ Light::attenuationStruct Light::getAttenuationForDist(float dist)
    {
      Light::initializeAttenuationTable();
    }
+   if(dist < attenuationTable.begin()->range)
+   {
+      return *attenuationTable.begin();
+   }
 
    std::vector<attenuationStruct>::iterator i,last;
    last = Light::attenuationTable.begin();
@@ -55,9 +59,25 @@ currentAttenuation(getAttenuationForDist(range))
 
 void Light::setRange(float range)
 {
-   currentAttenuation = getAttenuationForDist(range);
+   currentAttenuation = getAttenuationForDist(fmax(range,1.0));
 }
 
+/**
+ * Get a GLStruct representing this light
+ * names are degined in phong_frag
+ */
+GL_Structure Light::getStruct()
+{
+   GL_Structure template_light;
+   template_light.addAttribute("position");
+   template_light.addAttribute("ambient");
+   template_light.addAttribute("diffuse");
+   template_light.addAttribute("specular");
+   template_light.addAttribute("constant");
+   template_light.addAttribute("linear");
+   template_light.addAttribute("quadratic");
+   return template_light;
+}
 void Light::bind(GLint posLoc, GLint ambLoc, GLint diffLoc, GLint specLoc, GLint constAtten, GLint linearAtten, GLint quadAtten)
 {
    position = transform.getPosition();

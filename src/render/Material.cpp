@@ -18,3 +18,13 @@ void Material::bind(GLint ambLoc, GLint diffLoc, GLint specLoc, GLint shininessL
    glUniform3fv(specLoc,1,glm::value_ptr(specular));
    glUniform1f(shininessLoc,shininess);
 }
+
+GL_Structure Material::getStruct()
+{
+   GL_Structure template_material;
+   template_material.addAttribute("diffuse");
+   template_material.addAttribute("specular");
+   template_material.addAttribute("emission");
+   template_material.addAttribute("shininess");
+   return template_material;
+}
