@@ -55,6 +55,14 @@ void Transform::translate(const glm::vec3 & pos)
 
 }
 
+void Transform::copy(Transform & other)
+{
+   this->position = other.position;
+   this->rotation = other.rotation;
+   isDirty = true;
+   updateFrame();
+}
+
 void Transform::rotate(const glm::vec3 eulerAngles)
 {
    

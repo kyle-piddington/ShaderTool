@@ -33,6 +33,8 @@ struct DirectionalLight{
    vec3 specular
 };
 
+
+
 uniform Material material;
 uniform Light light;
 

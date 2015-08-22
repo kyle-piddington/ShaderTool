@@ -8,12 +8,12 @@ uniform mat4 V;
 uniform mat4 P;
 uniform mat3 N;
 
-out vec3 fragPos;
+out vec4 fragPosition;
 out vec3 fragNor;
 
 void main()
 {
    gl_Position = P * V * M *  vec4(position, 1.0);
-   fragPos = (V * M * vec4(position, 1.0)).xyz;
+   fragPosition = (V * M * vec4(position, 1.0));
    fragNor = N * normal;
 }

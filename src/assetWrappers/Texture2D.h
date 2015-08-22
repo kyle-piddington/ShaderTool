@@ -21,6 +21,8 @@ public:
     * Disable the texture on the shader
     */
    void disable();
+   int getWidth();
+   int getHeight();
    const std::string getName();
 private:
    std::string textureName;

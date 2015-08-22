@@ -13,6 +13,13 @@ public:
     * @param pos position to go to
     */
    void setPosition(const glm::vec3 & pos);
+
+   /**
+    * Copy a transform from another transofrm
+    * @param other the transform to copy.
+    */
+   void copy(Transform & other);
+
    /**
     * Set the rotation of the transform
     * @param eulerAngles the angles to rotate to

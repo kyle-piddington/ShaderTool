@@ -22,9 +22,10 @@
 #include "TexturedMaterial.h"
 #include "Light.h"
 #include "DirectionalLight.h"
-
+#include "Spotlight.h"
 INITIALIZE_EASYLOGGINGPP
 
+#define DEG2RAD(angleDegrees) (angleDegrees * M_PI / 180.0)
 
 const float screenWidth =800.0;
 const float screenHeight = 600.0;
@@ -131,8 +132,8 @@ int main()
    GL_Structure lampStruct = Light::getStruct();
    GL_Structure matStruct = Material::getStruct();
    GL_Structure dirLightStruct = DirectionalLight::getStruct();
-
-
+   GL_Structure spotlightStruct = Spotlight::getStruct();
+   spotlightStruct.addAttribute("mask");
    phongProg.addAttribute("position");
    phongProg.addAttribute("normal");
    phongProg.addAttribute("vertTexCoords");
@@ -145,24 +146,33 @@ int main()
    phongProg.addUniformStruct("pointLight",lampStruct);
    phongProg.addUniformStruct("material",matStruct);
    phongProg.addUniformStruct("dirLight",dirLightStruct);
-
+   phongProg.addUniformStruct("flashLight",spotlightStruct);
+  
    TexturedMaterial cubeMaterial(
       "assets/textures/container2.png",
       "assets/textures/container2_specular.png",
       "assets/textures/solid_black.png",
       32.0f);
 
+   //Setup lights
    Light lamp(
       glm::vec3(0.2),
       glm::vec3(0.5),
       glm::vec3(1.0),
       50.0f);
-   lamp.setRange(0);
-
+   
    DirectionalLight dirLight(glm::vec3(0.2f, -1.0f, -0.3f),
                              glm::vec3(0.2),
                              glm::vec3(0.5),
                              glm::vec3(1.0));
+
+   Spotlight spotlight(glm::vec3(0.0),
+                       glm::vec3(2.0),
+                       glm::vec3(2.0),
+                       DEG2RAD(12.5f),
+                       DEG2RAD(17.5f),
+                       120.0f);
+   Texture2D flashLightMask("assets/textures/awesomeface.png");
 
    lampProg.addAttribute("position");
    lampProg.addUniform("M");
@@ -254,7 +264,6 @@ int main()
    phongProg.enable();
    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-
    glUniformMatrix4fv(phongProg.getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
    GL_Logger::LogError("Could not set uniform perspective 1", glGetError());
    cubeMaterial.bind(
@@ -279,6 +288,8 @@ int main()
                  dirLightStruct.get("diffuse"),
                  dirLightStruct.get("specular"));
 
+   spotlight.transform().copy(camera.transform);
+     
    while(!glfwWindowShouldClose(window) && programsOK)
    {
 
@@ -301,7 +312,6 @@ int main()
       V = camera.getViewMatrix();
       glUniformMatrix4fv(phongProg.getUniform("V"), 1, GL_FALSE, glm::value_ptr(V));
       glUniformMatrix4fv(phongProg.getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
-
       lamp.bind(
          lampStruct.get("position"),
          lampStruct.get("ambient"),
@@ -310,7 +320,19 @@ int main()
          lampStruct.get("constant"),
          lampStruct.get("linear"),
          lampStruct.get("quadratic"));
+      flashLightMask.enable(phongProg.getUniform("flashLight.mask"));
 
+      spotlight.bind(
+        spotlightStruct.get("position"),
+        spotlightStruct.get("direction"),
+        spotlightStruct.get("ambient"),
+        spotlightStruct.get("diffuse"),
+        spotlightStruct.get("specular"),
+        spotlightStruct.get("cutOff"),
+        spotlightStruct.get("outerCutOff"),
+        spotlightStruct.get("constant"),
+        spotlightStruct.get("linear"),
+        spotlightStruct.get("quadratic"));
 
       for(int i = 0; i < 10; i++)
       {
@@ -321,10 +343,10 @@ int main()
         glUniformMatrix3fv(phongProg.getUniform("N"), 1, GL_FALSE, glm::value_ptr(NORM));
         glUniformMatrix4fv(phongProg.getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
         glDrawArrays(GL_TRIANGLES,0,36);
-
       }
 
 
+      flashLightMask.disable();
 
 
 
