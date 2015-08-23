@@ -208,6 +208,23 @@ GLint Program::getUniform(std::string unifName)
    }
 }
 
+GLint Program::hasUniform(std::string unifName)
+{
+   if(!created)
+   {
+      LOG(ERROR) << "Program " + name + " has not been created. Call .create()";
+      return -1;
+   }
+   GLint unifId = glGetUniformLocation(shaderProgram, unifName.c_str());
+   GL_Logger::LogError("Could not search program " + name, glGetError());
+   if(unifId == -1)
+   {
+      LOG(WARNING) << "Program " + name +  " Could not find uniform " + unifName + " (It may not exist, or has been optimized away)";
+   }
+   return unifId;
+
+
+}
 bool Program::checkBoundVariables()
 {
    if(!created)
@@ -245,10 +262,85 @@ int Program::addUniformStruct(std::string name, GL_Structure &  glStruct)
    }
    else
    {
-      LOG(ERROR) << "Struct " + name + " Could not find all attributes!"; 
+      LOG(ERROR) << "Struct " + name + " Could not find all attributes!";
       return -1;
    }
 }
+
+int Program::addUniformArray(std::string name, int len)
+{
+   bool canAddArray = true;
+   std::vector<GLint> locs;
+   for(int i = 0; i < len; i++)
+   {
+      GLint loc = hasUniform(name + "[" + std::to_string(i) + "]");
+      canAddArray &= (loc != -1);
+      locs.push_back(loc);
+   }
+
+   if(!canAddArray || len <= 0)
+   {
+      LOG(ERROR) << "Could not add array " + name + ", name wrong or length wrong";
+      return -1;
+   }
+   else
+   {
+      UniformArrayInfo info;
+      info.baseName = name;
+      info.locations = locs;
+      arrays[name] = info;
+      return 0;
+   }
+
+}
+
+int Program::addStructArray(std::string name, int len, GL_Structure & template_struct)
+{
+   if(len > 0)
+   {
+      bool canAddStruct = true;
+      std::vector<std::string> uniformNames = template_struct.getUniformNames();
+      int canAddUniform = 0;
+      UniformStructArrayInfo info;
+      info.baseName = name;
+      for(int i = 0; i < len; i++)
+      {
+         GL_Structure glStruct(template_struct);
+         for (std::vector<std::string>::iterator atrb = uniformNames.begin(); atrb != uniformNames.end(); ++atrb)
+         {
+            GLint unifLoc = hasUniform(name + "[" + std::to_string(i) + "]" + "." +*atrb);
+            canAddStruct &= (unifLoc != -1);
+            canAddStruct &= (glStruct.setUniformLocation(*atrb,unifLoc) == 0);
+         }
+         info.structs.push_back(glStruct);
+      }
+      if(!canAddStruct)
+      {
+         LOG(ERROR) << "Could not bind struct array";
+         return -1;
+      }
+      else
+      {
+         structArrays[name] = info;
+         return 0;
+      }
+   }
+   else
+   {
+      return -1;
+   }
+}
+
+const Program::UniformArrayInfo & Program::getArray(std::string name)
+{
+  return arrays[name];
+}
+
+const Program::UniformStructArrayInfo & Program::getStructArray(std::string name)
+{
+  return structArrays[name];
+}
+
 void Program::enable()
 {
    glUseProgram(shaderProgram);

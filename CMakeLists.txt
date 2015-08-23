@@ -62,6 +62,8 @@ SET(GraphicsEngine_Test_SOURCES ${GraphicsEngine_SOURCES})
 list(REMOVE_ITEM GraphicsEngine_Test_SOURCES ${PROJECT_SOURCE_DIR}/src/main.cpp)
 
 enable_testing()
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g ")
+
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR}) 
 set(GraphicsEngine_Test GraphicsEngine_test)
 include_directories(${GTEST_INCLUDE_DIRS})
@@ -69,7 +71,7 @@ include_directories(${GTEST_INCLUDE_DIRS})
 file(GLOB_RECURSE TEST_SRC_FILES "test/*.cpp")
 
 
-
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g ")
 add_executable(${GraphicsEngine_Test} ${GraphicsEngine_Test_SOURCES} ${TEST_SRC_FILES})
 if (APPLE)
   target_link_libraries(${GraphicsEngine_Test} "-framework OpenGL -framework CoreFoundation")
@@ -79,7 +81,7 @@ target_link_libraries(${GraphicsEngine_Test} ${EXTRA_LIBS} gtest)
 add_test( ${GraphicsEngine_Test} ${GraphicsEngine_Test} )
 
 #Add C++ 11
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g ")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g  ")
 add_executable (GraphicsEngine ${GraphicsEngine_SOURCES})
 target_link_libraries(GraphicsEngine ${EXTRA_LIBS})
 

@@ -5,14 +5,7 @@ GL_Structure::GL_Structure()
 {
 }
 
-GL_Structure::GL_Structure(const GL_Structure & other)
-{
-   for (auto i = other.uniforms.begin(); i != other.uniforms.end(); ++i)
-   {
-      uniforms[i->first] = -1;
-   }
 
-}
 
 void GL_Structure::addAttribute(std::string attribName)
 {
@@ -40,9 +33,9 @@ int GL_Structure::setUniformLocation(std::string name, GLint location)
    uniformID->second = location;
    return 0;
 }
-GLint GL_Structure::get(std::string name)
+const GLint GL_Structure::get(std::string name) const
 {
-   auto uniformID = uniforms.find(name);
+   auto uniformID  = uniforms.find(name);
    if(uniformID == uniforms.end())
    {
       LOG(WARNING) << "Structure has no attribute named " + name + " (Did you forget to add it to the structure?)";

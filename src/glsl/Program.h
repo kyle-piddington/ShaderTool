@@ -10,6 +10,21 @@
 class Program
 {
 public:
+   struct UniformArrayInfo
+   {
+      std::string baseName;
+      std::vector<GLint> locations;
+      GLint operator[](std::size_t idx){return locations[idx];} 
+      size_t size() const {return locations.size();}
+   };
+   struct UniformStructArrayInfo
+   {
+      std::string baseName;
+      std::vector<GL_Structure> structs;
+      GL_Structure const &operator[](std::size_t idx){return structs[idx];}
+      size_t size() const {return structs.size();}
+ 
+   };
    /**
     * Initialize the program object
     */
@@ -55,6 +70,12 @@ public:
    int addUniform(std::string uniform);
 
    /**
+    * See if a program has a uniform, without adding it to the program.
+    * @param  uniform the uniform name to check
+    * @return         >0  if exists, -1 otherwise.
+    */
+   GLint hasUniform(std::string uniform);
+   /**
     * Add a GLStruct uniform to the program
     * @param  name   name of the instance in the program
     * @param  struct struct to bind the instance to
@@ -73,9 +94,24 @@ public:
      * @param arr the array base name
      * @param len the maximum length
      * @param struct the structure
+     * @return 0 if OK
      */
     int addStructArray(std::string arrName, int len, GL_Structure & glStruct);
 
+    /**
+     * Get an array from the program
+     * @param  name name of the array
+     * @return      reference to the array
+     */
+    const UniformArrayInfo  & getArray(std::string name);
+
+    /**
+     * Get an array of structs from the program
+     * @param  name the name of the array
+     * @return      reference to the array
+     */
+    const UniformStructArrayInfo  & getStructArray(std::string name);
+    
    /**
     * Get an attribute from the program
     * @param  name attribute name.
@@ -123,15 +159,17 @@ private:
    GLuint tessalationShader;
    std::string tessShaderName;
 
+
    std::unordered_map<std::string, GLuint> attributes;
    std::unordered_map<std::string, GLint> uniforms;
-   
+
    std::unordered_map<std::string, bool> boundAttributes;
    std::unordered_map<std::string, bool> boundUniforms;
+   
+   std::unordered_map<std::string, UniformArrayInfo> arrays;
+   std::unordered_map<std::string, UniformStructArrayInfo> structArrays;
 
-
-
-
+   
 
 
 };

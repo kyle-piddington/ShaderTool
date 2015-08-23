@@ -22,9 +22,9 @@ TEST(StructShaderTests, checkStructBoundOK)
    testStruct.addAttribute("testVec2");
    testStruct.addAttribute("testVec3");
    EXPECT_EQ(0,program.addUniformStruct("test",testStruct));
-   EXPECT_EQ(program.getUniform("test.testVec1"),testStruct.get("testVec1"));
-   EXPECT_EQ(program.getUniform("test.testVec2"),testStruct.get("testVec2"));
-   EXPECT_EQ(program.getUniform("test.testVec3"),testStruct.get("testVec3"));
+   EXPECT_EQ(program.getUniform("test.testVec1"),testStruct["testVec1"]);
+   EXPECT_EQ(program.getUniform("test.testVec2"),testStruct["testVec2"]);
+   EXPECT_EQ(program.getUniform("test.testVec3"),testStruct["testVec3"]);
 }
 TEST(StructShaderTests, testStructCopy)
 {
@@ -37,11 +37,13 @@ TEST(StructShaderTests, testStructCopy)
    testStruct.addAttribute("testVec1");
    testStruct.addAttribute("testVec2");
    testStruct.addAttribute("testVec3");
-   EXPECT_EQ(0,program.addUniformStruct("test",testStruct));
+   
 
-   //Copy the structure, check to see bound varaibles reset
+   EXPECT_EQ(0,program.addUniformStruct("test",testStruct));
    GL_Structure testStruct2(testStruct);
-   EXPECT_EQ(-1, testStruct2.get("testVec1"));
+   
+   //Copy the structure, check to see bound varaibles persist
+   EXPECT_EQ(testStruct2.get("testVec1"), testStruct2.get("testVec1"));
 
    program.addUniformStruct("testStruct2", testStruct2);
    EXPECT_EQ(program.getUniform("testStruct2.testVec1"),testStruct2.get("testVec1"));

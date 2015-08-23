@@ -11,11 +11,6 @@ private:
   
 public:
    GL_Structure();
-   /**
-    * Create a copy of this structure, usually for making
-    * instances. All uniforms will be set to -1 on copy.
-    */
-   GL_Structure(const GL_Structure & other);
 
    /**
     * Add an attribute to this structure
@@ -28,12 +23,19 @@ public:
     * @param  attributeName name of the struct attribute
     * @return               -1 if not found, GLint otherwise
     */
-   GLint get(std::string attributeName);
+   const GLint get(std::string attributeName) const;
 
    /**
     * Get all names in the strucutre
     */
    std::vector<std::string> getUniformNames();
+
+   /**
+    * Same as 'get', but with operator syntax
+    * @param  idx string idx
+    * @return     GLint if exists
+    */
+   const GLint operator[] (std::string idx) const {return get(idx);}
 
    /**
     * Set a location for the uniform

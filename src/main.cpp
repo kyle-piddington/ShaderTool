@@ -167,11 +167,11 @@ int main()
                              glm::vec3(1.0));
 
    Spotlight spotlight(glm::vec3(0.0),
-                       glm::vec3(2.0),
-                       glm::vec3(2.0),
+                       glm::vec3(2.9),
+                       glm::vec3(2.9),
                        DEG2RAD(12.5f),
                        DEG2RAD(17.5f),
-                       120.0f);
+                       50.0f);
    Texture2D flashLightMask("assets/textures/awesomeface.png");
 
    lampProg.addAttribute("position");
@@ -312,6 +312,10 @@ int main()
       V = camera.getViewMatrix();
       glUniformMatrix4fv(phongProg.getUniform("V"), 1, GL_FALSE, glm::value_ptr(V));
       glUniformMatrix4fv(phongProg.getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
+      spotlight.transform().copy(lamp.transform);
+      spotlight.transform().setRotation(glm::vec3(0,0,0));
+     //spotlight.transform().lookAt(camera.transform.getPosition() + camera.transform.forward() * 3.f + glm::vec3(0.2*sin(glfwGetTime()*2.0), 0.2*cos(glfwGetTime() * 1.3),0.0));
+      
       lamp.bind(
          lampStruct.get("position"),
          lampStruct.get("ambient"),
