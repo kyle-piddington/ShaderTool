@@ -34,10 +34,8 @@ struct PointLight{
 };
 
 
-//#define NR_POINT_LIGHTS 5
-//uniform PointLight pointLights[NR_POINT_LIGHTS];
-//uniform int numPointLights;
-uniform PointLight pointLight;
+#define NR_POINT_LIGHTS 4
+uniform PointLight pointLights[NR_POINT_LIGHTS];
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
@@ -160,9 +158,13 @@ void main()
 
    //result += CalcDirLight(dirLight,norm,vec3(0,0,-1));
    vec3 viewDir = normalize(-fragPos);
-   result += CalcPointLight(pointLight,norm,fragPos,viewDir);
+   
    result += CalcDirLight(dirLight, norm, viewDir);
    result += CalcSpotLight(flashLight,norm,fragPos,viewDir);
+   for(int i = 0; i < NR_POINT_LIGHTS; i++)
+   {
+      result += CalcPointLight(pointLights[i],norm,fragPos,viewDir);
+   }
    vec3 emission = vec3(texture(material.emission,fragTexCoords));
    result += emission;
 

@@ -44,9 +44,8 @@ Light::attenuationStruct Light::getAttenuationForDist(float dist)
       }
       last = i;
    }
-   
+
    return *(Light::attenuationTable.end() -1);
-   
 
 }
 Light::Light(glm::vec3 amb, glm::vec3 diff, glm::vec3 spec,float range):

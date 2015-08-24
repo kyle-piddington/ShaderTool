@@ -83,5 +83,9 @@ TEST(StructShaderTests, testStructBadGet)
 
 }
 
-
+TEST(StructShaderTests, testEmptyStruct)
+{
+   GL_Structure emptyStruct;
+   EXPECT_EQ(-1,emptyStruct["attrb"]);
+}
 
