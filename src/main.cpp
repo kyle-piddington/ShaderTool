@@ -23,6 +23,7 @@
 #include "Light.h"
 #include "DirectionalLight.h"
 #include "Spotlight.h"
+#include "ReloadLocator.h"
 INITIALIZE_EASYLOGGINGPP
 
 #define NUM_POINT_LIGHTS 4
@@ -106,6 +107,8 @@ int main()
    glfwSetKeyCallback(window, GLFWHandler::key_callback);
    glfwSetCursorPosCallback(window, GLFWHandler::mousePositionCallback);
    glfwSetMouseButtonCallback(window, GLFWHandler::mouseButtonCallback);
+
+   FileSystem::ReloadLocator::Initialize();
 
 
    /**

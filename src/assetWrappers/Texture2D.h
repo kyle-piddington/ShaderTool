@@ -4,7 +4,8 @@
 #include "../render/TextureUnitManager.h"
 #include <GL/glew.h>
 #include <string>
-class Texture2D
+#include "ReloadableAsset.h"
+class Texture2D : public ReloadableAsset
 {
 public:
    /**
@@ -24,6 +25,13 @@ public:
    int getWidth();
    int getHeight();
    const std::string getName();
+   
+   void reload();
+   
+
+
+
+
 private:
    std::string textureName;
    int width;
