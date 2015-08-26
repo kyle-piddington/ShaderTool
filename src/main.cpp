@@ -24,6 +24,8 @@
 #include "DirectionalLight.h"
 #include "Spotlight.h"
 #include "ReloadLocator.h"
+//Apple specific stuff
+#include "AppleLiveReloadManager.h"
 INITIALIZE_EASYLOGGINGPP
 
 #define NUM_POINT_LIGHTS 4
@@ -109,7 +111,7 @@ int main()
    glfwSetMouseButtonCallback(window, GLFWHandler::mouseButtonCallback);
 
    FileSystem::ReloadLocator::Initialize();
-
+   FileSystem::ReloadLocator::provide(new AppleReloadManager());
 
    /**
     * TEST CODE
@@ -308,6 +310,8 @@ int main()
 
    while(!glfwWindowShouldClose(window) && programsOK)
    {
+      //Reload assets (Should be on a better title)
+      FileSystem::ReloadLocator::getService()->processEvents();
 
       glfwPollEvents();
       GLFWHandler::update();

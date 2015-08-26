@@ -18,10 +18,10 @@ namespace FileSystem
        * @param  file the asset to watch
        * @return      0 if OK, -1 otherwise
        */
-      virtual int watchFile(const ReloadableAsset * file) = 0;
+      virtual int watchFile(ReloadableAsset * file) = 0;
 
 
-      virtual int unwatchFile(const ReloadableAsset * file) = 0;
+      virtual int unwatchFile(ReloadableAsset * file) = 0;
 
 
       /**

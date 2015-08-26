@@ -8,12 +8,12 @@ NullReloadManager::~NullReloadManager()
 {
 
 }
-int NullReloadManager::watchFile(const ReloadableAsset *  file)
+int NullReloadManager::watchFile(ReloadableAsset *  file)
 {
    LOG(INFO) << "No live reloading service provided, asset '" << file->getPath() << "' will not reload";
    return 0;
 }
-int NullReloadManager::unwatchFile(const ReloadableAsset *  file)
+int NullReloadManager::unwatchFile(ReloadableAsset *  file)
 {
    return 0;
 }

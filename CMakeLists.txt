@@ -74,7 +74,7 @@ file(GLOB_RECURSE TEST_SRC_FILES "test/*.cpp")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g ")
 add_executable(${GraphicsEngine_Test} ${GraphicsEngine_Test_SOURCES} ${TEST_SRC_FILES})
 if (APPLE)
-  target_link_libraries(${GraphicsEngine_Test} "-framework OpenGL -framework CoreFoundation")
+  target_link_libraries(${GraphicsEngine_Test} "-framework OpenGL -framework CoreFoundation -framework CoreServices")
 endif()
 
 target_link_libraries(${GraphicsEngine_Test} ${EXTRA_LIBS} gtest)
@@ -86,7 +86,7 @@ add_executable (GraphicsEngine ${GraphicsEngine_SOURCES})
 target_link_libraries(GraphicsEngine ${EXTRA_LIBS})
 
 if (APPLE)
-  target_link_libraries(GraphicsEngine "-framework OpenGL -framework CoreFoundation")
+  target_link_libraries(GraphicsEngine "-framework OpenGL -framework CoreFoundation -framework CoreServices")
 endif()
 
 
