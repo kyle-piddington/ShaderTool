@@ -1,4 +1,5 @@
 #include "ShaderManager.h"
+
 std::unordered_map<std::string, std::shared_ptr<Shader>> ShaderManager::shaders;
 
  std::shared_ptr<Shader> ShaderManager::getShader(std::string shaderName, GLenum shaderType)
@@ -15,4 +16,12 @@ std::unordered_map<std::string, std::shared_ptr<Shader>> ShaderManager::shaders;
       ret = preloadedShader->second;
    }
    return ret;
+}
+
+void ShaderManager::cleanup()
+{
+   for(auto iter = shaders.begin(); iter != shaders.end(); iter++)
+   {
+      iter->second->deleteFromGPU();
+   }
 }

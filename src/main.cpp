@@ -24,6 +24,8 @@
 #include "DirectionalLight.h"
 #include "Spotlight.h"
 #include "ReloadLocator.h"
+#include "ShaderManager.h"
+
 //Apple specific stuff
 #include "AppleLiveReloadManager.h"
 INITIALIZE_EASYLOGGINGPP
@@ -126,6 +128,8 @@ int main()
    lampProg.addVertexShader("assets/shaders/debug_vert.vs");
    lampProg.addFragmentShader("assets/shaders/debug_frag.fs");
    programsOK &= (lampProg.create() >= 0);
+
+   ShaderManager::cleanup();
    /**
     * Add program introspection to gether attribute names and uniforms later.
     */
