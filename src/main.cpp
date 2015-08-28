@@ -312,7 +312,6 @@ int main()
    {
       //Reload assets (Should be on a better title)
       FileSystem::ReloadLocator::getService()->processEvents();
-
       glfwPollEvents();
       GLFWHandler::update();
       //Toggle Inputs

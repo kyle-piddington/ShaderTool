@@ -4,7 +4,7 @@ namespace FileSystem
 {
    FSLiveReloadManager * ReloadLocator::service;
    NullReloadManager ReloadLocator::nullService;
-  
+
    void ReloadLocator::Initialize()
    {
       service = &nullService;
@@ -13,10 +13,10 @@ namespace FileSystem
    {
       return service;
    }
-         /**
-          * Inject a service into the manager
-          * @param service the new service
-          */
+   /**
+    * Inject a service into the manager
+    * @param service the new service
+    */
    void ReloadLocator::provide(FSLiveReloadManager* injectedService)
    {
       if(injectedService == NULL)
@@ -34,6 +34,6 @@ namespace FileSystem
       if(service != nullptr){
          delete service;
       }
-      
+
    }
 }

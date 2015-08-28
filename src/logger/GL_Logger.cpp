@@ -1,6 +1,6 @@
 #include <easylogging++.h>
 #include "GL_Logger.h"
-#include <GL/glew.h>
+
 #include <GLFW/glfw3.h>
 
 inline int GL_Logger::LogError( std::string description, GLenum error)

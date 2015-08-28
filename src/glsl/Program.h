@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include "GL_Structure.h"
+#include "Shader.h"
 #include <unordered_map>
 class Program
 {
@@ -14,7 +15,7 @@ public:
    {
       std::string baseName;
       std::vector<GLint> locations;
-      GLint operator[](std::size_t idx){return locations[idx];} 
+      GLint operator[](std::size_t idx){return locations[idx];}
       size_t size() const {return locations.size();}
    };
    struct UniformStructArrayInfo
@@ -23,7 +24,7 @@ public:
       std::vector<GL_Structure> structs;
       GL_Structure const &operator[](std::size_t idx){return structs[idx];}
       size_t size() const {return structs.size();}
- 
+
    };
    /**
     * Initialize the program object
@@ -111,7 +112,7 @@ public:
      * @return      reference to the array
      */
     const UniformStructArrayInfo  & getStructArray(std::string name);
-    
+
    /**
     * Get an attribute from the program
     * @param  name attribute name.
@@ -140,36 +141,28 @@ public:
    void disable();
 
 private:
-   int addShader(GLuint & whichShader, std::string shaderName, GLenum shaderType);
+   int addShader(std::shared_ptr<Shader> & whichShader, std::string shaderName, GLenum shaderType);
 
    std::string name;
    bool created;
 
    GLuint shaderProgram;
 
-   GLuint vertShader;
-   std::string vertShaderName;
-
-   GLuint fragShader;
-   std::string fragShaderName;
-
-   GLuint geomShader;
-   std::string geomShaderName;
-
-   GLuint tessalationShader;
-   std::string tessShaderName;
-
+   std::shared_ptr<Shader> vertShader;
+   std::shared_ptr<Shader> fragShader;
+   std::shared_ptr<Shader> geomShader;
+   std::shared_ptr<Shader> tessalationShader;
 
    std::unordered_map<std::string, GLuint> attributes;
    std::unordered_map<std::string, GLint> uniforms;
 
    std::unordered_map<std::string, bool> boundAttributes;
    std::unordered_map<std::string, bool> boundUniforms;
-   
+
    std::unordered_map<std::string, UniformArrayInfo> arrays;
    std::unordered_map<std::string, UniformStructArrayInfo> structArrays;
 
-   
+
 
 
 };

@@ -19,7 +19,6 @@ void AppleReloadManager::eventCallback(
    {
       for (i=0; i<numEvents; i++)
       {
-
          pathsToReload.push_back(std::string(paths[i]));
       }
    }

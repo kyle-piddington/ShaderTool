@@ -4,6 +4,7 @@
 #include <GL_Logger.h>
 #include <gtest/gtest.h>
 #include <easyLogging++.h>
+#include "ReloadLocator.h"
 INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, char **argv) {
@@ -36,6 +37,9 @@ int main(int argc, char **argv) {
       return -1;
    }
    GL_Logger::LogError("Error in GLEW startup (Safe to ignore)", glGetError());
+
+   //Initialize a null service manager for tests
+   FileSystem::ReloadLocator::Initialize();
 
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
