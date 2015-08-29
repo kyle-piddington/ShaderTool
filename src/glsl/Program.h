@@ -140,6 +140,9 @@ public:
 
    void disable();
 
+   bool shouldProgramRecompile();
+
+   bool isCreated();
 private:
    int addShader(std::shared_ptr<Shader> & whichShader, std::string shaderName, GLenum shaderType);
 

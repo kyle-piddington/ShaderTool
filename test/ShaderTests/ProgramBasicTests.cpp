@@ -84,4 +84,15 @@ TEST(BasicShaderTests,queryUniformLocation)
 }
 
 
+TEST(BasicShaderTests,checkIfShouldCompile)
+{
+   Program program("Test9");
+   EXPECT_EQ(0,program.addVertexShader("test/testAssets/basicVert.vs"));
+   EXPECT_EQ(0,program.addFragmentShader("test/testAssets/basicFrag.fs"));
+   EXPECT_EQ(true, program.shouldProgramRecompile());
+   EXPECT_EQ(0,program.create());
+   EXPECT_EQ(false, program.shouldProgramRecompile());
+}
+
+
 

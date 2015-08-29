@@ -6,7 +6,6 @@ layout (location = 1) in vec2 vertTexCoords;
 uniform mat4 M;
 uniform mat4 V;
 uniform mat4 P;
-out vec4 vertexColor;
 out vec2 fragTexCoords;
 
 void main()

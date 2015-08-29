@@ -318,3 +318,21 @@ void Program::disable()
    glUseProgram(0);
 }
 
+bool Program::shouldProgramRecompile()
+{
+
+   //If all shaders are compiled, and the program is linked, then it should not be compiled
+   bool isCompiled = created;
+   isCompiled &= (vertShader == nullptr || vertShader->isCompiled());         
+   isCompiled &= (fragShader == nullptr || fragShader->isCompiled());
+   isCompiled &= (geomShader == nullptr || geomShader->isCompiled());
+   isCompiled &= (tessalationShader == nullptr || tessalationShader->isCompiled());
+   return !isCompiled;
+}
+
+bool Program::isCreated()
+{
+   return created;
+}
+
+

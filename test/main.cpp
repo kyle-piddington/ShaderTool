@@ -5,6 +5,7 @@
 #include <gtest/gtest.h>
 #include <easyLogging++.h>
 #include "ReloadLocator.h"
+#include "testAssets/TestReloadManager.h"
 INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, char **argv) {
@@ -40,7 +41,7 @@ int main(int argc, char **argv) {
 
    //Initialize a null service manager for tests
    FileSystem::ReloadLocator::Initialize();
-
+   FileSystem::ReloadLocator::provide(new TestReloadManager());
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
   glfwTerminate();
