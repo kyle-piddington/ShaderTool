@@ -12,7 +12,7 @@ public:
     * Programs should be created here, to allow the scene
     * to track dependencies
     */
-   virtual bool initPrograms() = 0;
+   virtual void initPrograms() = 0;
 
    /**
     * Bind an initial set of data to the scene. This function is called once 
@@ -45,10 +45,21 @@ public:
     * @return true if the scene should be reloaded.
     */
    bool shouldReloadScene();
-private:
 
-   int createPrograms();
-   Program * create_program(std::string programName);
+   /**
+    * Compile the current required programs
+    * @return true if there were no issues compiling
+    */
+   bool compilePrograms();
+  
+   /**
+    * Add a new program to the scene.
+    * @param  programName The program to create
+    * @return             a pointer to the program.
+    */
+   Program * createProgram(std::string programName);
+
+private:
 
    std::vector<Program *> requiredPrograms;
 

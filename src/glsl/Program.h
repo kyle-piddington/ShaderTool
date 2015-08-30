@@ -130,7 +130,7 @@ public:
     * Create the program. Call one of the above methods before doing this. Programs with no shaders attached will throw errors.
     */
    int create();
-
+   
    /**
     * Check to see if all declared uniforms and attributes are bound.
     */
@@ -145,6 +145,11 @@ public:
    bool isCreated();
 private:
    int addShader(std::shared_ptr<Shader> & whichShader, std::string shaderName, GLenum shaderType);
+   
+   /**
+    * Compile all shaders return 0 if ok, -1 otherwise.
+    */
+   int compileAllShaders();
 
    std::string name;
    bool created;

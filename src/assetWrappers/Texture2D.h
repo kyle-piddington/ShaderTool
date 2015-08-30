@@ -13,6 +13,8 @@ public:
     * Will also have support for loading texture metadata
     */
    Texture2D(std::string textureName);
+
+   ~Texture2D();
    /**
     * Enable the texture on the shader
     * @param samplerID the id of the texture sampler

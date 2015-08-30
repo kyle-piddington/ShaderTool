@@ -1,5 +1,9 @@
 #include "Scene.h"
 
+Scene::Scene()
+{
+
+}
 Scene::~Scene()
 {
    for (std::vector<Program *>::iterator i = requiredPrograms.begin(); i != requiredPrograms.end(); ++i)
@@ -9,7 +13,7 @@ Scene::~Scene()
 }
 bool Scene::canRenderScene()
 {
-   bool canRender = true;
+   bool canRender = requiredPrograms.size() > 0;
    for (std::vector<Program *>::iterator i = requiredPrograms.begin(); i != requiredPrograms.end(); ++i)
    {
       canRender &= (*i)->isCreated();
@@ -27,7 +31,7 @@ bool Scene::shouldReloadScene()
    return shouldReload;
 }
 
-bool Scene::initPrograms()
+bool Scene::compilePrograms()
 {
    int badProgram = 0;
    for (std::vector<Program *>::iterator i = requiredPrograms.begin(); i != requiredPrograms.end(); ++i)
@@ -43,7 +47,7 @@ bool Scene::initPrograms()
 
 
 
-Program * Scene::create_program(std::string programName)
+Program * Scene::createProgram(std::string programName)
 {
    Program * prog = new Program(programName);
    requiredPrograms.push_back(prog);

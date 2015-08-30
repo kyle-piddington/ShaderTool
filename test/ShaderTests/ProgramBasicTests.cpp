@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <Program.h>
+#include "ReloadLocator.h"
 TEST(BasicShaderTests,testBasicCreation)
 {
    Program program("Test1");
@@ -92,6 +93,20 @@ TEST(BasicShaderTests,checkIfShouldCompile)
    EXPECT_EQ(true, program.shouldProgramRecompile());
    EXPECT_EQ(0,program.create());
    EXPECT_EQ(false, program.shouldProgramRecompile());
+}
+
+TEST(BasicShaderTests,checkIfReloaded)
+{
+   Program program("Test9");
+   EXPECT_EQ(0,program.addVertexShader("test/testAssets/basicVert.vs"));
+   EXPECT_EQ(0,program.addFragmentShader("test/testAssets/basicFrag.fs"));
+   EXPECT_EQ(true, program.shouldProgramRecompile());
+   EXPECT_EQ(0,program.create());
+   EXPECT_EQ(false, program.shouldProgramRecompile());
+   //Flag programs as in need of recompiling.
+   FileSystem::ReloadLocator::getService()->processEvents();
+   EXPECT_EQ(true, program.shouldProgramRecompile());
+   
 }
 
 

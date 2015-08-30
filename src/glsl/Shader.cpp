@@ -17,7 +17,7 @@ Shader::~Shader()
 }
 int Shader::compile()
 {
-   isShaderCompiled=false;
+   isShaderCompiled = false;
    //Create shader ID
    if(shaderID == 0)
    {
@@ -48,10 +48,10 @@ int Shader::compile()
       return -1;
    }
 }
-
+//Mark shader as not compiled
 void Shader::reload()
 {
-   compile();
+   isShaderCompiled = false;
 }
 
 bool Shader::isCompiled()

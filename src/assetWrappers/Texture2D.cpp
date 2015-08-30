@@ -20,6 +20,12 @@ Texture2D::Texture2D(const std::string texName) : ReloadableAsset(texName),
    SOIL_free_image_data(image);
 }
 
+Texture2D::~Texture2D()
+{
+   texUnit->release();
+   bfr.unbind();
+}
+
 void Texture2D::enable(GLint samplerID)
 {
    texUnit = std::make_shared<TextureUnit>(TextureUnitManager::requestTextureUnit());

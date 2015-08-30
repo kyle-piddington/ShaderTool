@@ -35,18 +35,44 @@ int Program::addShader(std::shared_ptr<Shader> & shader, std::string shaderName,
       return -1;
    }
 }
-
+int Program::compileAllShaders()
+{
+   int okCompiled = 0;
+   if(vertShader != nullptr)
+      okCompiled |=vertShader->compile();
+   if(fragShader != nullptr)
+      okCompiled |= fragShader->compile();
+   if(geomShader != nullptr)
+      okCompiled |= geomShader->compile();
+   if(tessalationShader != nullptr)
+      okCompiled |= tessalationShader->compile();
+   return okCompiled;
+   
+}
 int Program::create()
 {
    int err = 0;
-   if(created)
+   //Already created case
+   if(created && !shouldProgramRecompile())
    {
-      LOG(WARNING) << "Program has already been created!";
+      LOG(WARNING) << "Program has already been created, and no changes are detected";
       return 0;
+   }
+   //Reloading case
+   else if(created && shouldProgramRecompile())
+   {
+      if(compileAllShaders() != 0)
+      {
+         LOG(WARNING) << "Program has been created, but could not reload. Not relinking until fixed, but will continue to function...";
+         return 0;
+      }
    }
    if(vertShader!= nullptr && vertShader->isCompiled() && fragShader!=nullptr && fragShader->isCompiled())
    {
-      shaderProgram = glCreateProgram();
+      if(!created)
+      {
+         shaderProgram = glCreateProgram();
+      }
       err |= GL_Logger::LogError("Could not create program" + name, glGetError());
       glAttachShader(shaderProgram,vertShader->getID());
       err |= GL_Logger::LogError("Could not attatch vertex shader to program" + name, glGetError());
