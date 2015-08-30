@@ -22,7 +22,8 @@ Texture2D::Texture2D(const std::string texName) : ReloadableAsset(texName),
 
 Texture2D::~Texture2D()
 {
-   texUnit->release();
+   if(texUnit != nullptr)
+      texUnit->release();
    bfr.unbind();
 }
 

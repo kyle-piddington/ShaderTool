@@ -69,10 +69,11 @@ int Program::create()
    }
    if(vertShader!= nullptr && vertShader->isCompiled() && fragShader!=nullptr && fragShader->isCompiled())
    {
-      if(!created)
+      if(created)
       {
-         shaderProgram = glCreateProgram();
+        glDeleteProgram(shaderProgram);
       }
+      shaderProgram = glCreateProgram();
       err |= GL_Logger::LogError("Could not create program" + name, glGetError());
       glAttachShader(shaderProgram,vertShader->getID());
       err |= GL_Logger::LogError("Could not attatch vertex shader to program" + name, glGetError());

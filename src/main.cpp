@@ -335,6 +335,7 @@ int main()
       V = camera.getViewMatrix();
       glUniformMatrix4fv(phongProg.getUniform("V"), 1, GL_FALSE, glm::value_ptr(V));
       glUniformMatrix4fv(phongProg.getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
+ 
       spotlight.transform().copy(camera.transform);
 
       Program::UniformStructArrayInfo lampArr = phongProg.getStructArray("pointLights");
@@ -430,6 +431,7 @@ int main()
 
 
       glfwSwapBuffers(window);
+
 
    }
    //Release textures
