@@ -61,5 +61,5 @@ void Window::run()
    {
       LOG(ERROR) << "No scene loaded in window, exiting...";
    }
-   
+
 }

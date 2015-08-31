@@ -54,9 +54,33 @@ int Program::compileAllShaders()
    if(tessalationShader != nullptr)
       okCompiled |= tessalationShader->compile();
    return okCompiled;
-   
+
 }
+
+/**
+ * Create a program. report all ok if
+ * @return [description]
+ */
 int Program::create()
+{
+   int programStatus = createProgram();
+
+   if(programStatus == -1)
+   {
+      if(!created)
+      {
+         LOG(WARNING) << "Program has been created, but could not reload. Not relinking until fixed, but will continue to function...";
+         return 0;
+      }
+      return -1;
+   }
+   else
+   {
+      return 0;
+   }
+}
+
+int Program::createProgram()
 {
    int err = 0;
    //Already created case
@@ -70,8 +94,7 @@ int Program::create()
    {
       if(compileAllShaders() != 0)
       {
-         LOG(WARNING) << "Program has been created, but could not reload. Not relinking until fixed, but will continue to function...";
-         return 0;
+         return -1;
       }
    }
    if(vertShader!= nullptr && vertShader->isCompiled() && fragShader!=nullptr && fragShader->isCompiled())
@@ -118,7 +141,7 @@ int Program::create()
       {
          return -1;
       }
-   
+      return 0;
    }
    else
    {
@@ -358,7 +381,7 @@ bool Program::shouldProgramRecompile()
 
    //If all shaders are compiled, and the program is linked, then it should not be compiled
    bool isCompiled = created;
-   isCompiled &= (vertShader == nullptr || vertShader->isCompiled());         
+   isCompiled &= (vertShader == nullptr || vertShader->isCompiled());
    isCompiled &= (fragShader == nullptr || fragShader->isCompiled());
    isCompiled &= (geomShader == nullptr || geomShader->isCompiled());
    isCompiled &= (tessalationShader == nullptr || tessalationShader->isCompiled());

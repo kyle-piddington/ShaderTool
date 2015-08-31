@@ -17,7 +17,7 @@ Shader::~Shader()
 }
 int Shader::compile()
 {
-   isShaderCompiled = false;
+   isShaderCompiled = true;
    //Create shader ID
    if(shaderID == 0)
    {
@@ -39,9 +39,12 @@ int Shader::compile()
       glCompileShader(shaderID);
       if(GL_Logger::CheckShader("Loading shader " + path + "...", shaderID) == 0)
       {
-         isShaderCompiled=true;
+         return 0;
       }
-      return 0;
+      else
+      {
+         return -1;
+      }
    }
    else
    {

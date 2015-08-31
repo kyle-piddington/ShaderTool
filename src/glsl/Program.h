@@ -150,7 +150,8 @@ private:
 
     */
    int compileAllShaders();
-
+   int createProgram();
+   
    std::string name;
    bool created;
 

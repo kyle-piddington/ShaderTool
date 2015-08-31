@@ -44,11 +44,11 @@ int main()
       return -1;
    }
    GL_Logger::LogError("Error in GLEW startup (Safe to ignore)", glGetError());
-  
+
    glfwSetKeyCallback(window, GLFWHandler::key_callback);
    glfwSetCursorPosCallback(window, GLFWHandler::mousePositionCallback);
    glfwSetMouseButtonCallback(window, GLFWHandler::mouseButtonCallback);
-   
+
    FileSystem::ReloadLocator::Initialize();
    FileSystem::ReloadLocator::provide(new AppleReloadManager());
 
@@ -61,7 +61,7 @@ int main()
    //Load and render the scene until user
    renderWindow.loadScene(scene);
    renderWindow.run();
-   
+
    delete scene;
 
    return 0;
