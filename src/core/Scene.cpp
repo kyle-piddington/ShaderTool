@@ -6,14 +6,16 @@ Scene::Scene()
 }
 Scene::~Scene()
 {
+   this->cleanup();
    for (std::vector<Program *>::iterator i = requiredPrograms.begin(); i != requiredPrograms.end(); ++i)
    {
       delete *i;
    }
 }
+
 bool Scene::canRenderScene()
 {
-   bool canRender = requiredPrograms.size() > 0;
+   bool canRender = true;
    for (std::vector<Program *>::iterator i = requiredPrograms.begin(); i != requiredPrograms.end(); ++i)
    {
       canRender &= (*i)->isCreated();
@@ -45,7 +47,10 @@ bool Scene::compilePrograms()
    return true;
 }
 
+void Scene::cleanup()
+{
 
+}
 
 Program * Scene::createProgram(std::string programName)
 {

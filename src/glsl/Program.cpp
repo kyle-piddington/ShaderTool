@@ -1,5 +1,6 @@
-#include "Program.h"
 #include "../logger/GL_Logger.h"
+#include "Program.h"
+
 #include "../io/TextLoader.h"
 #include <easyLogging++.h>
 #include "ShaderManager.h"
@@ -13,7 +14,13 @@ Program::Program(std::string name):
 {
    //No initialization yet for program
 }
-
+Program::~Program()
+{
+   if(created)
+   {
+      glDeleteProgram(shaderProgram);
+   }
+}
 int Program::addVertexShader(std::string shaderSrc)
 {
    return addShader(vertShader, shaderSrc, GL_VERTEX_SHADER);
@@ -111,6 +118,7 @@ int Program::create()
       {
          return -1;
       }
+   
    }
    else
    {

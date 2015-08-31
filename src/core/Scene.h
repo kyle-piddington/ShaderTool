@@ -2,6 +2,7 @@
 #define __SCENE_H__
 
 #include "Program.h"
+
 class Scene
 {
 public:
@@ -33,7 +34,7 @@ public:
     * Cleanup the scene before destroying data. This function is called on a shader error, or before 
     * changing scenes.
     */
-   virtual void cleanup() = 0;
+   virtual void cleanup();
    /**
     * Check to see if the scene can be rendered;
     * @return true if all programs are OK, and ready to go

@@ -1,6 +1,5 @@
 #ifndef __ERR_SCENE_H__
 #define __ERR_SCENE_H__
-
 #include "Texture2D.h"
 #include "VertexArrayObject.h"
 #include "VertexBuffer.h"

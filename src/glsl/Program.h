@@ -1,9 +1,8 @@
 #ifndef __PROGRAM_H__
-#define __PROGRAM_H__ value
+#define __PROGRAM_H__
 
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+//#include <GL/glew.h>
+//#include <GLFW/glfw3.h>
 #include <iostream>
 #include "GL_Structure.h"
 #include "Shader.h"
@@ -30,7 +29,7 @@ public:
     * Initialize the program object
     */
    Program(std::string name);
-
+   ~Program();
    /**
     * Add a vertex buffer to the program
     * @param shaderSrc String of the program source
@@ -130,7 +129,7 @@ public:
     * Create the program. Call one of the above methods before doing this. Programs with no shaders attached will throw errors.
     */
    int create();
-   
+
    /**
     * Check to see if all declared uniforms and attributes are bound.
     */
@@ -148,6 +147,7 @@ private:
    
    /**
     * Compile all shaders return 0 if ok, -1 otherwise.
+
     */
    int compileAllShaders();
 
