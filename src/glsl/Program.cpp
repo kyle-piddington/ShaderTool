@@ -4,6 +4,8 @@
 #include "../io/TextLoader.h"
 #include <easyLogging++.h>
 #include "ShaderManager.h"
+
+
 Program::Program(std::string name):
    name(name),
    vertShader(nullptr),
@@ -63,90 +65,111 @@ int Program::compileAllShaders()
  */
 int Program::create()
 {
-   int programStatus = createProgram();
+   ProgCreationInfo programStatus = createProgram();
 
-   if(programStatus == -1)
+   if(programStatus.status == ProgramStatus::LINK_ERR)
    {
-      if(!created)
+      glDeleteProgram(programStatus.program);
+      if(created)
       {
-         LOG(WARNING) << "Program has been created, but could not reload. Not relinking until fixed, but will continue to function...";
+         LOG(WARNING) << "Program could not be created, but is already running. The progam will not be replaced.";
+      }
+   }
+
+   else 
+   {
+      if(programStatus.status == ProgramStatus::OK)
+      {
+         if(created)
+         {
+            glDeleteProgram(shaderProgram);
+         }
+         shaderProgram = programStatus.program;
+         created = true;
          return 0;
       }
-      return -1;
+      else 
+      {
+         //Program could not compile, but is not going to fail
+         if (created)
+            return 0;
+         else
+            return -1;
+      }
    }
-   else
-   {
-      return 0;
-   }
+   return -1;
 }
 
-int Program::createProgram()
+Program::ProgCreationInfo Program::createProgram()
 {
+   ProgCreationInfo prog;
+   prog.program = 0;
+   prog.status = ProgramStatus::OK;
    int err = 0;
    //Already created case
    if(created && !shouldProgramRecompile())
    {
       LOG(WARNING) << "Program has already been created, and no changes are detected";
-      return 0;
+      return prog;
    }
    //Reloading case
    else if(created && shouldProgramRecompile())
    {
       if(compileAllShaders() != 0)
       {
-         return -1;
+         prog.status = ProgramStatus::COMPILE_ERR;
+         return prog;
       }
    }
    if(vertShader!= nullptr && vertShader->isCompiled() && fragShader!=nullptr && fragShader->isCompiled())
    {
-      if(created)
-      {
-        glDeleteProgram(shaderProgram);
-      }
-      shaderProgram = glCreateProgram();
+      
+      prog.program = glCreateProgram();
       err |= GL_Logger::LogError("Could not create program" + name, glGetError());
-      glAttachShader(shaderProgram,vertShader->getID());
+      glAttachShader(prog.program,vertShader->getID());
       err |= GL_Logger::LogError("Could not attatch vertex shader to program" + name, glGetError());
-      glAttachShader(shaderProgram,fragShader->getID());
+      glAttachShader(prog.program,fragShader->getID());
       err |= GL_Logger::LogError("Could not attatch fragment shader to program" + name, glGetError());
       if(geomShader!= nullptr && geomShader->isCompiled())
       {
-         glAttachShader(shaderProgram,geomShader->getID());
+         glAttachShader(prog.program,geomShader->getID());
          err |= GL_Logger::LogError("Could not attatch geometry shader to program" + name, glGetError());
 
       }
       if(tessalationShader != nullptr && tessalationShader->isCompiled())
       {
-         glAttachShader(shaderProgram, tessalationShader->getID());
+         glAttachShader(prog.program, tessalationShader->getID());
          err |= GL_Logger::LogError("Could not attatch fragment shader to program" + name, glGetError());
 
       }
       //If nothing has caused an error yet, link the program.
       if(!err)
       {
-         glLinkProgram(shaderProgram);
+         glLinkProgram(prog.program);
          err |= GL_Logger::CheckProgram("Linking program " +name, shaderProgram);
          if(err == 0)
          {
-            created = true;
-            return 0;
+            return prog;
          }
          else
          {
-            return -1;
+            prog.status = ProgramStatus::LINK_ERR;
+            return prog;
          }
 
       }
       else
       {
-         return -1;
+         prog.status = ProgramStatus::LINK_ERR;
+         return prog;
       }
-      return 0;
+
    }
    else
    {
       LOG(ERROR) << "Program "+name+" does not have a valid vertex and fragment stage.";
-      return -1;
+      prog.status = ProgramStatus::NOT_ENOUGH_SHADERS_ERR;
+      return prog;
    }
 }
 

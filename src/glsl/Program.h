@@ -7,6 +7,16 @@
 #include "GL_Structure.h"
 #include "Shader.h"
 #include <unordered_map>
+namespace ProgramStatus
+{
+  enum CreateStatus
+     {
+        OK = 0,
+        COMPILE_ERR= - 1,
+        NOT_ENOUGH_SHADERS_ERR= - 2,
+        LINK_ERR  = -3
+     };
+}
 class Program
 {
 public:
@@ -143,6 +153,14 @@ public:
 
    bool isCreated();
 private:
+
+
+     
+  struct ProgCreationInfo
+   {
+      ProgramStatus::CreateStatus status;
+      GLuint program;
+   };
    int addShader(std::shared_ptr<Shader> & whichShader, std::string shaderName, GLenum shaderType);
    
    /**
@@ -150,7 +168,7 @@ private:
 
     */
    int compileAllShaders();
-   int createProgram();
+   ProgCreationInfo createProgram();
    
    std::string name;
    bool created;
