@@ -9,18 +9,20 @@ class TestScene1 : public EmptyScene
       Program * prog = createProgram("Test program");
       prog->addVertexShader("test/testAssets/basicVert.vs");
       prog->addFragmentShader("test/testAssets/basicFrag.fs");
-      
+
    }
 };
 TEST(BasicSceneTests, testSceneCreation)
 {
    Scene * scene = new TestScene1();
-   EXPECT_EQ(false, scene->canRenderScene());  
+   //Scenes can run with no programs.
+   EXPECT_EQ(true, scene->canRenderScene());
    scene->initPrograms();
+   //Scenes must compile programs before running, if added
    EXPECT_EQ(false, scene->canRenderScene());
    scene->compilePrograms();
+   //Scenes can run after a successful first compile.
    EXPECT_EQ(true, scene->canRenderScene());
-
 
 }
 
@@ -46,7 +48,7 @@ class TestScene2 : public EmptyScene
       Program * prog = createProgram("Test Error program");
       prog->addVertexShader("test/testAssets/badVert.vs");
       prog->addFragmentShader("test/testAssets/basicFrag.fs");
-      
+
    }
 };
 TEST(BasicSceneTests, badProgramTest)

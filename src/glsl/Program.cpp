@@ -146,7 +146,7 @@ Program::ProgCreationInfo Program::createProgram()
       if(!err)
       {
          glLinkProgram(prog.program);
-         err |= GL_Logger::CheckProgram("Linking program " +name, shaderProgram);
+         err |= GL_Logger::CheckProgram("Linking program " +name, prog.program);
          if(err == 0)
          {
             return prog;
