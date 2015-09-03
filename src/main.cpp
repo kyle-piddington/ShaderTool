@@ -53,8 +53,10 @@ int main()
    FileSystem::ReloadLocator::provide(new AppleReloadManager());
 
 
+   Context * ctx = new Context(window);
    //Init scene of choice here
    Scene * scene = new ErrorScene();
+   scene->setContext(ctx);
 
    //Create a window for the program to run in
    Window renderWindow(window);
@@ -63,6 +65,6 @@ int main()
    renderWindow.run();
 
    delete scene;
-
+   delete ctx;
    return 0;
 }

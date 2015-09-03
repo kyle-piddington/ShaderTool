@@ -2,7 +2,7 @@
 #define __SCENE_H__
 
 #include "Program.h"
-
+#include "Context.h"
 class Scene
 {
 public:
@@ -60,9 +60,16 @@ public:
     */
    Program * createProgram(std::string programName);
 
+   /**
+    * Set the context of the window (Done automatically)
+    */
+   void setContext(Context * ctx);
+
+   Context * getContext();
 private:
 
    std::vector<Program *> requiredPrograms;
+   Context * ctx;
 
 };
 #endif

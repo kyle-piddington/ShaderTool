@@ -21,6 +21,8 @@ Window::~Window()
 void Window::loadScene(Scene * scene)
 {
    currentScene = scene;
+   //Copy context pointer
+   errorScene->setContext(currentScene->getContext());
 }
 void Window::run()
 {

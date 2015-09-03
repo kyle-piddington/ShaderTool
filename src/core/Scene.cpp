@@ -58,3 +58,13 @@ Program * Scene::createProgram(std::string programName)
    requiredPrograms.push_back(prog);
    return prog;
 }
+
+Context * Scene::getContext()
+{
+   return ctx;
+}
+
+void Scene::setContext(Context * context)
+{
+   this->ctx = context;
+}
