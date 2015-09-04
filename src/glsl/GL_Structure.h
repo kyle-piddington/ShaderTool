@@ -4,6 +4,9 @@
 #include <string>
 #include <GLFW/glfw3.h>
 #include <unordered_map>
+/**
+ * GL_Structure maps a GLSL structure to a series of attribute names, allowing for easy querying.
+ */
 class GL_Structure
 {
 private:

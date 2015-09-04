@@ -17,9 +17,16 @@ namespace ProgramStatus
         LINK_ERR  = -3
      };
 }
+
+/**
+ * A program represents the current state of a GLSL shader program. The program class
+ * provides ways to query, access, and set parameters of a GLSL shader program.
+ * The program class also handles compiling a set of shaders in order to for ma complete program.
+ */
 class Program
 {
 public:
+
    struct UniformArrayInfo
    {
       std::string baseName;
@@ -39,6 +46,9 @@ public:
     * Initialize the program object
     */
    Program(std::string name);
+   /**
+    * Remove the program object
+    */
    ~Program();
    /**
     * Add a vertex buffer to the program
@@ -145,22 +155,50 @@ public:
     */
    bool checkBoundVariables();
 
+   /**
+    * Enable the program as the active GLFW program
+    */
    void enable();
 
+   /**
+    * Disable this program as the active GLFW program.
+    * (This function only needs to be called for the last program, due to how the opengl state machine works)
+    */
    void disable();
 
+   /**
+    * Chech the program's shaders to see if any changes have occurred.
+    * @return true if the program should recompile
+    */
    bool shouldProgramRecompile();
 
+   /**
+    * Check to see if the program exists on the GPU (Has been created once).
+    * After an initial compile, this function will return true for the remainder of the program's lifetime
+    * @return true if the program has compiled at least once.
+    */
    bool isCreated();
 private:
 
 
-     
+  /**
+   * ProgCreationInfo is a tuple containing data regarding a program being compiled.
+   * The program integer will be nonzero if the program succeeded at compiling it's shaders
+   * the status may indicate a link failure. Appropriate action will be taken in create() to deal with these errors
+   */
   struct ProgCreationInfo
    {
       ProgramStatus::CreateStatus status;
       GLuint program;
    };
+
+   /**
+    * Addd a shader to the program
+    * @param whichShader the Shader program to add
+    * @param shaderName the name of the shader, for print out purposes
+    * @param shaderType Indicates if this shader is a vertex, fragment, geometry, tessalation, or other.
+    * @return 0 if OK, -1 otherwise.
+    */
    int addShader(std::shared_ptr<Shader> & whichShader, std::string shaderName, GLenum shaderType);
    
    /**
@@ -168,6 +206,11 @@ private:
 
     */
    int compileAllShaders();
+
+   /**
+    * Create and link a shader program.
+    * @return a tuple containing the program's ID, and the status of the program.
+    */
    ProgCreationInfo createProgram();
    
    std::string name;

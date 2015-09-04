@@ -5,6 +5,13 @@
 #include "Context.h"
 class Scene
 {
+  /**
+   * The Scene interface provides a quick API to manage a standalone opengl application.
+   * The scene's lifetime is managed by Window. The scene will be constructed, then initPrograms and initialBind will be called.
+   * Render and Update will be called continuously until a program change occurs. At that point, the scene will recall initialBind if compilation is successful.
+   * The loop continues until Window decides to stop rendering the scene. At that point, cleanup and the destructor are called.
+   * Consider using EmptyScene as a staring point for building scenes.
+   */
 public:
    Scene();
    virtual ~Scene();
@@ -65,6 +72,10 @@ public:
     */
    void setContext(Context * ctx);
 
+   /**
+    * Retrieve the context of the scene
+    * @return the current context.
+    */
    Context * getContext();
 private:
 

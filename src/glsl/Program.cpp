@@ -21,7 +21,9 @@ Program::~Program()
    if(created)
    {
       glDeleteProgram(shaderProgram);
+
    }
+     
 }
 int Program::addVertexShader(std::string shaderSrc)
 {

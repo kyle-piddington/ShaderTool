@@ -4,7 +4,8 @@
 #include "Scene.h"
 /**
  * A scene starting point with no gemoetry, no initialization
- * and empty implementations of Scene's virtual methods
+ * and empty implementations of Scene's virtual methods. Provides a good starting point for other scenes
+ * that do not need much interaction 
  */
 class EmptyScene : public Scene
 {
@@ -31,7 +32,9 @@ public:
     * Update the scene. this function is called every frame
     */
    virtual void update();
-   
+   /**
+    * Cleanup any excess memory of the scene. This is called before the destructor.
+    */
    virtual void cleanup();
  
 private:

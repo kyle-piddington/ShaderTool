@@ -1,6 +1,10 @@
 #ifndef __RELOADABLE_ASSET_H__
 #define __RELOADABLE_ASSET_H__ value
 #include <string>
+/**
+ * The reloadableAsset interface allows assets to be reloaded when any change occurs. 
+ * Any changes to the assets will cause a reload, effectivly allowing live editing to occur.
+ */
 class ReloadableAsset
 {
    public:

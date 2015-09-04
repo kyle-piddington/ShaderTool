@@ -24,10 +24,26 @@ public:
     * Disable the texture on the shader
     */
    void disable();
+   /**
+    * Get the width of the texture
+    * @return the width, in pixels.
+    */
    int getWidth();
+   /**
+    * Get the height of the texture
+    * @return the height, in pixels.
+    */
    int getHeight();
+   /**
+    * Get the name of the texture
+    * @return the path to the texture
+    */
    const std::string getName();
    
+   /**
+    * Reload this texture. Implemented for ReloadableAsset.
+    * Calling Reload will cauase this texture to be pushed onto the GPU.
+    */
    void reload();
    
 

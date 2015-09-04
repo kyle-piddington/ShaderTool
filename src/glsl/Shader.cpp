@@ -13,7 +13,6 @@ isShaderCompiled(false)
 
 Shader::~Shader()
 {
-
 }
 int Shader::compile()
 {

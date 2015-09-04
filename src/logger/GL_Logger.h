@@ -16,7 +16,13 @@ public:
     * @return             0 if OK, -1 otherwise
     */
    static int CheckShader(std::string description, GLuint shader);
-   static int CheckProgram(std::string description, GLuint shader);
+   /**
+    * Check the status of a program
+    * @param Description Description of the action before this log
+    * @param	program 	the program's ID on the GPU.
+    * @return	0 of OK, -1 otherwise.
+    */
+   static int CheckProgram(std::string description, GLuint program);
 
 };
 #endif

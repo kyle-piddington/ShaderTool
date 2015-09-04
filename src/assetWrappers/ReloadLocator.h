@@ -4,6 +4,10 @@
 #include "NullReloadManager.h"
 namespace FileSystem
 {
+  /**
+   * ReloadLocator follows the serviceLocator pattern to provide access to a file system reloader.
+   * Reloadlocator will either return a fully featured reloading service, or a placeholder if none have been provided.
+   */
    class ReloadLocator
    {
    public:

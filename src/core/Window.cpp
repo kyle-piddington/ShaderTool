@@ -44,8 +44,10 @@ void Window::run()
 
          if(currentScene->shouldReloadScene())
          {
-            currentScene->compilePrograms();
-            currentScene->initialBind();
+            if(currentScene->compilePrograms())
+            {
+               currentScene->initialBind();
+            }
          }
          if(currentScene->canRenderScene())
          {
