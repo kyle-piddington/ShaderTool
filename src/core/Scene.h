@@ -13,7 +13,7 @@ class Scene
    * Consider using EmptyScene as a staring point for building scenes.
    */
 public:
-   Scene();
+   Scene(Context * ctx = nullptr);
    virtual ~Scene();
    /**
     * Initialize the programs needed by this scene.

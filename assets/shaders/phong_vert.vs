@@ -11,6 +11,7 @@ uniform mat3 N;
 out vec4 fragPosition;
 out vec3 fragNor;
 
+
 void main()
 {
    gl_Position = P * V * M *  vec4(position, 1.0);

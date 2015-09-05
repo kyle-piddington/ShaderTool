@@ -309,7 +309,12 @@ int main()
                  dirLightStruct.get("diffuse"),
                  dirLightStruct.get("specular"));
 
-   spotlight.transform().copy(camera.transform);
+  camera.setPosition(glm::vec3(0,0,5));
+
+   dirLight.bind(dirLightStruct.get("direction"),
+                 dirLightStruct.get("ambient"),
+                 dirLightStruct.get("diffuse"),
+                 dirLightStruct.get("specular"));
 
    while(!glfwWindowShouldClose(window) && programsOK)
    {

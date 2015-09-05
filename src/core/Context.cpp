@@ -6,15 +6,15 @@ window(window)
     glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
 }
 
-GLFWwindow * Context::getWindow()
+GLFWwindow * Context::getWindow() const
 {
    return window;
 }
-int Context::getWindowWidth()
+int Context::getWindowWidth() const
 {
    return windowWidth;
 }
-int Context::getWindowHeight()
+int Context::getWindowHeight() const
 {
    return windowHeight;
 }

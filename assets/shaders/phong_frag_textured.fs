@@ -95,7 +95,7 @@ struct FlashLight{
    vec3  direction;
    float cutOff;
    float outerCutOff;
-   sampler2D mask;
+   
 
    float constant;
    float linear;
@@ -133,7 +133,7 @@ vec3 CalcSpotLight(FlashLight light,  vec3 normal, vec3 position, vec3 viewDir)
    specular *= intensity;
 
    vec3 circleCenter = lightPosView + lightDirView * length(lightPosView - position)*theta;
-
+   /*
    float maskCosTheta = ((circleCenter.x - position.x)/length(circleCenter - position));
    float maskSinTheta = ((circleCenter.y - position.y)/length(circleCenter - position));
    float maskR = length(circleCenter - position);
@@ -141,6 +141,7 @@ vec3 CalcSpotLight(FlashLight light,  vec3 normal, vec3 position, vec3 viewDir)
    vec3 lightMask = texture(light.mask,vec2(maskR * maskCosTheta, maskR * maskSinTheta)*0.5 + vec2(0.5)).xyz;
    diffuse *= lightMask;
    specular *= lightMask;
+   */
    float dist    = length(light.position - fragPos);
    float attenuation = 1.0f / (light.constant + light.linear * dist +
              light.quadratic * (dist * dist));

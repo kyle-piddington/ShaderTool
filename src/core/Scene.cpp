@@ -1,8 +1,9 @@
 #include "Scene.h"
 
-Scene::Scene()
+Scene::Scene(Context * context)
 {
-
+   if(context != nullptr)
+      ctx = context;
 }
 Scene::~Scene()
 {
