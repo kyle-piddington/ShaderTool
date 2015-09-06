@@ -1,49 +1,15 @@
-#include "VertexArrayObject.h"
-#include "GL_Structure.h"
-#include <glm/glm.hpp>
-#include "Scene.h"
-#include "Camera.h"
-#include "Spotlight.h"
-#include "Light.h"
-#include "VertexBuffer.h"
-#include "Light.h"
-#include "TexturedMaterial.h"
-#include "DirectionalLight.h"
-#include "Material.h"
+#include "BoxScene.h"
 #include "Mouse.h"
 #include "Keyboard.h"
 #include <glm/gtc/type_ptr.hpp>
+
 #define NUM_POINT_LIGHTS 4
 #define DEG2RAD(angleDegrees) (angleDegrees * M_PI / 180.0)
 
 
-class BoxScene : public Scene
-{
-   public:
-      BoxScene(Context * ctx);
-      virtual ~BoxScene();
-      virtual void initPrograms();
-      virtual void initialBind();
-      virtual void render();
-      virtual void update();
-      virtual void cleanup();
-   private:
-      Camera * camera;
 
-      Program * phongProg;
-      Program * lampProg;
-      GL_Structure spotlightStruct = Spotlight::getStruct();
-      GL_Structure lampStruct = Light::getStruct();
-      GL_Structure dirLightStruct = DirectionalLight::getStruct();
-      GL_Structure matStruct = Material::getStruct();
-
-      DirectionalLight dirLight;
-      TexturedMaterial cubeMaterial;
-      Light lamp;
-      VertexArrayObject boxVao, lightVao;
-      Spotlight spotlight;
-
-};
+float pitch = 0;
+float yaw = 0;
 
 //Helper functions
 glm::mat3 createNormalMatrix(const glm::mat4 & view, const glm::mat4 & model)
@@ -53,8 +19,6 @@ glm::mat3 createNormalMatrix(const glm::mat4 & view, const glm::mat4 & model)
 
 void handleCameraInput(Camera & camera, Context * ctx)
 {
-   static float pitch = 0;
-   static float yaw = 0;
 
    const float Cam_Speed = 1.0/30.0;
    const float Cam_Rot_Speed = M_PI;
@@ -78,8 +42,9 @@ void handleCameraInput(Camera & camera, Context * ctx)
    }
    if(Mouse::pressed(GLFW_MOUSE_BUTTON_LEFT))
    {
-      rotate.x = (Mouse::getLastY() - Mouse::getY())/ctx->getWindowHeight()/2.0 * Cam_Rot_Speed;
-      rotate.y = (Mouse::getLastX() - Mouse::getX())/ctx->getWindowWidth()/2.0 * Cam_Rot_Speed;
+
+      rotate.x = (Mouse::getLastY() - Mouse::getY())/(float)ctx->getWindowHeight()/2.0 * Cam_Rot_Speed;
+      rotate.y = (Mouse::getLastX() - Mouse::getX())/(float)ctx->getWindowWidth()/2.0 * Cam_Rot_Speed;
       pitch += rotate.x;
       yaw += rotate.y;
       rotate.z = 0;
@@ -187,13 +152,7 @@ BoxScene::BoxScene(Context * ctx) : Scene(ctx),
     -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
     -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
   };
-  VertexBuffer vbo;
   vbo.setData(vertices, 36*8);
-
-  boxVao.addAttribute(phongProg->getAttribute("position"),vbo,8*sizeof(GLfloat));
-  boxVao.addAttribute(phongProg->getAttribute("normal"),vbo,8*sizeof(GLfloat),3*sizeof(GLfloat));
-  boxVao.addAttribute(phongProg->getAttribute("vertTexCoords"),vbo,8*sizeof(GLfloat),6*sizeof(GLfloat),2);
-  lightVao.addAttribute(this->phongProg->getAttribute("position"),vbo, 8*sizeof(GLfloat));
 
   phongProg = createProgram("Phong Shade Program");
   lampProg = createProgram("Lamp display program");
@@ -239,22 +198,30 @@ void BoxScene::initialBind()
    lampProg->addUniform("debugColor");
 
    //Scene setup
-   glEnable(GL_DEPTH_TEST);
-   camera->setPosition(glm::vec3(0,0,5));
+   //
+   //
  
    phongProg->enable();
+   boxVao.addAttribute(phongProg->getAttribute("position"),vbo,8*sizeof(GLfloat));
+   boxVao.addAttribute(phongProg->getAttribute("normal"),vbo,8*sizeof(GLfloat),3*sizeof(GLfloat));
+   boxVao.addAttribute(phongProg->getAttribute("vertTexCoords"),vbo,8*sizeof(GLfloat),6*sizeof(GLfloat),2);
+   
+   glEnable(GL_DEPTH_TEST);
+   camera->setPosition(glm::vec3(0,0,5));
    dirLight.bind(dirLightStruct.get("direction"),
                  dirLightStruct.get("ambient"),
                  dirLightStruct.get("diffuse"),
                  dirLightStruct.get("specular"));
 
 
-
-
+   lampProg->enable();
+   lightVao.addAttribute(lampProg->getAttribute("position"),vbo, 8*sizeof(GLfloat));
    glClearColor(0.75f, 0.52f, 0.3f, 1.0f);
 }
 void BoxScene::render()
 {
+   //Clear the current buffers
+   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
    glm::mat4 P,M,V;
    glm::mat3 NORM;
@@ -321,6 +288,7 @@ void BoxScene::render()
 
    );
    //Draw 10 cubes
+   
    Transform cubeTransform;
    boxVao.bind();
 
@@ -334,10 +302,11 @@ void BoxScene::render()
         glUniformMatrix4fv(phongProg->getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
         glDrawArrays(GL_TRIANGLES,0,36);
       }
+    cubeMaterial.unbind();
 
-
-
+   
    //Draw  lamps
+   
    lampProg->enable();
    lightVao.bind();
    glUniformMatrix4fv(lampProg->getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
@@ -352,12 +321,14 @@ void BoxScene::render()
         glUniformMatrix4fv(lampProg->getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
         glDrawArrays(GL_TRIANGLES,0,36);
    }
+   
 
 
 }
 void BoxScene::update()
 {
    handleCameraInput(*camera,getContext());
+   //std::cout << camera->transform.getPosition().x<< std::endl;
 }
 void BoxScene::cleanup()
 {

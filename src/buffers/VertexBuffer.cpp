@@ -11,10 +11,13 @@ VertexBuffer::VertexBuffer():
 VertexBuffer::~VertexBuffer()
 {
    /**
-    * Deconstruct later if handled by VAO.
+    * Deconstruct later if handled by VAO, this needs some work.
+    * ARC style counting could help though!
     */
+   /*
    glDeleteBuffers(1,&vboID);
    GL_Logger::LogError("Deinitialize VBO", glGetError());
+   */
 }
 
 void VertexBuffer::setData(const float * vertices, int size, GLenum usage)

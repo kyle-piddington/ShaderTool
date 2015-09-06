@@ -56,6 +56,7 @@ void Window::run()
          }
          else
          {
+
             errorScene->render();
          }
          glfwSwapBuffers(currentWindow);
