@@ -162,7 +162,7 @@ BoxScene::BoxScene(Context * ctx) : Scene(ctx),
 
 BoxScene::~BoxScene()
 {
-
+   delete camera;
 }
 void BoxScene::initPrograms()
 {
@@ -332,5 +332,5 @@ void BoxScene::update()
 }
 void BoxScene::cleanup()
 {
-   delete camera;
+
 }

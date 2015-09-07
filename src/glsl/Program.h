@@ -1,4 +1,4 @@
-#ifndef __PROGRAM_H__
+  #ifndef __PROGRAM_H__
 #define __PROGRAM_H__
 
 //#include <GL/glew.h>
@@ -12,6 +12,7 @@ namespace ProgramStatus
   enum CreateStatus
      {
         OK = 0,
+        NOCHANGE = 1,
         COMPILE_ERR= - 1,
         NOT_ENOUGH_SHADERS_ERR= - 2,
         LINK_ERR  = -3

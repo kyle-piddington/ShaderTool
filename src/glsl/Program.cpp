@@ -68,16 +68,19 @@ int Program::compileAllShaders()
 int Program::create()
 {
    ProgCreationInfo programStatus = createProgram();
-
+   if(programStatus.status == ProgramStatus::NOCHANGE)
+   {
+      return 0;
+   }
    if(programStatus.status == ProgramStatus::LINK_ERR)
    {
       glDeleteProgram(programStatus.program);
       if(created)
       {
          LOG(WARNING) << "Program could not be created, but is already running. The progam will not be replaced.";
+         return 0;
       }
    }
-
    else 
    {
       if(programStatus.status == ProgramStatus::OK)
@@ -112,6 +115,7 @@ Program::ProgCreationInfo Program::createProgram()
    if(created && !shouldProgramRecompile())
    {
       LOG(WARNING) << "Program has already been created, and no changes are detected";
+      prog.status = ProgramStatus::NOCHANGE;
       return prog;
    }
    //Reloading case
