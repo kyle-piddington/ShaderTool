@@ -36,7 +36,8 @@ INCLUDE_DIRECTORIES(${GLFW_INCLUDE_DIRS})
 
 FIND_LIBRARY(GLEW_LIB GLEW)
 FIND_LIBRARY(SOIL_LIB SOIL)
-list(APPEND EXTRA_LIBS ${GLFW_LIBRARIES} ${GLEW_LIB} ${SOIL_LIB})
+FIND_LIBRARY(ASSIMP_LIB assimp)
+list(APPEND EXTRA_LIBS ${GLFW_LIBRARIES} ${ASSIMP_LIB} ${GLEW_LIB} ${SOIL_LIB})
 
 IF(APPLE)
    FIND_LIBRARY(OpenGL_LIBRARY OpenGL)
@@ -71,7 +72,7 @@ include_directories(${GTEST_INCLUDE_DIRS})
 file(GLOB_RECURSE TEST_SRC_FILES "test/*.cpp")
 
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g ")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g  ")
 add_executable(${GraphicsEngine_Test} ${GraphicsEngine_Test_SOURCES} ${TEST_SRC_FILES})
 if (APPLE)
   target_link_libraries(${GraphicsEngine_Test} "-framework OpenGL -framework CoreFoundation -framework CoreServices")

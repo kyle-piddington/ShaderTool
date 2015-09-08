@@ -5,8 +5,10 @@
 #include <GL/glew.h>
 #include <string>
 #include "ReloadableAsset.h"
+
 class Texture2D : public ReloadableAsset
 {
+  
 public:
    /**
     * Create an RGB texture. (No alpha support, yet...)

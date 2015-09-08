@@ -27,7 +27,8 @@ public:
     * @param vertices The vertices to send to the GPU
     * @param usage    Enum for drawing. Use GL_STATIC_DRAW, GL_DYNAMIC_DRAW< or GL_STREAM_DRAW.
     */
-   void setData(const std::vector<float> & vertices, GLenum usage = GL_STATIC_DRAW);
+   template<typename T>
+   void setData(const std::vector<T> & vertices, GLenum usage = GL_STATIC_DRAW);
 
    /**
     * Bind this buffer to the GPU. Be sure to unbind it later!

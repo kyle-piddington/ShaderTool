@@ -168,6 +168,6 @@ void main()
    }
    vec3 emission = vec3(texture(material.emission,fragTexCoords));
    result += emission;
-
+   //result += vec(0.5);
    color = vec4(result,1.0);
 }
