@@ -14,6 +14,8 @@ Program::Program(std::string name):
    tessalationShader(nullptr),
    created(false)
 {
+   emptyUniformArray.isValid = false;
+   emptyStructUniformArray.isValid = false;
    //No initialization yet for program
 }
 Program::~Program()
@@ -342,6 +344,7 @@ int Program::addUniformArray(std::string name, int len)
       UniformArrayInfo info;
       info.baseName = name;
       info.locations = locs;
+      info.isValid = true;
       arrays[name] = info;
       return 0;
    }
@@ -375,6 +378,7 @@ int Program::addStructArray(std::string name, int len, GL_Structure & template_s
       }
       else
       {
+         info.isValid = true;
          structArrays[name] = info;
          return 0;
       }
@@ -385,14 +389,26 @@ int Program::addStructArray(std::string name, int len, GL_Structure & template_s
    }
 }
 
-const Program::UniformArrayInfo & Program::getArray(std::string name)
+const Program::UniformArrayInfo  & Program::getArray(std::string name)
 {
-  return arrays[name];
+  
+  if(arrays.find(name) != arrays.end())
+     return arrays[name];
+   else
+   {
+     
+      return emptyUniformArray;
+   }
 }
 
-const Program::UniformStructArrayInfo & Program::getStructArray(std::string name)
+const Program::UniformStructArrayInfo &  Program::getStructArray(std::string name)
 {
-  return structArrays[name];
+  if(structArrays.find(name) != structArrays.end())
+     return structArrays[name];
+  else
+  {
+     return emptyStructUniformArray;
+  }
 }
 
 void Program::enable()

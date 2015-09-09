@@ -13,13 +13,17 @@ struct Vertex
    glm::vec2 texCoords;
 };
 
+/**
+ * Assimp mesh container
+ * A few assumptions are made about the programs here.
+ */
 class Mesh{
 public:
    std::vector<Vertex> vertices;
-   std::vector<GLuint> indicies;
-   std::vector<Texture2D> textures;
+   std::vector<GLuint> indices;
+   std::vector<std::shared_ptr<Texture2D>> textures;
 
-   Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<Texture2D> textures);
+   Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<std::shared_ptr<Texture2D>> textures);
    void render(Program & prog);
 
 

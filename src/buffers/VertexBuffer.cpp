@@ -36,22 +36,7 @@ void VertexBuffer::setData(const float * vertices, int size, GLenum usage)
    }
 }
 
-template<typename T>
-void VertexBuffer::setData(const std::vector<T>  & vertices ,  GLenum usage)
-{
-   if(vboID > 0)
-   {
-      LOG(ERROR) << "Vertex buffer not initialized";
-   }
-   else
-   {
-      glBindBuffer(GL_ARRAY_BUFFER, vboID);
-      glBufferData(GL_ARRAY_BUFFER, sizeof(T) * vertices.size(), &vertices[0], usage);
-      GL_Logger::LogError("Bind data to Vertex Buffer", glGetError());
-      glBindBuffer(GL_ARRAY_BUFFER, 0);
-      vertsLen = vertices.size();
-   }
-}
+
 
 
 void VertexBuffer::bind()

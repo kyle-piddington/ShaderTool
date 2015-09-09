@@ -34,6 +34,7 @@ public:
       std::vector<GLint> locations;
       GLint operator[](std::size_t idx){return locations[idx];}
       size_t size() const {return locations.size();}
+      bool isValid;
    };
    struct UniformStructArrayInfo
    {
@@ -41,8 +42,11 @@ public:
       std::vector<GL_Structure> structs;
       GL_Structure const &operator[](std::size_t idx){return structs[idx];}
       size_t size() const {return structs.size();}
+      bool isValid;
 
    };
+
+
    /**
     * Initialize the program object
     */
@@ -234,6 +238,8 @@ private:
    std::unordered_map<std::string, UniformStructArrayInfo> structArrays;
 
 
+   UniformArrayInfo emptyUniformArray;
+   UniformStructArrayInfo emptyStructUniformArray;
 
 
 };

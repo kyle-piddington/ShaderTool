@@ -6,9 +6,18 @@
 #include <string>
 #include "ReloadableAsset.h"
 
+namespace TextureType
+{
+  enum type
+  {
+    NONE = -1,
+    DIFFUSE = 0,
+    SPECULAR = 1
+  };
+}
 class Texture2D : public ReloadableAsset
 {
-  
+
 public:
    /**
     * Create an RGB texture. (No alpha support, yet...)
@@ -47,6 +56,10 @@ public:
     * Calling Reload will cauase this texture to be pushed onto the GPU.
     */
    void reload();
+
+   void setTextureType(TextureType::type texType);
+
+   TextureType::type textureType();
    
 
 
@@ -57,6 +70,7 @@ private:
    int width;
    int height;
    TextureBuffer bfr;
+   TextureType::type texType;
    std::shared_ptr<TextureUnit> texUnit;
 
 };

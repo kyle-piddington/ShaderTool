@@ -6,6 +6,8 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <vector>
+#include "../logger/GL_Logger.h"
+#include <easylogging++.h>
 class VertexBuffer
 {
 public:
@@ -28,8 +30,21 @@ public:
     * @param usage    Enum for drawing. Use GL_STATIC_DRAW, GL_DYNAMIC_DRAW< or GL_STREAM_DRAW.
     */
    template<typename T>
-   void setData(const std::vector<T> & vertices, GLenum usage = GL_STATIC_DRAW);
-
+   void setData(const std::vector<T>  & vertices ,  GLenum usage = GL_STATIC_DRAW)
+   {
+      if(vboID > 0)
+      {
+         LOG(ERROR) << "Vertex buffer not initialized";
+      }
+      else
+      {
+         glBindBuffer(GL_ARRAY_BUFFER, vboID);
+         glBufferData(GL_ARRAY_BUFFER, sizeof(T) * vertices.size(), &vertices[0], usage);
+         GL_Logger::LogError("Bind data to Vertex Buffer", glGetError());
+         glBindBuffer(GL_ARRAY_BUFFER, 0);
+         vertsLen = vertices.size();
+      }
+   }
    /**
     * Bind this buffer to the GPU. Be sure to unbind it later!
     */

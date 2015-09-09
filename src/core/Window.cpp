@@ -41,7 +41,7 @@ void Window::run()
          glfwPollEvents();
          //Update the input handler
          GLFWHandler::update();
-
+         
          if(currentScene->shouldReloadScene())
          {
             if(currentScene->compilePrograms())
@@ -56,7 +56,6 @@ void Window::run()
          }
          else
          {
-
             errorScene->render();
          }
          glfwSwapBuffers(currentWindow);
