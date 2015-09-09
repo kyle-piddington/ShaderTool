@@ -51,7 +51,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
    vec3 diffuse = vec3(0.0);
    for(int diffTex = 0; diffTex < numDiffuseTextures; diffTex++)
    {
-      ambient += light.ambient * vec3(texture(diffuseTextures[diffTex],fragTexCoords));
+      ambient +=  light.ambient * vec3(texture(diffuseTextures[diffTex],fragTexCoords));
       diffuse +=  light.diffuse * diff * vec3(texture(diffuseTextures[diffTex],fragTexCoords));
    }
    vec3 specular = vec3(0.0);
@@ -60,7 +60,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
       specular += light.specular * spec * vec3(texture(specularTextures[specTex],fragTexCoords));
    }
    
-   float dist    = length(light.position - fragPos);
+   float dist    = length(lightPosView - fragPos);
    float attenuation = 1.0f / (light.constant + light.linear * dist +
              light.quadratic * (dist * dist));
 

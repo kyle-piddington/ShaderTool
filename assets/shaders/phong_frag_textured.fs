@@ -53,7 +53,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
    vec3 diffuse  =  light.diffuse * diff * vec3(texture(material.diffuse,fragTexCoords));
    vec3 specular = light.specular * spec * vec3(texture(material.specular,fragTexCoords));
    
-   float dist    = length(light.position - fragPos);
+   float dist    = length(lightPosView - fragPos);
    float attenuation = 1.0f / (light.constant + light.linear * dist +
              light.quadratic * (dist * dist));
 
@@ -142,7 +142,7 @@ vec3 CalcSpotLight(FlashLight light,  vec3 normal, vec3 position, vec3 viewDir)
    diffuse *= lightMask;
    specular *= lightMask;
    */
-   float dist    = length(light.position - fragPos);
+   float dist    = length(lightPosView - fragPos);
    float attenuation = 1.0f / (light.constant + light.linear * dist +
              light.quadratic * (dist * dist));
 
