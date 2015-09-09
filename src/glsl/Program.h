@@ -40,7 +40,7 @@ public:
    {
       std::string baseName;
       std::vector<GL_Structure> structs;
-      GL_Structure const &operator[](std::size_t idx){return structs[idx];}
+      GL_Structure const &operator[](std::size_t idx) const{return structs[idx];}
       size_t size() const {return structs.size();}
       bool isValid;
 
@@ -121,7 +121,7 @@ public:
      * @param struct the structure
      * @return 0 if OK
      */
-    int addStructArray(std::string arrName, int len, GL_Structure & glStruct);
+    int addStructArray(std::string arrName, int len, GL_Structure  glStruct);
 
     /**
      * Get an array from the program

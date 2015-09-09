@@ -41,7 +41,8 @@ void Texture2D::enable(GLint samplerID)
 }
 void Texture2D::disable()
 {
-   texUnit->release();
+   if(texUnit != nullptr)
+      texUnit->release();
    bfr.unbind();
    texUnit = nullptr;
 }

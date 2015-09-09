@@ -351,7 +351,7 @@ int Program::addUniformArray(std::string name, int len)
 
 }
 
-int Program::addStructArray(std::string name, int len, GL_Structure & template_struct)
+int Program::addStructArray(std::string name, int len, GL_Structure  template_struct)
 {
    if(len > 0)
    {
@@ -425,7 +425,7 @@ bool Program::shouldProgramRecompile()
 {
 
    //If all shaders are compiled, and the program is linked, then it should not be compiled
-   bool isCompiled = created;
+   bool isCompiled = true;
    isCompiled &= (vertShader == nullptr || vertShader->isCompiled());
    isCompiled &= (fragShader == nullptr || fragShader->isCompiled());
    isCompiled &= (geomShader == nullptr || geomShader->isCompiled());

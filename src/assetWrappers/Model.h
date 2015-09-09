@@ -14,15 +14,15 @@ public:
    Model(std::string path);
    void render(Program & prog);
 private:
-   std::vector<Mesh> meshes;
+   std::vector< std::shared_ptr<Mesh> > meshes;
    std::string directory;
    void loadModel(std::string path);
    void processNode(aiNode * node, const aiScene * scene);
-   Mesh processMesh(aiMesh * mesh, const aiScene * scene);
-   std::vector<Texture> loadTextureMaterials(
+   std::shared_ptr<Mesh> processMesh(aiMesh * mesh, const aiScene * scene);
+   std::vector<std::shared_ptr<Texture2D> > loadMaterialTextures(
       aiMaterial * mat, aiTextureType type,
-      std::string typeName);
-   
+      TextureType::type texType);
+
 
 
 };

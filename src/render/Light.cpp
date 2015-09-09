@@ -1,9 +1,9 @@
 #include "Light.h"
 #include <glm/gtc/type_ptr.hpp>
 std::vector<Light::attenuationStruct> Light::attenuationTable;
-  
 
-//Static setup of attenuationTable table. Values taken from http://www.ogre3d.org/tikiwiki/tiki-index.php?page=-Point+Light+Attenuation 
+
+//Static setup of attenuationTable table. Values taken from http://www.ogre3d.org/tikiwiki/tiki-index.php?page=-Point+Light+Attenuation
 void Light::initializeAttenuationTable()
 {
    Light::attenuationTable.push_back(attenuationStruct(7,0.7,1.8));
@@ -97,5 +97,17 @@ void Light::bind(GLint posLoc, GLint ambLoc, GLint diffLoc, GLint specLoc, GLint
    {
      glUniform1f(quadAtten,currentAttenuation.quadratic);
    }
-   
+
+}
+
+void Light::bind(const GL_Structure & lightStruct)
+{
+   this->bind(
+      lightStruct["position"],
+      lightStruct["ambient"],
+      lightStruct["diffuse"],
+      lightStruct["specular"],
+      lightStruct["constant"],
+      lightStruct["linear"],
+      lightStruct["quadratic"]);
 }

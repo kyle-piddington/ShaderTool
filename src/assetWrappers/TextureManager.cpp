@@ -1,9 +1,9 @@
 #include "TextureManager.h"
 std::unordered_map<std::string, std::shared_ptr<Texture2D>> TextureManager::textures;
 
-std::shared_ptr<Texture2D> getTexture(std::string name)
+std::shared_ptr<Texture2D> TextureManager::getTexture(std::string name)
 {
-   std::shared_ptr<Shader> ret = nullptr;
+   std::shared_ptr<Texture2D> ret = nullptr;
    auto preloadedTexture = textures.find(name);
    if(preloadedTexture != textures.end())
    {
@@ -11,7 +11,7 @@ std::shared_ptr<Texture2D> getTexture(std::string name)
    }
    else
    {
-      ret = std::shared_ptr(new Texture2D(name));
+      ret = std::shared_ptr<Texture2D>(new Texture2D(name));
       textures[name] = ret;
    }
    return ret;

@@ -1,4 +1,5 @@
 #include "Mesh.h"
+#include "GL_Logger.h"
 Mesh::Mesh(std::vector<Vertex> vertices,
            std::vector<GLuint> indices,
             std::vector<std::shared_ptr<Texture2D>> textures):
@@ -6,6 +7,7 @@ Mesh::Mesh(std::vector<Vertex> vertices,
    indices(indices),
    textures(textures)
    {
+
       setupMesh();
    }
 
@@ -37,21 +39,25 @@ void Mesh::render(Program & program)
    {
       if((*i)->textureType() == TextureType::DIFFUSE)
       {
-         if(diffuseTextures.size() < numDiffuseTextures)
+         if(numDiffuseTextures < diffuseTextures.size())
          {
             (*i)->enable(diffuseTextures[numDiffuseTextures++]);
          }
       }
       else if((*i)->textureType() == TextureType::SPECULAR)
       {
-         if(specularTextures.size() < numSpecularTextures)
+         if(numSpecularTextures  < specularTextures.size())
          {
             (*i)->enable(specularTextures[numSpecularTextures++]);
          }
       }
    }
-   glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);
 
+   //Set uniforms for number of textures
+   glUniform1i(program.getUniform("numDiffuseTextures"),numDiffuseTextures);
+   glUniform1i(program.getUniform("numSpecularTextures"),numSpecularTextures);
+
+   glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);
    vao.unbind();
 
    for (std::vector<std::shared_ptr<Texture2D>>::iterator i = textures.begin(); i != textures.end(); ++i)

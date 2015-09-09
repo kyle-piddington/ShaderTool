@@ -30,7 +30,8 @@ void Window::run()
    {
       currentScene->initPrograms();
       currentScene->compilePrograms();
-      currentScene->initialBind();
+      if(currentScene->canRenderScene())
+         currentScene->initialBind();
       //While not esc pressed
       while(!glfwWindowShouldClose(currentWindow))
       {
@@ -41,7 +42,7 @@ void Window::run()
          glfwPollEvents();
          //Update the input handler
          GLFWHandler::update();
-         
+
          if(currentScene->shouldReloadScene())
          {
             if(currentScene->compilePrograms())

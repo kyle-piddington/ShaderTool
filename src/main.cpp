@@ -10,6 +10,7 @@
 #include <GLFW/glfw3.h>
 #include "ErrorScene.h"
 #include "BoxScene.h"
+#include "AssimpScene.h"
 
 INITIALIZE_EASYLOGGINGPP
 
@@ -56,7 +57,7 @@ int main()
 
    Context * ctx = new Context(window);
    //Init scene of choice here
-   Scene * scene = new BoxScene(ctx);
+   Scene * scene = new AssimpScene(ctx);
    scene->setContext(ctx);
 
    //Create a window for the program to run in

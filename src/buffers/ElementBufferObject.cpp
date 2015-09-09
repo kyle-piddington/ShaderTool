@@ -33,7 +33,7 @@ void ElementBufferObject::setData(const unsigned int * indicies, int size, GLenu
 }
 void ElementBufferObject::setData(const std::vector<unsigned int>  & indicies ,  GLenum usage)
 {
-   if(eboID > 0)
+   if(eboID == 0)
    {
       LOG(ERROR) << "index buffer not initialized";
    }

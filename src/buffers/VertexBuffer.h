@@ -32,7 +32,7 @@ public:
    template<typename T>
    void setData(const std::vector<T>  & vertices ,  GLenum usage = GL_STATIC_DRAW)
    {
-      if(vboID > 0)
+      if(vboID == 0)
       {
          LOG(ERROR) << "Vertex buffer not initialized";
       }

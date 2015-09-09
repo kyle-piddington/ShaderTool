@@ -51,7 +51,6 @@ void ErrorScene::render()
    errVAO.bind();
    errTexture.enable(errProgram->getUniform("tex"));
    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
    errVAO.unbind();
    errTexture.disable();
    errProgram->disable();

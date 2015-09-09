@@ -6,6 +6,7 @@ VertexBuffer::VertexBuffer():
 {
    glGenBuffers(1, &vboID);
    GL_Logger::LogError("Initialize VBO", glGetError());
+   std::cout << "VBO created @" << vboID << std::endl;
 }
 
 VertexBuffer::~VertexBuffer()
