@@ -4,13 +4,14 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Camera.h"
-#include "EmptyScene.h"
+#include "CameraScene.h"
 #include "Light.h"
-class AssimpScene : public EmptyScene
+class AssimpScene : public CameraScene
 {
 public:
    AssimpScene(Context * ctx);
 
+   virtual ~AssimpScene();
    virtual void initPrograms();
    
    virtual void initialBind();
@@ -21,14 +22,10 @@ public:
 
 private:
    Light light1, light2;
-   Camera * camera;
    Model * model;
    Program * assimpProg;
-   void handleCameraInput();
    glm::mat3 createNormalMatrix(const glm::mat4 & view, const glm::mat4 & model);
-   float pitch;
-   float yaw;
-
+ 
 
 };
 #endif

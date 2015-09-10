@@ -10,7 +10,8 @@ Scene::~Scene()
    this->cleanup();
    for (std::vector<Program *>::iterator i = requiredPrograms.begin(); i != requiredPrograms.end(); ++i)
    {
-      delete *i;
+      if(*i != nullptr)
+         delete *i;
    }
 }
 
