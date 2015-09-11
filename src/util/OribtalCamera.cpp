@@ -27,15 +27,16 @@ void OrbitalCamera::update(const Context * ctx)
 
          rotate.y = (Mouse::getLastY() - Mouse::getY())/(float)(ctx->getWindowHeight())/2.0 * Cam_Rot_Speed;
          rotate.x = (Mouse::getLastX() - Mouse::getX())/(float)(ctx->getWindowWidth())/2.0 * Cam_Rot_Speed;
-         phi += rotate.x;
-         theta -= rotate.y;
+         phi += rotate.y;
+         theta += rotate.x;
          rotate.z = 0;
       }
 
    }
    glm::vec3 position(0,0,radius);
-   glm::rotateY(position,phi);
-   glm::rotateX(position,theta);
+   position = glm::rotateX(position,phi);
+   position = glm::rotateY(position,theta);
+
    setPosition(position);
    lookAt(glm::vec3(0,0,0));
 }
