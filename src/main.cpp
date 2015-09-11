@@ -38,7 +38,6 @@ int main()
    glfwGetFramebufferSize(window, &width, &height);
    glViewport(0, 0, width, height);
 
-
    glewExperimental = GL_TRUE;
    if(glewInit() != GLEW_OK)
    {

@@ -67,7 +67,7 @@ void AssimpScene::render()
    Transform modelTransform;
    modelTransform.setPosition(glm::vec3(0.0f, -1.75f, 0.0f));
    modelTransform.setScale(glm::vec3(0.2));
-   modelTransform.setRotation(glm::vec3(0,glfwGetTime(),0));
+   //modelTransform.setRotation(glm::vec3(0,glfwGetTime(),0));
    if(Keyboard::isKeyToggled(GLFW_KEY_O))
    {
       P = camera.getOrthographicMatrix();

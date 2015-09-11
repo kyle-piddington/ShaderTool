@@ -51,8 +51,7 @@ glm::mat4 Camera::getViewMatrix()
     this->currentViewMatrix = glm::inverse(transform.getMatrix());
     dirty = false;
   }
-    
-   return currentViewMatrix;
+  return currentViewMatrix;
 }
 glm::mat4 Camera::getPerspectiveMatrix()
 {

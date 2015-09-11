@@ -4,13 +4,14 @@
 #include "EmptyScene.h"
 #include "Keyboard.h"
 #include "Mouse.h"
+#include "OrbitalCamera.h"
 class CameraScene:public EmptyScene
 {
 public:
    CameraScene(Context * ctx);
    virtual ~CameraScene();
    virtual void update();
-   Camera camera;
+   OrbitalCamera camera;
    float Cam_Speed = 1.0/10.0;
    float Cam_Rot_Speed = M_PI;
 
