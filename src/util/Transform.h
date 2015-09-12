@@ -3,7 +3,14 @@
 #include <glm/glm.hpp>
 
 #include <glm/gtc/quaternion.hpp>
-
+namespace Space
+{
+  enum spaceType
+  {
+    WORLD = 0,
+    LOCAL = 1
+  };
+}
 class Transform
 {
 public:
@@ -42,13 +49,13 @@ public:
     * Rotate by a set of angles
     * @param eulerAngles the new orientation to rotate to
     */
-   void rotate(const glm::vec3 eulerAngles);
+   void rotate(const glm::vec3 eulerAngles, Space::spaceType type = Space::WORLD);
 
     /**
     * Rotate by a set of angles
     * @param eulerAngles the new orientation to rotate to
     */
-   void rotate(float angle, const glm::vec3 & axis);
+   void rotate(float angle, const glm::vec3 & axis, Space::spaceType type = Space::WORLD);
    
    /**
     * Orient the transform to point towards a target
@@ -76,6 +83,7 @@ public:
     */
    glm::mat4 getMatrix();
 
+   glm::mat4 getRotationMatrix();
    /**
     * Get the local up facing vector
     */
@@ -89,7 +97,10 @@ public:
     */
    glm::vec3 forward() const;
 
-
+   void setParent(Transform * parent)
+   {
+     this->parent = parent;
+   }
 
 private:
    void updateFrame();
@@ -101,6 +112,7 @@ private:
    bool isDirty;
    glm::mat4 currentMatrix;
    glm::quat rotation;
+  Transform * parent;
 
 };
 #endif

@@ -13,7 +13,8 @@ Transform::Transform():
    localRight(glm::vec4(World::Right,0.0)),
    localForward(glm::vec4(World::Forward,0.0)),
    currentMatrix(glm::mat4(1.0)),
-   isDirty(false)
+   isDirty(false),
+   parent(nullptr)
    {
 
    }
@@ -63,7 +64,7 @@ void Transform::copy(Transform & other)
    updateFrame();
 }
 
-void Transform::rotate(const glm::vec3 eulerAngles)
+void Transform::rotate(const glm::vec3 eulerAngles, Space::spaceType type)
 {
    
    this->rotation = glm::normalize(this->rotation * glm::quat(eulerAngles));
@@ -72,7 +73,7 @@ void Transform::rotate(const glm::vec3 eulerAngles)
    updateFrame();
 }
 
-void Transform::rotate(float angle, const glm::vec3 & axis)
+void Transform::rotate(float angle, const glm::vec3 & axis, Space::spaceType space)
 {
    if(axis.length() == 0)
    {
@@ -80,9 +81,14 @@ void Transform::rotate(float angle, const glm::vec3 & axis)
       assert(false);
    }
    //Convert world axis to local axis
-   glm::mat4 rotMtx = glm::mat4_cast(rotation);
-   glm::vec3 localAxis = glm::vec3(rotMtx * glm::vec4(axis,0.0));
+   glm::vec3 localAxis = axis;
+   if(space == Space::WORLD)
+   {
+      glm::mat4 rotMtx = glm::mat4_cast(rotation);
+      glm::vec3 localAxis = glm::vec3(rotMtx * glm::vec4(axis,0.0));
+   }
    glm::normalize(localAxis);
+
 
    glm::quat newQuat = glm::angleAxis(angle,localAxis);
    this->rotation = glm::normalize(this->rotation * newQuat);
@@ -117,6 +123,10 @@ glm::mat4  Transform::getMatrix()
       currentMatrix =   t * glm::mat4_cast(rotation) * s;
       isDirty = false;
 
+   }
+   if(parent != nullptr)
+   {
+      currentMatrix = parent->getMatrix() * currentMatrix;
    }
    return currentMatrix;
 }
