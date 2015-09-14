@@ -23,7 +23,7 @@ public:
     * Create an RGB texture. (No alpha support, yet...)
     * Will also have support for loading texture metadata
     */
-   Texture2D(std::string textureName);
+   Texture2D(std::string textureName, bool enableAlphaTest = false);
 
    ~Texture2D();
    /**
@@ -69,6 +69,7 @@ private:
    std::string textureName;
    int width;
    int height;
+   bool isAlpha;
    TextureBuffer bfr;
    TextureType::type texType;
    GLint currentBoundSampler;

@@ -13,6 +13,14 @@ uniform int numDiffuseTextures;
 uniform sampler2D specularTextures[MAX_SPECULAR_TEXTURES];
 uniform int numSpecularTextures;
 
+struct Material
+{
+   vec3 ambient;
+   vec3 diffuse;
+   vec3 specular;
+   float shininess;
+};
+uniform Material material;
 
 struct PointLight{
    vec3 position;
@@ -30,7 +38,7 @@ struct PointLight{
 #define NR_POINT_LIGHTS 2
 uniform PointLight pointLights[NR_POINT_LIGHTS];
 
-float shininess = 35;
+uniform float shininess = 35;
 
 uniform mat4 V;
 
@@ -51,15 +59,21 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
    vec3 diffuse = vec3(0.0);
    for(int diffTex = 0; diffTex < numDiffuseTextures; diffTex++)
    {
-      ambient +=  light.ambient * vec3(texture(diffuseTextures[diffTex],fragTexCoords));
-      diffuse +=  light.diffuse * diff * vec3(texture(diffuseTextures[diffTex],fragTexCoords));
+      ambient +=  max(vec3(0.0),light.ambient * vec3(texture(diffuseTextures[diffTex],fragTexCoords)));
+      diffuse +=  max(vec3(0.0),light.diffuse * diff * vec3(texture(diffuseTextures[diffTex],fragTexCoords)));
+
    }
+   ambient +=  max(vec3(0.0),light.ambient * material.ambient);
+   diffuse +=  max(vec3(0.0),light.diffuse * diff * material.diffuse);
+
    vec3 specular = vec3(0.0);
    for(int specTex = 0; specTex < numSpecularTextures; specTex++)
    {
-      specular += light.specular * spec * vec3(texture(specularTextures[specTex],fragTexCoords));
-   }
+      specular += max(vec3(0.0),light.specular * spec * vec3(texture(specularTextures[specTex],fragTexCoords)));
    
+   }
+   specular += max(vec3(0.0),light.specular * spec * material.specular);
+ 
    float dist    = length(lightPosView - fragPos);
    float attenuation = 1.0f / (light.constant + light.linear * dist +
              light.quadratic * (dist * dist));

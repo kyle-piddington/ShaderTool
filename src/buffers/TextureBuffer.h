@@ -62,6 +62,8 @@ public:
     */
    void setMinifyFilter(GLenum filter);
   
+    void setStoreFormat(GLint storeFmt);
+
    /**
     * Bind the texture
     */

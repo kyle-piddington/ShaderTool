@@ -61,12 +61,12 @@ void TextureBuffer::setRepeat(GLenum repeatType, bool onS, bool onT)
    glBindTexture(textureType, textureID);
    if(onS)
    {
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, SWrapType);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, repeatType);
       GL_Logger::LogError("Could not set S wrap ", glGetError());
    }
    if(onT)
    {
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, TWrapType);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, repeatType);
       GL_Logger::LogError("Could not set T wrap ", glGetError());
    }
    glBindTexture(textureType, 0);
@@ -110,6 +110,11 @@ void TextureBuffer::bindBorderColor()
    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
    GL_Logger::LogError("Could not set texture border color", glGetError());
    glBindTexture(textureType, 0);
+}
+
+void TextureBuffer::setStoreFormat(GLint storeFmt)
+{
+   this->storeFmt = storeFmt;
 }
 
 void TextureBuffer::bind()

@@ -4,22 +4,33 @@
 #include <easyLogging++.h>
 #include "../util/FileUtils.h"
 #include "ReloadableAsset.h"
-Texture2D::Texture2D(const std::string texName) : ReloadableAsset(texName),
+Texture2D::Texture2D(const std::string texName, bool enableAlphaTest) : ReloadableAsset(texName),
    textureName(texName),
+   isAlpha(enableAlphaTest),
    bfr(GL_TEXTURE_2D),
    texUnit(nullptr),
    texType(TextureType::NONE)
 {
 
    int width, height;
+   int loadType = SOIL_LOAD_RGB;
+   GLenum bindType = GL_RGB;
+   if(isAlpha)
+   {
+      loadType = SOIL_LOAD_RGBA;
+      bindType = GL_RGBA;
+      bfr.setStoreFormat(GL_RGBA);
+      bfr.setRepeat(GL_CLAMP_TO_EDGE);
+   }
+
    if(!FileUtils::fExists(textureName))
    {
       LOG(ERROR) << "Could not find texture at " + textureName;
       textureName = "assets/textures/missing_texture.png";
    }
 
-   unsigned char* image = SOIL_load_image(textureName.c_str(), &width, &height, 0, SOIL_LOAD_RGB);
-   bfr.setData(image, width, height, GL_RGB, GL_UNSIGNED_BYTE);
+   unsigned char* image = SOIL_load_image(textureName.c_str(), &width, &height, 0, loadType);
+   bfr.setData(image, width, height, bindType, GL_UNSIGNED_BYTE);
    SOIL_free_image_data(image);
 }
 
@@ -56,8 +67,16 @@ void Texture2D::reload()
       LOG(ERROR) << "Could not find texture at " + textureName;
       textureName = "assets/textures/missing_texture.png";
    }
-   unsigned char* image = SOIL_load_image(textureName.c_str(), &width, &height, 0, SOIL_LOAD_RGB);
-   bfr.setData(image, width, height, GL_RGB, GL_UNSIGNED_BYTE);
+   int loadType = SOIL_LOAD_RGB;
+   GLint bindType = GL_RGB;
+   if(isAlpha)
+   {
+      loadType = SOIL_LOAD_RGBA;
+      bindType = GL_RGBA;
+   }
+
+   unsigned char* image = SOIL_load_image(textureName.c_str(), &width, &height, 0, loadType);
+   bfr.setData(image, width, height, bindType, GL_UNSIGNED_BYTE);
    SOIL_free_image_data(image);
 }
 
