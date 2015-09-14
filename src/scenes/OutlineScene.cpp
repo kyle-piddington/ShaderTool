@@ -107,4 +107,15 @@ void OutlineScene::render()
 void OutlineScene::update()
 {
    CameraScene::update();
+   if(Keyboard::key(GLFW_KEY_L))
+   {
+      if(Keyboard::isKeyToggled(GLFW_KEY_L))
+      {
+         glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+      }
+      else
+      {
+         glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+      }
+   }
 }

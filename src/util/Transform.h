@@ -70,7 +70,7 @@ public:
    /**
     * Get the current position expressed as a 3d vector
     */
-   glm::vec3 getPosition() const;
+   glm::vec3 getPosition(Space::spaceType type = Space::WORLD) const;
 
    /**
     * Get the current rotation expressed as a quaternion

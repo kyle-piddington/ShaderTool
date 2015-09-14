@@ -97,9 +97,12 @@ void Transform::rotate(float angle, const glm::vec3 & axis, Space::spaceType spa
    updateFrame();
 }
 
-glm::vec3 Transform::getPosition() const
+glm::vec3 Transform::getPosition(Space::spaceType type) const
 {
-   return position;
+   if(type == Space::LOCAL || parent == nullptr)
+      return position;
+   else
+      return glm::vec3(parent->getMatrix() * glm::vec4(position,1.0));
 }
 glm::quat Transform::getRotation() const
 {

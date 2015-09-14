@@ -19,9 +19,10 @@ public:
 private:
 
    Program * alphaTexProg;
-   Texture2D metal, marble, grass;
-   Plane plane, grassQuad;
+   Texture2D metal, marble, window;
+   Plane plane, windowQuad;
    Cube cube1, cube2;
-
+   std::vector<glm::vec3> sortedTransparentObjects;
+    
 };
 #endif

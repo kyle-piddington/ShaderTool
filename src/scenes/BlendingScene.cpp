@@ -5,16 +5,23 @@ BlendingScene::BlendingScene(Context * ctx) :
 CameraScene(ctx),
 metal("assets/textures/metal.png"),
 marble("assets/textures/marble.jpg"),
-grass("assets/textures/grass.png",true)
+window("assets/textures/window.png",true)
 {
    alphaTexProg = createProgram("Alpha texture program");
    plane.transform.setScale(glm::vec3(5.0f));
    plane.transform.setPosition(glm::vec3(0,-0.501,0));
    cube1.transform.setPosition(glm::vec3(-1.0f, 0.0f, -1.0f));
    cube2.transform.setPosition(glm::vec3(2.0,0.0,0.0));
-   grassQuad.transform.setRotation(glm::vec3(-M_PI/2.0,0,0));
-   grassQuad.transform.setScale(glm::vec3(0.5));
+   windowQuad.transform.setRotation(glm::vec3(-M_PI/2.0,0,0));
+   windowQuad.transform.setScale(glm::vec3(0.5));
 
+   sortedTransparentObjects.push_back(glm::vec3(-1.5f,  0.0f, -0.4f));
+   sortedTransparentObjects.push_back(glm::vec3( 1.5f,  0.0f,  0.4f));
+   sortedTransparentObjects.push_back(glm::vec3( 0.0f,  0.0f,  0.8f));
+   sortedTransparentObjects.push_back(glm::vec3(-0.3f,  0.0f, -2.4f));
+   sortedTransparentObjects.push_back(glm::vec3( 0.5f,  0.0f, -0.7f));
+
+ 
 
 }
 BlendingScene::~BlendingScene()
@@ -44,7 +51,8 @@ void BlendingScene::initialBind()
    P = camera.getPerspectiveMatrix();
    glUniformMatrix4fv(alphaTexProg->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
    alphaTexProg->disable();
-
+   glEnable(GL_BLEND);
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
    glClearColor(0.2,0.2,0.2,1.0);
 }
 void BlendingScene::render()
@@ -72,25 +80,21 @@ void BlendingScene::render()
    glUniformMatrix4fv(alphaTexProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(plane.transform.getMatrix()));
    plane.render();
    metal.disable();
-   
-   glm::vec3 posArray[5]{glm::vec3(-1.5f,  0.0f, -0.48f),
-                         glm::vec3( 1.5f,  0.0f,  0.51f),
-                         glm::vec3( 0.0f,  0.0f,  0.7f),
-                         glm::vec3(-0.3f,  0.0f, -2.3f),
-                         glm::vec3( 0.5f,  0.0f, -0.6f)};
 
-   grass.enable(alphaTexProg->getUniform("tex"));
+   sort(sortedTransparentObjects.begin(),sortedTransparentObjects.end(),[&](const glm::vec3 a, glm::vec3 b) -> bool
+   {
+      return glm::length(a - camera.transform.getPosition()) > glm::length(b - camera.transform.getPosition());
+   });
+
+
+   window.enable(alphaTexProg->getUniform("tex"));
    for(int i = 0; i < 5; i++)
    {
-      grassQuad.transform.setPosition(posArray[i]);
-      glUniformMatrix4fv(alphaTexProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(grassQuad.transform.getMatrix()));
-      grassQuad.render();
+      windowQuad.transform.setPosition(sortedTransparentObjects[i]);
+       glUniformMatrix4fv(alphaTexProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(windowQuad.transform.getMatrix()));
+      windowQuad.render();
    }
-   grass.disable();
-
-
-
-
+   window.disable();
 
 }
 
