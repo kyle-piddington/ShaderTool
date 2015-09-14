@@ -11,7 +11,8 @@ AssimpScene::AssimpScene(Context * ctx):
    CameraScene(ctx),
    light1(glm::vec3(0.05),glm::vec3(1.0),glm::vec3(1.0),50),
    light2(glm::vec3(0.05),glm::vec3(1.0),glm::vec3(1.0),50),
-   mat(glm::vec3(0.0),glm::vec3(0.0),glm::vec3(0.0),0)
+   mat(glm::vec3(0.0),glm::vec3(0.0),glm::vec3(0.0),0),
+   plane(3,3)
 
    {
       model = new Model("assets/models/nanosuit/nanosuit.obj");
@@ -89,14 +90,14 @@ void AssimpScene::render()
    glUniformMatrix4fv(assimpProg->getUniform("MV"), 1, GL_FALSE, glm::value_ptr(MV));
    glUniformMatrix3fv(assimpProg->getUniform("N"), 1, GL_FALSE, glm::value_ptr(NORM));
    mat.bind(assimpProg->getUniformStruct("material"));
-   model->render(*assimpProg);
+   //model->render(*assimpProg);
 
-   M = cube.transform.getMatrix();
+   M = plane.transform.getMatrix();
    MV = V*M;
    glUniformMatrix4fv(assimpProg->getUniform("MV"), 1, GL_FALSE, glm::value_ptr(MV));
 
-   cube.render();
-
+   //cube.render();
+   plane.render();
    assimpProg->disable();
 
 }

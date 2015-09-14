@@ -45,10 +45,6 @@ Plane::Plane(int xres, int zres)
    ElementBufferObject ebo;
    std::vector<Vertex> verts = generatePlaneVertices(xres,zres);
    std::vector<GLuint> inds = generatePlaneIndicies(xres, zres);
-   for (std::vector<GLuint>::iterator i = inds.begin(); i != inds.end(); ++i)
-   {
-      std::cout << *i << std::endl;
-   }
    vbo.setData(verts);
    ebo.setData(inds);
    planeVAO.addAttribute(0,vbo,sizeof(Vertex));
@@ -56,7 +52,7 @@ Plane::Plane(int xres, int zres)
    planeVAO.addAttribute(2, vbo,sizeof(Vertex),offsetof(Vertex,texCoords),2);
    planeVAO.addElementArray(ebo);
    numIndicies = ebo.getNumIndicies();
-   std::cout << "Plane has " << verts.size() << "verts and " << numIndicies << " indicies" << std::endl;
+
 }
 
 void Plane::render()

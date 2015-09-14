@@ -105,7 +105,7 @@ glm::quat Transform::getRotation() const
 {
    return rotation;
 }
-glm::mat4  Transform::getMatrix()
+const glm::mat4 & Transform::getMatrix()
 {
    if(isDirty)
    {

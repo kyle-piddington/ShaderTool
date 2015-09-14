@@ -81,7 +81,7 @@ public:
    /**
     * Get a 4x4 transform matrix representing this transform
     */
-   glm::mat4 getMatrix();
+   const glm::mat4 & getMatrix();
 
    glm::mat4 getRotationMatrix();
    /**

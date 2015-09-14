@@ -6,7 +6,7 @@
 class Plane
 {
 public:
-   Plane(int xRes = 0, int yRes = 0);
+   Plane(int xRes = 1, int yRes = 1);
    void render();
    Transform transform;
 private:

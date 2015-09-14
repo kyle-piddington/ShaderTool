@@ -11,7 +11,7 @@
 #include "ErrorScene.h"
 #include "BoxScene.h"
 #include "AssimpScene.h"
-
+#include "OutlineScene.h"
 INITIALIZE_EASYLOGGINGPP
 
 int main()
@@ -56,7 +56,7 @@ int main()
 
    Context * ctx = new Context(window);
    //Init scene of choice here
-   Scene * scene = new AssimpScene(ctx);
+   Scene * scene = new OutlineScene(ctx);
    scene->setContext(ctx);
 
    //Create a window for the program to run in
