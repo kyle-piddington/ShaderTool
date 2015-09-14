@@ -71,6 +71,7 @@ private:
    int height;
    TextureBuffer bfr;
    TextureType::type texType;
+   GLint currentBoundSampler;
    std::shared_ptr<TextureUnit> texUnit;
 
 };

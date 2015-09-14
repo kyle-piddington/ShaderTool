@@ -37,6 +37,7 @@ void Texture2D::enable(GLint samplerID)
    GL_Logger::LogError("Could not activate texture", glGetError());
    bfr.bind();
    glUniform1i(samplerID, texUnit->getTexUnit());
+   currentBoundSampler = samplerID;
    GL_Logger::LogError("Could not set texture uniform", glGetError());
 }
 void Texture2D::disable()

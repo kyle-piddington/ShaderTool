@@ -6,13 +6,7 @@
 #include "VertexBuffer.h"
 #include "VertexArrayObject.h"
 #include "ElementBufferObject.h"
-struct Vertex
-{
-   glm::vec3 position;
-   glm::vec3 normal;
-   glm::vec2 texCoords;
-};
-
+#include "Vertex.h"
 /**
  * Assimp mesh container
  * A few assumptions are made about the programs here.

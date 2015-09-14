@@ -10,7 +10,8 @@ glm::mat3 AssimpScene::createNormalMatrix(const glm::mat4 & view, const glm::mat
 AssimpScene::AssimpScene(Context * ctx):
    CameraScene(ctx),
    light1(glm::vec3(0.05),glm::vec3(1.0),glm::vec3(1.0),50),
-   light2(glm::vec3(0.05),glm::vec3(1.0),glm::vec3(1.0),50)
+   light2(glm::vec3(0.05),glm::vec3(1.0),glm::vec3(1.0),50),
+   mat(glm::vec3(0.0),glm::vec3(0.0),glm::vec3(0.0),0)
 
    {
       model = new Model("assets/models/nanosuit/nanosuit.obj");
@@ -32,8 +33,7 @@ void AssimpScene::initPrograms()
 
 void AssimpScene::initialBind()
 {
-   assimpProg->addUniform("M");
-   assimpProg->addUniform("V");
+   assimpProg->addUniform("MV");
    assimpProg->addUniform("P");
    assimpProg->addUniform("N");
 
@@ -46,14 +46,19 @@ void AssimpScene::initialBind()
    assimpProg->addUniformArray("specularTextures",2);
    assimpProg->addUniform("numSpecularTextures");
 
+   assimpProg->addUniformStruct("material",Material::getStruct());
+
    glClearColor(0.1,0.1,0.1,1.0);
 
    assimpProg->enable();
    light1.bind(assimpProg->getStructArray("pointLights")[0]);
    light2.bind(assimpProg->getStructArray("pointLights")[1]);
     GL_Logger::LogError("Any errors after lighting..", glGetError());
-
    assimpProg->disable();
+
+   //glEnable(GL_CULL_FACE);
+   //glCullFace(GL_BACK);
+
 
 
 }
@@ -62,12 +67,10 @@ void AssimpScene::render()
 {
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-   glm::mat4 M, V, P;
+   glm::mat4 M, V, P, MV;
    glm::mat3 NORM;
-   Transform modelTransform;
-   modelTransform.setPosition(glm::vec3(0.0f, -1.75f, 0.0f));
-   modelTransform.setScale(glm::vec3(0.2));
-   //modelTransform.setRotation(glm::vec3(0,glfwGetTime(),0));
+   model->transform.setPosition(glm::vec3(0.0f, -1.75f, 0.0f));
+   model->transform.setScale(glm::vec3(0.2));
    if(Keyboard::isKeyToggled(GLFW_KEY_O))
    {
       P = camera.getOrthographicMatrix();
@@ -77,18 +80,22 @@ void AssimpScene::render()
       P = camera.getPerspectiveMatrix();
    }
    V = camera.getViewMatrix();
-   M = modelTransform.getMatrix();
+   M = model->transform.getMatrix();
    NORM = createNormalMatrix(V, M);
-
+   MV = V*M;
    GL_Logger::LogError("Any errors before enabling..", glGetError());
    assimpProg->enable();
-
    glUniformMatrix4fv(assimpProg->getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
-   glUniformMatrix4fv(assimpProg->getUniform("V"), 1, GL_FALSE, glm::value_ptr(V));
-   glUniformMatrix4fv(assimpProg->getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
+   glUniformMatrix4fv(assimpProg->getUniform("MV"), 1, GL_FALSE, glm::value_ptr(MV));
    glUniformMatrix3fv(assimpProg->getUniform("N"), 1, GL_FALSE, glm::value_ptr(NORM));
-
+   mat.bind(assimpProg->getUniformStruct("material"));
    model->render(*assimpProg);
+
+   M = cube.transform.getMatrix();
+   MV = V*M;
+   glUniformMatrix4fv(assimpProg->getUniform("MV"), 1, GL_FALSE, glm::value_ptr(MV));
+
+   cube.render();
 
    assimpProg->disable();
 

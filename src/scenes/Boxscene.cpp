@@ -187,9 +187,9 @@ void BoxScene::initialBind()
    phongProg->addUniform("N");
 
    phongProg->addStructArray("pointLights",NUM_POINT_LIGHTS,lampStruct);
-   phongProg->addUniformStruct("material",matStruct);
-   phongProg->addUniformStruct("dirLight",dirLightStruct);
-   phongProg->addUniformStruct("flashLight",spotlightStruct);
+   phongProg->addUniformStruct("material",TexturedMaterial::getStruct());
+   phongProg->addUniformStruct("dirLight",DirectionalLight::getStruct());
+   phongProg->addUniformStruct("flashLight",Spotlight::getStruct());
 
    lampProg->addAttribute("position");
    lampProg->addUniform("M");
@@ -208,10 +208,7 @@ void BoxScene::initialBind()
    
    glEnable(GL_DEPTH_TEST);
    camera->setPosition(glm::vec3(0,0,5));
-   dirLight.bind(dirLightStruct.get("direction"),
-                 dirLightStruct.get("ambient"),
-                 dirLightStruct.get("diffuse"),
-                 dirLightStruct.get("specular"));
+   dirLight.bind(phongProg->getUniformStruct("dirLight"));
 
 
    lampProg->enable();
@@ -254,39 +251,17 @@ void BoxScene::render()
         tempLamp.diffuse = pointLightColors[i];
         tempLamp.specular = pointLightColors[i];
 
-        tempLamp.bind(
-           lampArr[i].get("position"),
-           lampArr[i].get("ambient"),
-           lampArr[i].get("diffuse"),
-           lampArr[i].get("specular"),
-           lampArr[i].get("constant"),
-           lampArr[i].get("linear"),
-           lampArr[i].get("quadratic"));
+        tempLamp.bind(lampArr[i]);
+
       }
 
 
 
    //Spotlight lighting
    spotlight.transform().copy(camera->transform);
-   spotlight.bind(
-        spotlightStruct.get("position"),
-        spotlightStruct.get("direction"),
-        spotlightStruct.get("ambient"),
-        spotlightStruct.get("diffuse"),
-        spotlightStruct.get("specular"),
-        spotlightStruct.get("cutOff"),
-        spotlightStruct.get("outerCutOff"),
-        spotlightStruct.get("constant"),
-        spotlightStruct.get("linear"),
-        spotlightStruct.get("quadratic"));
+   spotlight.bind(phongProg->getUniformStruct("flashLight"));
    //Texturing
-   cubeMaterial.bind(
-         matStruct.get("diffuse"),
-         matStruct.get("specular"),
-         matStruct.get("emission"),
-         matStruct.get("shininess")
-
-   );
+   cubeMaterial.bind(phongProg->getUniformStruct("material"));
    //Draw 10 cubes
    
    Transform cubeTransform;

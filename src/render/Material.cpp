@@ -19,12 +19,19 @@ void Material::bind(GLint ambLoc, GLint diffLoc, GLint specLoc, GLint shininessL
    glUniform1f(shininessLoc,shininess);
 }
 
+void Material::bind(const GL_Structure & matStruct)
+{
+   bind(matStruct["ambient"],
+        matStruct["diffuse"],
+        matStruct["specular"],
+        matStruct["shininess"]);
+}
 GL_Structure Material::getStruct()
 {
    GL_Structure template_material;
+   template_material.addAttribute("ambient");
    template_material.addAttribute("diffuse");
    template_material.addAttribute("specular");
-   template_material.addAttribute("emission");
    template_material.addAttribute("shininess");
    return template_material;
 }

@@ -10,7 +10,7 @@ public:
    float Cam_Zoom_Speed;
    TabletopCamera(float width, float height);
    void update(const Context * ctx);
-   
+
 private:
    float phi;
    float theta;

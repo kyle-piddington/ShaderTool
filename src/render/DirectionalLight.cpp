@@ -18,6 +18,14 @@ void DirectionalLight::bind(GLint dirLoc, GLint ambLoc, GLint diffLoc, GLint spe
    glUniform3fv(specLoc,1,glm::value_ptr(specular));
 }
 
+void DirectionalLight::bind(const GL_Structure & dirStruct)
+{
+   bind(dirStruct["direction"],
+        dirStruct["ambient"],
+        dirStruct["diffuse"],
+        dirStruct["specular"]);
+}
+
 //Constants named in phong_frag_textured.fs
 GL_Structure DirectionalLight::getStruct()
 {

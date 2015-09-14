@@ -6,6 +6,8 @@
 #include "Camera.h"
 #include "CameraScene.h"
 #include "Light.h"
+#include "Cube.h"
+#include "Material.h"
 class AssimpScene : public CameraScene
 {
 public:
@@ -24,8 +26,9 @@ private:
    Light light1, light2;
    Model * model;
    Program * assimpProg;
+   Cube cube;
    glm::mat3 createNormalMatrix(const glm::mat4 & view, const glm::mat4 & model);
- 
+   Material mat;
 
 };
 #endif

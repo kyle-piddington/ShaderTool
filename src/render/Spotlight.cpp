@@ -16,6 +16,15 @@ void Spotlight::bind(GLint posLoc, GLint dirLoc, GLint ambLoc, GLint diffLoc, GL
    glUniform1f(cutOffLoc,cutOff);
    glUniform1f(outerCutOffLoc,outerCutOff);
 };
+
+void Spotlight::bind(const GL_Structure & spotStruct)
+{
+   light.bind(spotStruct);
+   glm::vec3 dir = light.transform.forward();
+   glUniform3fv(spotStruct["direction"],1,glm::value_ptr(dir));
+   glUniform1f(spotStruct["cutOff"],cutOff);
+   glUniform1f(spotStruct["outerCutOff"],outerCutOff);
+};
 void Spotlight::setRange(float range)
 {
    light.setRange(range);

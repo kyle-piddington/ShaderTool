@@ -5,6 +5,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include "Transform.h"
 /**
  * An Assimp renderable model
  */
@@ -13,6 +14,8 @@ class Model
 public:
    Model(std::string path);
    void render(Program & prog);
+   Transform transform;
+
 private:
    std::vector< std::shared_ptr<Mesh> > meshes;
    std::string directory;
@@ -22,7 +25,6 @@ private:
    std::vector<std::shared_ptr<Texture2D> > loadMaterialTextures(
       aiMaterial * mat, aiTextureType type,
       TextureType::type texType);
-
 
 
 };

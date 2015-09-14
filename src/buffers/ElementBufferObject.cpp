@@ -29,6 +29,7 @@ void ElementBufferObject::setData(const unsigned int * indicies, int size, GLenu
       glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * size, indicies, usage);
       GL_Logger::LogError("Could not bind data to index Buffer", glGetError());
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+      numInds = size;
    }
 }
 void ElementBufferObject::setData(const std::vector<unsigned int>  & indicies ,  GLenum usage)
@@ -43,6 +44,7 @@ void ElementBufferObject::setData(const std::vector<unsigned int>  & indicies , 
       glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indicies.size(), &indicies[0], usage);
       GL_Logger::LogError("Bind data to index Buffer", glGetError());
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+      numInds = indicies.size();
    }
 }
 

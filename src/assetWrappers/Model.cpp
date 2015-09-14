@@ -13,6 +13,9 @@ void Model::render(Program & prog)
    {
       (*mesh)->render(prog);
    }
+   glUniform1i(prog.getUniform("numDiffuseTextures"),0);
+   glUniform1i(prog.getUniform("numSpecularTextures"),0);
+
 }
 
 void Model::loadModel(std::string path)

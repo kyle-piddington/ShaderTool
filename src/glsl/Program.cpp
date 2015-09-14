@@ -299,7 +299,8 @@ bool Program::checkBoundVariables()
    }
    return allBound;
 }
-int Program::addUniformStruct(std::string name, GL_Structure &  glStruct)
+
+int Program::addUniformStruct(std::string name, GL_Structure glStruct)
 {
    std::vector<std::string> uniformNames = glStruct.getUniformNames();
    int canAddUniform = 0;
@@ -314,6 +315,8 @@ int Program::addUniformStruct(std::string name, GL_Structure &  glStruct)
       {
          glStruct.setUniformLocation(*i,getUniform(name + "." +*i));
       }
+      uniformStructs[name] = glStruct;
+ 
       return 0;
    }
    else
@@ -388,7 +391,16 @@ int Program::addStructArray(std::string name, int len, GL_Structure  template_st
       return -1;
    }
 }
-
+GL_Structure Program::getUniformStruct(std::string name)
+{
+   if(uniformStructs.find(name) != uniformStructs.end())
+     return uniformStructs[name];
+   else
+   {
+      LOG(ERROR) << "Could not find structure named " << name << ", did you add it to the program?";
+      return GL_Structure();
+   }
+}
 const Program::UniformArrayInfo  & Program::getArray(std::string name)
 {
   
