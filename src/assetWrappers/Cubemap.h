@@ -9,10 +9,10 @@ class CubeMap
 private:
    struct CubeMapTexture : public ReloadableAsset
    {
-      CubeMapTexture(std::string path, GLenum face, const CubeMap * cubemap);
+      CubeMapTexture(std::string path, GLenum face, GLuint cubemapID);
       virtual void reload();
       private:
-         const CubeMap * cubeMap;
+         GLuint cubeMapID;
          GLenum face;
    };
    std::vector<CubeMapTexture> textures;
@@ -24,10 +24,12 @@ private:
    
 public:
    CubeMap();
+   ~CubeMap();
    void init(std::vector<std::string> textures);
    void enable(GLint samplerID);
    void disable();
    GLuint getID() const;
+   CubeMapTexture *cubeTextures[6];
    std::shared_ptr<TextureUnit> texUnit;
 
 

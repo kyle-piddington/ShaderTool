@@ -3,10 +3,10 @@
 #include <easylogging++.h>
 #include "../util/FileUtils.h"
 
-CubeMap::CubeMapTexture::CubeMapTexture(std::string path, GLenum face, const CubeMap * cubeMap) :
+CubeMap::CubeMapTexture::CubeMapTexture(std::string path, GLenum face, GLuint cubeMapID) :
    ReloadableAsset(path),
    face(face),
-   cubeMap(cubeMap)
+   cubeMapID(cubeMapID)
    {
       int width, height;
       if(!FileUtils::fExists(path))
@@ -31,7 +31,7 @@ void CubeMap::CubeMapTexture::reload()
          path = "assets/textures/missing_texture.png";
    }
    unsigned char* image = SOIL_load_image(path.c_str(), &width, &height, 0, SOIL_LOAD_RGB);
-   glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMap->getID());
+   glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapID);
    glTexImage2D(
           face, 
            0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image
@@ -47,6 +47,14 @@ texUnit(nullptr)
 {
 
 }
+CubeMap::~CubeMap()
+{
+   for(int i = 0; i < 6; i++)
+   {
+      if(cubeTextures[i] != nullptr)
+         delete cubeTextures[i];
+   }
+}
 
 void CubeMap::init(std::vector<std::string> texturePaths)
 {
@@ -56,7 +64,7 @@ void CubeMap::init(std::vector<std::string> texturePaths)
    int numTextures = 0;
    for (std::vector<std::string>::iterator i = texturePaths.begin(); i != texturePaths.end(); ++i)
    {
-      textures.push_back(CubeMapTexture(*i,GL_TEXTURE_CUBE_MAP_POSITIVE_X + numTextures,this));
+      cubeTextures[numTextures] = new CubeMapTexture(*i,GL_TEXTURE_CUBE_MAP_POSITIVE_X + numTextures,cubeMapID);
       numTextures++;
    }
    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
