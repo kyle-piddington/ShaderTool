@@ -10,7 +10,7 @@ std::vector<Vertex> generatePlaneVertices(int xres, int zres)
          Vertex v;
          v.position = glm::vec3((x-xres/2.0)/(xres/2.0),0,(z-zres/2.0)/(zres/2.0));
          v.normal = glm::vec3(0,1,0);
-         v.texCoords = glm::vec2(x/(float)xres,1-z/(float)zres);
+         v.texCoords = glm::vec2(x/(float)xres,z/(float)zres);
          vertices.push_back(v);
       }
    }

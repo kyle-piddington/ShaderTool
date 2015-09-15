@@ -1,5 +1,6 @@
 #ifndef __FILE_UTILS_H___
 #define __FILE_UTILS_H___
+#include <string>
 struct FileUtils
 {
    static bool fExists(std::string fileName)
