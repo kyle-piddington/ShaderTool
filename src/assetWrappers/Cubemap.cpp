@@ -77,9 +77,12 @@ void CubeMap::init(std::vector<std::string> texturePaths)
 
 void CubeMap::enable(GLint samplerID)
 {
-   texUnit = std::make_shared<TextureUnit>(TextureUnitManager::requestTextureUnit());
-   glActiveTexture(texUnit->getGlUnit());
-   GL_Logger::LogError("Could not activate texture", glGetError());
+   if(texUnit == nullptr)
+   {
+     texUnit = std::make_shared<TextureUnit>(TextureUnitManager::requestTextureUnit());
+     glActiveTexture(texUnit->getGlUnit());
+     GL_Logger::LogError("Could not activate texture", glGetError());
+   }
    glBindTexture(GL_TEXTURE_CUBE_MAP, cubeMapID);
    glUniform1i(samplerID, texUnit->getTexUnit());
    GL_Logger::LogError("Could not set texture uniform", glGetError());

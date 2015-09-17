@@ -26,8 +26,8 @@ Cube::Cube()
         side2,  side2, -side2,  0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
         side2, -side2, -side2,  0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
        // Left
-       -side2, -side2, side2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-       -side2,  side2, side2, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+       -side2, -side2, side2,  -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+       -side2,  side2, side2,  -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
        -side2,  side2, -side2, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
        -side2, -side2, -side2, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
        // Bottom

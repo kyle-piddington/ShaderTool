@@ -42,13 +42,12 @@ TEST(StructShaderTests, testStructCopy)
    EXPECT_EQ(0,program.addUniformStruct("test",testStruct));
    GL_Structure testStruct2(testStruct);
    
-   //Copy the structure, check to see bound varaibles persist
-   EXPECT_EQ(testStruct2.get("testVec1"), testStruct2.get("testVec1"));
+
 
    program.addUniformStruct("testStruct2", testStruct2);
-   EXPECT_EQ(program.getUniform("testStruct2.testVec1"),testStruct2.get("testVec1"));
-   EXPECT_EQ(program.getUniform("testStruct2.testVec2"),testStruct2.get("testVec2"));
-   EXPECT_EQ(program.getUniform("testStruct2.testVec3"),testStruct2.get("testVec3"));
+   EXPECT_EQ(program.getUniform("testStruct2.testVec1"),program.getUniformStruct("test").get("testVec1"));
+   EXPECT_EQ(program.getUniform("testStruct2.testVec2"),program.getUniformStruct("test").get("testVec2"));
+   EXPECT_EQ(program.getUniform("testStruct2.testVec3"),program.getUniformStruct("test").get("testVec3"));
 }
 
 TEST(StructShaderTests, testStructBadAttrib)

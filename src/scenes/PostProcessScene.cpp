@@ -25,7 +25,7 @@ void PostProcessScene::initPrograms()
    texProg->addVertexShader("assets/shaders/tex_vert_layout.vs");
    texProg->addFragmentShader("assets/shaders/tex_frag.fs");
    postprocessProg->addVertexShader("assets/shaders/postprocess_vert.vs");
-   postprocessProg->addFragmentShader("assets/shaders/postprocess_frag.fs");
+   postprocessProg->addFragmentShader("assets/shaders/postprocess_frag_blur.fs");
 }
 
 void PostProcessScene::initialBind()

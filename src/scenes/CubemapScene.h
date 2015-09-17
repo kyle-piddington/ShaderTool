@@ -15,7 +15,8 @@ public:
 private:
    Program * texProg;
    Program * skyboxProg;
-   Cube cube, skyboxCube;
+   Program * reflectProg;
+   Cube cube, skyboxCube, reflectCube;
    Texture2D crate;
    CubeMap cubeMap;
 };

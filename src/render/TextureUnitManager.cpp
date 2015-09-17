@@ -39,7 +39,7 @@ const GLenum TextureUnit::getGlUnit()
 void TextureUnitManager::init()
 {
 
-   int texUnits;
+   int texUnits = 15;
    glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &texUnits);
    texUnits -= 1;
    if(GL_Logger::LogError("[WARN] could not get texunits, defaulting to 16", glGetError()))
@@ -66,7 +66,6 @@ TextureUnit TextureUnitManager::requestTextureUnit()
       TextureUnit ret = unitQueue.top();
       unitQueue.pop();
       ret.active = true;
-
       return ret;
    }
    else
