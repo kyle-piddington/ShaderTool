@@ -10,10 +10,10 @@ Cube::Cube()
 
    float v[24*8] = {
         // Front
-       -side2, -side2, side2, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f,
-        side2, -side2, side2, 0.0f, 0.0f, 1.0f,  1.0f, 0.0f,
-        side2,  side2, side2, 0.0f, 0.0f, 1.0f,  1.0f, 1.0f,
-       -side2,  side2, side2, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+       -side2, -side2, side2, 0.0f, 0.0f, -1.0f,  0.0f, 0.0f,
+        side2, -side2, side2, 0.0f, 0.0f, -1.0f,  1.0f, 0.0f,
+        side2,  side2, side2, 0.0f, 0.0f, -1.0f,  1.0f, 1.0f,
+       -side2,  side2, side2, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
 
        // Right
         side2, -side2, side2,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
@@ -21,10 +21,10 @@ Cube::Cube()
         side2,  side2, -side2, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
         side2,  side2, side2,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
        // Back
-       -side2, -side2, -side2,  0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
-       -side2,  side2, -side2,  0.0f, 0.0f, -1.0f, 1.0f, 0.0f,
-        side2,  side2, -side2,  0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
-        side2, -side2, -side2,  0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
+       -side2, -side2, -side2,  0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+       -side2,  side2, -side2,  0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+        side2,  side2, -side2,  0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+        side2, -side2, -side2,  0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
        // Left
        -side2, -side2, side2,  -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
        -side2,  side2, side2,  -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
@@ -57,9 +57,9 @@ Cube::Cube()
    bufferData.setData(v,24*8);
    ElementBufferObject ebo;
    ebo.setData(el,36);
-   cubeVao.addAttribute(0,bufferData,  8 *sizeof(float));
-   cubeVao.addAttribute(1,bufferData,  8 * sizeof(float), 3 * sizeof(float));
-   cubeVao.addAttribute(2, bufferData, 8 * sizeof(float), 6 * sizeof(float),2);
+   cubeVao.addAttribute(0,bufferData,  8 * sizeof(GLfloat));
+   cubeVao.addAttribute(1,bufferData,  8 * sizeof(GLfloat), 3 * sizeof(GLfloat));
+   cubeVao.addAttribute(2, bufferData, 8 * sizeof(GLfloat), 6 * sizeof(GLfloat),2);
    cubeVao.addElementArray(ebo);
    numInds = ebo.getNumIndicies();
 

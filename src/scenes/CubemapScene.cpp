@@ -18,7 +18,7 @@ crate("assets/textures/container.jpg")
    skyboxProg = createProgram("Skybox program");
    reflectProg = createProgram("Reflection program");
    skyboxCube.transform.setScale(glm::vec3(100));
-   reflectCube.transform.setPosition(glm::vec3(2,0,0));
+   //reflectCube.transform.setPosition(glm::vec3(2,0,0));
 }
 
 void CubemapScene::initPrograms()
@@ -82,16 +82,16 @@ void CubemapScene::render()
    glUniformMatrix4fv(texProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(cube.transform.getMatrix()));
    glUniformMatrix4fv(texProg->getUniform("V"),1,GL_FALSE,glm::value_ptr(V));
 
-   crate.enable(texProg->getUniform("tex"));
-   cube.render();
-   crate.disable();
+   //crate.enable(texProg->getUniform("tex"));
+   //cube.render();
+   //crate.disable();
 
 
    reflectProg->enable();
    //reflectCube.transform.rotate(glm::vec3(M_PI/128.0,M_PI/200.0,0));
    glUniformMatrix4fv(reflectProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(reflectCube.transform.getMatrix()));
    glm::mat3 N = GlmUtil::createNormalMatrix(glm::mat4(1.0),reflectCube.transform.getMatrix());
-   glUniformMatrix3fv(reflectProg->getUniform("N"),1,GL_FALSE,glm::value_ptr(reflectCube.transform.getMatrix()));
+   glUniformMatrix3fv(reflectProg->getUniform("N"),1,GL_FALSE,glm::value_ptr(N));
    glUniformMatrix4fv(reflectProg->getUniform("V"),1,GL_FALSE,glm::value_ptr(V));
    glm::vec3 camPos = camera.getPosition();
    glUniform3fv(reflectProg->getUniform("cameraPos"),1,glm::value_ptr(camPos));
