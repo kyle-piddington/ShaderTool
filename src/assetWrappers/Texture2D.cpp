@@ -43,9 +43,12 @@ Texture2D::~Texture2D()
 
 void Texture2D::enable(GLint samplerID)
 {
-   texUnit = std::make_shared<TextureUnit>(TextureUnitManager::requestTextureUnit());
-   glActiveTexture(texUnit->getGlUnit());
-   GL_Logger::LogError("Could not activate texture", glGetError());
+   if(texUnit == nullptr)
+   {
+      texUnit = std::make_shared<TextureUnit>(TextureUnitManager::requestTextureUnit());
+      glActiveTexture(texUnit->getGlUnit());
+      GL_Logger::LogError("Could not activate texture", glGetError());
+   }
    bfr.bind();
    glUniform1i(samplerID, texUnit->getTexUnit());
    currentBoundSampler = samplerID;
