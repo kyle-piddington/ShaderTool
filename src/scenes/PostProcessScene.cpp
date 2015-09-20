@@ -6,7 +6,7 @@ PostProcessScene::PostProcessScene(Context * ctx) :
 CameraScene(ctx),
 metal("assets/textures/metal.png"),
 marble("assets/textures/container.jpg"),
-fbo(ctx->getWindowWidth(),ctx->getWindowHeight())
+fbo(FramebufferConfiguration::DefaultRenderbuffer(ctx->getWindowWidth(),ctx->getWindowHeight()))
 {
    texProg = createProgram("Diffuse texture program");
    postprocessProg = createProgram("Postprocess render program");
@@ -25,7 +25,7 @@ void PostProcessScene::initPrograms()
    texProg->addVertexShader("assets/shaders/tex_vert_layout.vs");
    texProg->addFragmentShader("assets/shaders/tex_frag.fs");
    postprocessProg->addVertexShader("assets/shaders/postprocess_vert.vs");
-   postprocessProg->addFragmentShader("assets/shaders/postprocess_frag_blur.fs");
+   postprocessProg->addFragmentShader("assets/shaders/postprocess_frag.fs");
 }
 
 void PostProcessScene::initialBind()

@@ -3,9 +3,10 @@
 #include <easylogging++.h>
 #include <glfw/glfw3.h>
 #include "GL_Logger.h"
-Framebuffer::Framebuffer(int width, int height):
-width(width),
-height(height),
+
+Framebuffer::Framebuffer(FramebufferConfiguration configuration):
+width(configuration.width),
+height(configuration.height),
 texUnit(nullptr)
 {
    glGenFramebuffers(1, &framebufferID);
@@ -13,7 +14,9 @@ texUnit(nullptr)
    glGenTextures(1,&renderTexture);
    glBindTexture(GL_TEXTURE_2D, renderTexture);
 
-   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+   glTexImage2D(GL_TEXTURE_2D, 0, configuration.outputComponentType,
+                width, height, 0, configuration.outputComponentType, 
+                configuration.outputComponentStorage, NULL);
 
    //Generate a texture to write this FBO to.
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -23,15 +26,11 @@ texUnit(nullptr)
    //Add the texture to the framebuffer
    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTexture, 0);
 
-   //Generate a Renderbuffer for this FBO. Add a switch here to generate a texture instead!
-   glGenRenderbuffers(1, &rbo);
-   glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-   glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-   glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-   //Add the renderbuffer to the framebuffer
-   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
-
+   //Attach the bounded config
+   fbAttachment = configuration.getAttachment();
+   fbAttachment->attach();
+   
+   
    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
       LOG(ERROR)<< "ERROR::FRAMEBUFFER:: Framebuffer is not complete!";
    glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -40,10 +39,11 @@ texUnit(nullptr)
 
 void Framebuffer::deleteFramebuffer()
 {
+   fbAttachment->cleanup();
    glDeleteTextures(1,&renderTexture);
-   glDeleteRenderbuffers(1,&rbo);
    glDeleteFramebuffers(1,&framebufferID);
 }
+
 
 void Framebuffer::bindFrameBuffer()
 {
@@ -56,9 +56,12 @@ void Framebuffer::unbindFrameBuffer()
 }
 void Framebuffer::enableAsTexture(GLint samplerID)
 {
-   texUnit = std::make_shared<TextureUnit>(TextureUnitManager::requestTextureUnit());
-   glActiveTexture(texUnit->getGlUnit());
-   GL_Logger::LogError("Could not activate fbo texture", glGetError());
+   if(texUnit == nullptr)
+   {
+      texUnit = std::make_shared<TextureUnit>(TextureUnitManager::requestTextureUnit());
+      glActiveTexture(texUnit->getGlUnit());
+      GL_Logger::LogError("Could not activate fbo texture", glGetError());
+   }
    glBindTexture(GL_TEXTURE_2D,renderTexture);
    glUniform1i(samplerID, texUnit->getTexUnit());
    GL_Logger::LogError("Could not set fbo texture uniform", glGetError());

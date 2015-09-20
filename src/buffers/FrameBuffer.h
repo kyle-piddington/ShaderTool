@@ -2,10 +2,12 @@
 #define __FRAMEBUFFER_H__
 #include <TextureUnitManager.h>
 #include <memory>
+#include "FramebufferConfiguration.h"
+
 class Framebuffer
 {
 public:
-   Framebuffer(int w, int h);
+   Framebuffer(FramebufferConfiguration configuration);
    void deleteFramebuffer();
    void bindFrameBuffer();
    void unbindFrameBuffer();
@@ -19,8 +21,9 @@ private:
    int width, height;
    GLuint framebufferID;
    GLuint renderTexture;
-   GLuint rbo;
    std::shared_ptr<TextureUnit> texUnit;
+   std::shared_ptr<FramebufferAttachment> fbAttachment;
+
 
 
 };

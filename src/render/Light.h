@@ -10,6 +10,7 @@
 
 struct Light
 {
+   Light();
    Light(glm::vec3 amb, glm::vec3 diff, glm::vec3 specular, float dist);
    void bind(GLint posLoc, GLint ambLoc, GLint diffLoc, GLint specLoc, GLint constAttenLoc = -1, GLint linAttenLoc = -1, GLint quadAttenLoc = -1);
    void bind(const GL_Structure & lightStruct);
@@ -18,6 +19,7 @@ struct Light
    glm::vec3 ambient;
    glm::vec3 diffuse;
    glm::vec3 specular;
+   
    Transform transform;
 
 private:
