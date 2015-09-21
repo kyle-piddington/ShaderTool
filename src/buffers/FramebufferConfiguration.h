@@ -2,15 +2,31 @@
 #define __FRAMEBUFFER_CONFIGURATION_H__
 #include <GL/glew.h>
 #include <memory>
+#include <easyLogging++.h>
 class FramebufferAttachment
 {
 public:
    virtual void attach() = 0;
    virtual void cleanup() = 0;
-   void setWidthHeight(int width, int height);
+
 protected:
    int width,height;
 
+private:
+   friend class FramebufferConfiguration;
+   void setWidthHeight(int width, int height);
+
+};
+
+struct NullAttachment : FramebufferAttachment
+{
+   void attach()
+   {
+   }
+   void cleanup()
+   {
+
+   }
 };
 
 struct RenderbufferAttachment : FramebufferAttachment
@@ -56,9 +72,7 @@ public:
    FramebufferConfiguration(int width, int height);
    void ConfigureRenderbuffer(RenderbufferAttachment renderbufferInfo);
    void ConfigureTexturebuffer(TextureAttachment info);
-   void addAttachment();
    std::shared_ptr<FramebufferAttachment> getAttachment();
-
    static FramebufferConfiguration DefaultRenderbuffer(int w, int h);
 private:
    std::shared_ptr<FramebufferAttachment> fbAttachment;

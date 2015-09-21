@@ -44,7 +44,16 @@ void RenderbufferAttachment::cleanup()
    glDeleteRenderbuffers(1, &rbo);
 }
 
+//@TODO, learn how to use texture attachments to framebuffers
+void TextureAttachment::attach()
+{
 
+}
+
+void TextureAttachment::cleanup()
+{
+
+}
 
 FramebufferConfiguration FramebufferConfiguration::DefaultRenderbuffer(int w, int h)
 {
@@ -52,4 +61,16 @@ FramebufferConfiguration FramebufferConfiguration::DefaultRenderbuffer(int w, in
    RenderbufferAttachment attachment(GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT);
    config.ConfigureRenderbuffer(attachment);
    return config;
+}
+
+std::shared_ptr<FramebufferAttachment> FramebufferConfiguration::getAttachment()
+{
+   if(fbAttachment != nullptr)
+   {
+      return fbAttachment;
+   }
+   else
+   {
+      return std::shared_ptr<FramebufferAttachment>(new NullAttachment());
+   }
 }

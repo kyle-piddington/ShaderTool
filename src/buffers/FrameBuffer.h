@@ -16,7 +16,7 @@ public:
    int getWidth();
    int getHeight();
    static void BindDefaultFramebuffer();
-
+   bool isCompleted();
 private:
    int width, height;
    GLuint framebufferID;

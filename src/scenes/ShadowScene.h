@@ -10,7 +10,10 @@ public:
    virtual void render();
    void cleanup();
 private:
-   Framebuffer depthBuffer;
+   std::unique_ptr<Framebuffer> depthBuffer;
+   Program * depthPassProg, *postprocessProg;
+   Cube renderCube;
+   Plane postprocessPlane;
    Light pointLight;
 };
 #endif

@@ -30,7 +30,6 @@ texUnit(nullptr)
    fbAttachment = configuration.getAttachment();
    fbAttachment->attach();
    
-   
    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
       LOG(ERROR)<< "ERROR::FRAMEBUFFER:: Framebuffer is not complete!";
    glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -73,6 +72,12 @@ void Framebuffer::disableTexture()
    glActiveTexture(GL_TEXTURE0);
    texUnit = nullptr;
 
+}
+
+bool Framebuffer::isCompleted()
+{
+   return framebufferID != 0 && 
+      glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
 }
 
 void Framebuffer::BindDefaultFramebuffer()
