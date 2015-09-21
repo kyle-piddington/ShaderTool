@@ -17,6 +17,8 @@ public:
    virtual void render();
 
    virtual void update();
+
+   virtual void cleanup();
 private:
 
    void renderGeometry();

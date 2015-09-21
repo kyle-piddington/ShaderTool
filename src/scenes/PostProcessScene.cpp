@@ -6,7 +6,7 @@ PostProcessScene::PostProcessScene(Context * ctx) :
 CameraScene(ctx),
 metal("assets/textures/metal.png"),
 marble("assets/textures/container.jpg"),
-fbo(FramebufferConfiguration::DefaultRenderbuffer(ctx->getWindowWidth(),ctx->getWindowHeight()))
+fbo(FramebufferConfiguration::DefaultFramebuffer(ctx->getWindowWidth(),ctx->getWindowHeight()))
 {
    texProg = createProgram("Diffuse texture program");
    postprocessProg = createProgram("Postprocess render program");
@@ -85,15 +85,15 @@ void PostProcessScene::renderGeometry()
    metal.disable();
    texProg->disable();
 
+
 }
 
 void PostProcessScene::renderFrameBuffer()
 {
 
    postprocessProg->enable();
-   fbo.enableAsTexture(postprocessProg->getUniform("screenTexture"));
+   fbo.enableTexture("color",postprocessProg->getUniform("screenTexture"));
    renderPlane.render();
-   fbo.disableTexture();
    postprocessProg->disable();
 
 }
@@ -111,4 +111,11 @@ void PostProcessScene::update()
          glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
       }
    }
+}
+
+void PostProcessScene::cleanup()
+{
+   postprocessProg->enable();
+   fbo.disableTexture("color");
+   postprocessProg->disable();
 }

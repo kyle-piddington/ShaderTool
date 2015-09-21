@@ -1,6 +1,10 @@
 #ifndef __SHADOW_SCENE_H__
 #define __SHADOW_SCENE_H__
 #include "CameraScene.h"
+#include "Framebuffer.h"
+#include "Cube.h"
+#include "Plane.h"
+#include "Light.h"
 class ShadowScene : public CameraScene
 {
 public:
@@ -8,7 +12,7 @@ public:
    virtual void initPrograms();
    virtual void initialBind();
    virtual void render();
-   void cleanup();
+   virtual void cleanup();
 private:
    std::unique_ptr<Framebuffer> depthBuffer;
    Program * depthPassProg, *postprocessProg;

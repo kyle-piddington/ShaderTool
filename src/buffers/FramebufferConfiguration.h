@@ -3,6 +3,8 @@
 #include <GL/glew.h>
 #include <memory>
 #include <easyLogging++.h>
+#include <unordered_map>
+#include "TextureUnitManager.h"
 class FramebufferAttachment
 {
 public:
@@ -46,36 +48,43 @@ private:
 struct TextureAttachment : FramebufferAttachment
 {
    GLenum attachmentInfo;
-   GLenum drawBufferInfo;
-   GLenum readBufferInfo;
-   TextureAttachment(
-         GLenum attachmentInfo,
-         GLenum drawBuffer,
-         GLenum readBuffer):
+   GLenum outputComponentType;
+   GLenum outputComponentStorage;
+   std::string textureName;
+   TextureAttachment(std::string textureName, GLenum outputComponentType, GLenum outputComponentStorage, GLenum attachmentInfo):
+   textureName(textureName),
    attachmentInfo(attachmentInfo),
-   drawBufferInfo(drawBuffer),
-   readBufferInfo(readBuffer)
+   outputComponentType(outputComponentType),
+   outputComponentStorage(outputComponentStorage),
+   tbo(0)
    {}
    void attach();
    void cleanup();
+   void enableTexture(GLuint id);
+   void disableTexture();
 private:
    GLuint tbo;
+   std::shared_ptr<TextureUnit> texUnit;
+
+
 
 
 };
 class FramebufferConfiguration
 {
 public:
-   GLenum outputComponentType;
-   GLenum outputComponentStorage;
+
    int width, height;
    FramebufferConfiguration(int width, int height);
-   void ConfigureRenderbuffer(RenderbufferAttachment renderbufferInfo);
-   void ConfigureTexturebuffer(TextureAttachment info);
-   std::shared_ptr<FramebufferAttachment> getAttachment();
-   static FramebufferConfiguration DefaultRenderbuffer(int w, int h);
+   void addRenderbuffer(RenderbufferAttachment renderbufferInfo);
+   void addTexturebuffer(TextureAttachment info);
+   std::vector<std::shared_ptr<FramebufferAttachment> > getAttachments();
+   std::shared_ptr<TextureAttachment> getTextureAttachment(std::string name) ;
+  
+   static FramebufferConfiguration DefaultFramebuffer(int w, int h);
 private:
-   std::shared_ptr<FramebufferAttachment> fbAttachment;
+   std::unordered_map<std::string, std::shared_ptr<TextureAttachment> > fbTextures;
+   std::vector<std::shared_ptr<FramebufferAttachment> > fbAttachments;
    bool isCompleted;
 };
 #endif

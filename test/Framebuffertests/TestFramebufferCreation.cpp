@@ -10,7 +10,7 @@ TEST(TestFramebufferCreation, NoAttachmentConfiguration)
 
 TEST(TestFramebufferCreation, testDefaultRenderbuffer)
 {
-   Framebuffer buffer(FramebufferConfiguration::DefaultRenderbuffer(10,10));
+   Framebuffer buffer(FramebufferConfiguration::DefaultFramebuffer(10,10));
    EXPECT_TRUE(buffer.isCompleted());
    buffer.deleteFramebuffer();
 }

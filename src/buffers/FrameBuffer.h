@@ -11,18 +11,17 @@ public:
    void deleteFramebuffer();
    void bindFrameBuffer();
    void unbindFrameBuffer();
-   void enableAsTexture(GLint samplerID);
-   void disableTexture();
+   void enableTexture(std::string texName, GLint samplerID);
+   void disableTexture(std::string texName);
    int getWidth();
    int getHeight();
    static void BindDefaultFramebuffer();
    bool isCompleted();
+
 private:
    int width, height;
+   FramebufferConfiguration configuration;
    GLuint framebufferID;
-   GLuint renderTexture;
-   std::shared_ptr<TextureUnit> texUnit;
-   std::shared_ptr<FramebufferAttachment> fbAttachment;
 
 
 
