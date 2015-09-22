@@ -5,6 +5,10 @@
 #include <easyLogging++.h>
 #include <unordered_map>
 #include "TextureUnitManager.h"
+/**
+ * A FramebufferAttachment can either be a renderbuffer or texturebuffer
+ * and are attached to the framebuffer when it is being configured
+ */
 class FramebufferAttachment
 {
 public:
@@ -76,6 +80,8 @@ public:
 
    int width, height;
    FramebufferConfiguration(int width, int height);
+   FramebufferConfiguration();
+   
    void addRenderbuffer(RenderbufferAttachment renderbufferInfo);
    void addTexturebuffer(TextureAttachment info);
    std::vector<std::shared_ptr<FramebufferAttachment> > getAttachments();

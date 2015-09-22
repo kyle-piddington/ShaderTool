@@ -1,5 +1,11 @@
 #include "FramebufferConfiguration.h"
 #include "GL_Logger.h"
+FramebufferConfiguration::FramebufferConfiguration():
+width(-1),
+height(-1)
+{
+
+}
 FramebufferConfiguration::FramebufferConfiguration(int width, int height) : 
 width(width),
 height(height)

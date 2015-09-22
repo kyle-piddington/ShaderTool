@@ -7,7 +7,9 @@
 class Framebuffer
 {
 public:
+   Framebuffer();
    Framebuffer(FramebufferConfiguration configuration);
+   void init(FramebufferConfiguration configuration);
    void deleteFramebuffer();
    void bindFrameBuffer();
    void unbindFrameBuffer();

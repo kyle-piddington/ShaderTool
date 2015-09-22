@@ -4,12 +4,24 @@
 #include <glfw/glfw3.h>
 #include "GL_Logger.h"
 
-Framebuffer::Framebuffer(FramebufferConfiguration configuration):
-configuration(configuration),
-width(configuration.width),
-height(configuration.height),
+Framebuffer::Framebuffer():
 framebufferID(0)
 {
+
+}
+Framebuffer::Framebuffer(FramebufferConfiguration configuration):
+framebufferID(0)
+{
+   
+   init(configuration);
+
+}
+
+void Framebuffer::init(FramebufferConfiguration config)
+{
+   this->configuration = config;
+   this->width = config.width;
+   this->height = config.height;
    glGenFramebuffers(1, &framebufferID);
    glBindFramebuffer(GL_FRAMEBUFFER,framebufferID);
    std::vector< std::shared_ptr<FramebufferAttachment> > attachments = configuration.getAttachments();
@@ -21,8 +33,6 @@ framebufferID(0)
    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
       LOG(ERROR)<< "ERROR::FRAMEBUFFER:: Framebuffer is not complete!";
    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-
 }
 
 void Framebuffer::deleteFramebuffer()
