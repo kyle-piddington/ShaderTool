@@ -12,7 +12,13 @@
 class FramebufferAttachment
 {
 public:
+   /**
+    * Add this attachment to the framebuffer
+    */
    virtual void attach() = 0;
+   /**
+    * Delete this attachment
+    */
    virtual void cleanup() = 0;
 
 protected:
@@ -24,6 +30,9 @@ private:
 
 };
 
+/**
+ * NullAttachment, was used earlier, but I don't think I need it.
+ */
 struct NullAttachment : FramebufferAttachment
 {
    void attach()
@@ -35,6 +44,11 @@ struct NullAttachment : FramebufferAttachment
    }
 };
 
+/**
+ * Renderbuffer Attachments add a write only buffer to the Framebuffer
+ * Renderbuffers are useful for stencil and depth attachments, when neither are needed
+ * in a fragment shader.
+ */
 struct RenderbufferAttachment : FramebufferAttachment
 {
    GLenum storageType;
@@ -49,6 +63,11 @@ private:
    GLuint rbo;
 };
 
+/**
+ * Texture Attachments add a texture to the framebuffer.
+ * Textures are useful for all attachments, when the output must be sampled later
+ * in a shading pipeline.
+ */
 struct TextureAttachment : FramebufferAttachment
 {
    GLenum attachmentInfo;
@@ -70,10 +89,13 @@ private:
    GLuint tbo;
    std::shared_ptr<TextureUnit> texUnit;
 
-
-
-
 };
+
+/**
+ * The FramebufferConfiguration object provides a Framebuffer with all the attachments and information
+ * it needs to successfully be created. In addition, it provides access to the textues for enabling and disabling them.
+ * 
+ */
 class FramebufferConfiguration
 {
 public:

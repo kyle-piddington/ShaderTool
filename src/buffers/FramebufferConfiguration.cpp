@@ -6,7 +6,7 @@ height(-1)
 {
 
 }
-FramebufferConfiguration::FramebufferConfiguration(int width, int height) : 
+FramebufferConfiguration::FramebufferConfiguration(int width, int height) :
 width(width),
 height(height)
 {
@@ -18,7 +18,7 @@ void FramebufferConfiguration::addRenderbuffer(RenderbufferAttachment info)
    std::shared_ptr<FramebufferAttachment> fbAttachment = std::shared_ptr<FramebufferAttachment>(new RenderbufferAttachment(info));
    fbAttachment->setWidthHeight(width,height);
    fbAttachments.push_back(fbAttachment);
-   
+
 }
 
 void FramebufferConfiguration::addTexturebuffer(TextureAttachment info)
@@ -84,12 +84,12 @@ void TextureAttachment::attach()
       glGenTextures(1,&tbo);
       glBindTexture(GL_TEXTURE_2D, tbo);
       GL_Logger::LogError("Could activate texture at tbo id " + std::to_string(tbo), glGetError());
- 
+
       glTexImage2D(GL_TEXTURE_2D, 0, outputComponentType,
-                width, height, 0, outputComponentType, 
+                width, height, 0, outputComponentType,
                 outputComponentStorage, NULL);
       GL_Logger::LogError("Could set texture data in texturebuffer " + std::to_string(tbo), glGetError());
- 
+
       //Generate a texture to write this FBO to.
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -112,7 +112,7 @@ void TextureAttachment::enableTexture(GLuint samplerID)
    }
    glBindTexture(GL_TEXTURE_2D,tbo);
    GL_Logger::LogError("Could activate texture at tbo id " + std::to_string(tbo), glGetError());
- 
+
    glUniform1i(samplerID, texUnit->getTexUnit());
 
 }
@@ -138,5 +138,5 @@ void TextureAttachment::cleanup()
 }
 
 
- 
+
 
