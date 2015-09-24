@@ -1,5 +1,4 @@
 #include "Transform.h"
-#include "World.h"
 #include <iostream>
 #include <easylogging++.h>
 #include <glm/gtx/orthonormalize.hpp>
@@ -134,14 +133,14 @@ const glm::mat4 & Transform::getMatrix()
    return currentMatrix;
 }
 
-void Transform::lookAt(glm::vec3 target)
+void Transform::lookAt(glm::vec3 target, glm::vec3 upVec)
 {
    /*Vector forward = lookAt.Normalized();
    Vector right = Vector::Cross(up.Normalized(), forward);
    Vector up = Vector::Cross(forward, right);*/
 
    glm::vec3 forward = glm::normalize(target-position);
-   glm::vec3 up = glm::orthonormalize(World::Up, forward); // Keeps up the same, make forward orthogonal to up
+   glm::vec3 up = glm::orthonormalize(upVec, forward); // Keeps up the same, make forward orthogonal to up
    glm::vec3 right = glm::normalize(glm::cross(forward, up));
 
    glm::mat4 rotMat;

@@ -1,7 +1,7 @@
 #ifndef __TRANSFORM_H__
 #define __TRANSFORM_H__
 #include <glm/glm.hpp>
-
+#include "World.h"
 #include <glm/gtc/quaternion.hpp>
 namespace Space
 {
@@ -61,7 +61,7 @@ public:
     * Orient the transform to point towards a target
     * @param target the target position
     */
-   void lookAt(glm::vec3 target);
+   void lookAt(glm::vec3 target,glm::vec3 up = World::Up);
 
    /**
     * Scale the transform

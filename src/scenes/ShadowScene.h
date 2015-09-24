@@ -14,10 +14,14 @@ public:
    virtual void render();
    virtual void cleanup();
 private:
-   std::unique_ptr<Framebuffer> depthBuffer;
+   void renderGeometry(GLint modelMtx);
+   void renderDepthPass();
+   void renderDepthMap();
+
+   Framebuffer depthBuffer;
    Program * depthPassProg, *postprocessProg;
-   Cube renderCube;
-   Plane postprocessPlane;
+   Cube renderCube[3]{Cube()};
+   Plane postprocessPlane, geomPlane;
    Light pointLight;
 };
 #endif

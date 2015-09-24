@@ -50,12 +50,12 @@ public:
     * Get the width of this framebuffer
     * @return the width, in px.
     */
-   int getWidth();
+   int getWidth(){return width;}
    /**
     * Get the height of the framebuffer
     * @return the height, in px.
     */
-   int getHeight();
+   int getHeight(){return height;}
    /**
     * Bind Framebuffer Object 0, effectivly unbinding all framebuffers
     */

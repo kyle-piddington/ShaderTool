@@ -48,4 +48,16 @@ CameraScene::~CameraScene()
 void CameraScene::update()
 {
    camera.update(getContext());
+   if(Keyboard::key(GLFW_KEY_L))
+   {
+      if(Keyboard::isKeyToggled(GLFW_KEY_L))
+      {
+         glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
+      }
+      else
+      {
+         glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+      }
+   }
+
 }
