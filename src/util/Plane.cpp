@@ -28,11 +28,11 @@ std::vector<GLuint> generatePlaneIndicies(int xres, int zres)
          int lr = x + z*(xres + 1) + 1;
          int ul = x + (z + 1) * (xres+1);
          int ur = x + (z + 1) * (xres+1) + 1;
+         indicies.push_back(lr);
          indicies.push_back(ll);
-         indicies.push_back(lr);
          indicies.push_back(ul);
-         indicies.push_back(lr);
          indicies.push_back(ur);
+         indicies.push_back(lr);
          indicies.push_back(ul);
       }
    }

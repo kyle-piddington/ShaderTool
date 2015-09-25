@@ -4,8 +4,9 @@ layout (location = 2) in vec2 vertTexCoords;
 
 out vec2 fragTexCoords;
 
+uniform mat4 M;
 void main()
 {
-   gl_Position = vec4(position.x,position.z,0,1);
+   gl_Position = M * vec4(position.x,position.z,0,1);
    fragTexCoords = vertTexCoords;
 }

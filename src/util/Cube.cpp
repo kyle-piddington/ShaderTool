@@ -10,10 +10,10 @@ Cube::Cube()
 
    float v[24*8] = {
         // Front
-       -side2, -side2, side2, 0.0f, 0.0f, -1.0f,  0.0f, 0.0f,
-        side2, -side2, side2, 0.0f, 0.0f, -1.0f,  1.0f, 0.0f,
-        side2,  side2, side2, 0.0f, 0.0f, -1.0f,  1.0f, 1.0f,
-       -side2,  side2, side2, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
+       -side2, -side2, side2, 0.0f, 0.0f, 1.0f,  0.0f, 0.0f,
+        side2, -side2, side2, 0.0f, 0.0f, 1.0f,  1.0f, 0.0f,
+        side2,  side2, side2, 0.0f, 0.0f, 1.0f,  1.0f, 1.0f,
+       -side2,  side2, side2, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
 
        // Right
         side2, -side2, side2,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
@@ -21,10 +21,10 @@ Cube::Cube()
         side2,  side2, -side2, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
         side2,  side2, side2,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
        // Back
-       -side2, -side2, -side2,  0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-       -side2,  side2, -side2,  0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-        side2,  side2, -side2,  0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
-        side2, -side2, -side2,  0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+       -side2, -side2, -side2,  0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+       -side2,  side2, -side2,  0.0f, 0.0f, -1.0f, 1.0f, 0.0f,
+        side2,  side2, -side2,  0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
+        side2, -side2, -side2,  0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
        // Left
        -side2, -side2, side2,  -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
        -side2,  side2, side2,  -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
