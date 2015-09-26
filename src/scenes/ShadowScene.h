@@ -16,7 +16,7 @@ public:
    virtual void cleanup();
    virtual void update();
 private:
-   void renderGeometry(GLint modelMtx, GLint normalMtx = -1);
+   void renderGeometry(GLint modelMtx, GLint normalMtx = -1, GLint texMtx = -1);
    void renderDepthPass();
    void renderDepthMap();
    void renderGeometryWithShadows();

@@ -4,7 +4,7 @@
 ShadowScene::ShadowScene(Context * ctx) :
    CameraScene(ctx),
    woodTexture("assets/textures/wood.png"),
-   pointLight(glm::vec3(0.1),glm::vec3(0.7),glm::vec3(0.8),50.0f)
+   pointLight(glm::vec3(0.1),glm::vec3(0.7),glm::vec3(0.8),250.0f)
    {
       pointLight.transform.setPosition(glm::vec3(-2.0f, 4.0f, -1.0f));
       pointLight.transform.lookAt(glm::vec3(0.0),glm::vec3(1.0));
@@ -61,6 +61,7 @@ void ShadowScene::initialBind()
 
    phongTexShadowProg->addUniform("P");
    phongTexShadowProg->addUniform("V");
+   phongTexShadowProg->addUniform("T");
    phongTexShadowProg->addUniform("M");
    phongTexShadowProg->addUniform("NORM");
    phongTexShadowProg->addUniform("lightSpaceMatrix");
@@ -74,7 +75,7 @@ void ShadowScene::initialBind()
    phongTexShadowProg->disable();
 
    glClearColor(0.2,0.2,0.2,1.0);
-   glEnable(GL_CULL_FACE);  
+   glEnable(GL_CULL_FACE);
 
 }
 
@@ -100,14 +101,14 @@ void ShadowScene::renderGeometryWithShadows()
    woodTexture.enable(phongTexShadowProg->getUniform("diffuseTexture"));
    depthBuffer.enableTexture("depth",phongTexShadowProg->getUniform("shadowMap"));
    glUniformMatrix4fv(phongTexShadowProg->getUniform("V"),1,GL_FALSE,glm::value_ptr(V));
-   
+
    GLfloat near_plane = 1.0f, far_plane = 7.5f;
    glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
    glm::mat4 VPMatrix = lightProjection * glm::inverse(pointLight.transform.getMatrix());
    glUniformMatrix4fv(phongTexShadowProg->getUniform("lightSpaceMatrix"),1,GL_FALSE,glm::value_ptr(VPMatrix));
-  
+
    pointLight.bind(phongTexShadowProg->getUniformStruct("pLight"));
-   renderGeometry(phongTexShadowProg->getUniform("M"),phongTexShadowProg->getUniform("NORM"));
+   renderGeometry(phongTexShadowProg->getUniform("M"),phongTexShadowProg->getUniform("NORM"), phongTexShadowProg->getUniform("T"));
    woodTexture.disable();
    depthBuffer.disableTexture("depth");
 
@@ -126,8 +127,13 @@ void ShadowScene::renderDepthPass()
    renderGeometry(depthPassProg->getUniform("model"));
    depthBuffer.unbindFrameBuffer();
 }
-void ShadowScene::renderGeometry(GLint modelMtx, GLint normalMtx)
+void ShadowScene::renderGeometry(GLint modelMtx, GLint normalMtx, GLint texMtx)
 {
+   glm::mat3 T(1.0);
+   if(texMtx > -1)
+   {
+      glUniformMatrix3fv(texMtx, 1, GL_FALSE, glm::value_ptr(T));
+   }
    for(int i = 0; i < 3; i++)
    {
       glUniformMatrix4fv(modelMtx,1,GL_FALSE,glm::value_ptr(renderCube[i].transform.getMatrix()));
@@ -144,17 +150,23 @@ void ShadowScene::renderGeometry(GLint modelMtx, GLint normalMtx)
       glm::mat3 NORM = GlmUtil::createNormalMatrix(camera.getViewMatrix(),geomPlane.transform.getMatrix());
       glUniformMatrix3fv(normalMtx,1,GL_FALSE,glm::value_ptr(NORM));
    }
-   
+   if(texMtx > -1)
+   {
+      T[0][0] = 25;
+      T[1][1] = 25;
+      glUniformMatrix3fv(texMtx, 1, GL_FALSE, glm::value_ptr(T));
+
+   }
    geomPlane.render();
 
-   
+
 }
 
 void ShadowScene::update()
 {
    CameraScene::update();
-   pointLight.transform.setPosition(glm::vec3(2*sin(glfwGetTime()),4.0,2*cos(glfwGetTime())));
-   pointLight.transform.lookAt(glm::vec3(0.0));
+   //pointLight.transform.setPosition(glm::vec3(2*sin(glfwGetTime()),4.0,2*cos(glfwGetTime())));
+   //pointLight.transform.lookAt(glm::vec3(0.0));
 }
 
 void ShadowScene::renderDepthMap()
