@@ -60,6 +60,8 @@ public:
     * @return 0 if the shader was successfully deleted, -1 otherwise.
     */
    int deleteFromGPU();
+
+
 private:
    std::string path;
    GLuint shaderID;

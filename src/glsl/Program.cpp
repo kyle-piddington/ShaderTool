@@ -35,6 +35,10 @@ int Program::addFragmentShader(std::string shaderSrc)
 {
    return addShader(fragShader, shaderSrc, GL_FRAGMENT_SHADER);
 }
+int Program::addGeometryShader(std::string shaderSrc)
+{
+   return addShader(geomShader, shaderSrc, GL_GEOMETRY_SHADER);
+}
 
 int Program::addShader(std::shared_ptr<Shader> & shader, std::string shaderName, GLenum shaderType)
 {

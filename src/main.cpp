@@ -16,6 +16,7 @@
 #include "PostProcessScene.h"
 #include "CubemapScene.h"
 #include "ShadowScene.h"
+#include "GeometryShaderScene.h"
 INITIALIZE_EASYLOGGINGPP
 
 int main()
@@ -60,7 +61,7 @@ int main()
 
    Context * ctx = new Context(window);
    //Init scene of choice here
-   Scene * scene = new ShadowScene(ctx);
+   Scene * scene = new GeometryShaderScene(ctx);
    scene->setContext(ctx);
 
    //Create a window for the program to run in
