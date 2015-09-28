@@ -279,12 +279,13 @@ GLint Program::hasUniform(std::string unifName)
    GL_Logger::LogError("Could not search program " + name, glGetError());
    if(unifId == -1)
    {
-      LOG(WARNING) << "Program " + name +  " Could not find uniform " + unifName + " (It may not exist, or has been optimized away)";
+      LOG(WARNING) << "Program " + name + " has no uniform named " + unifName + " (Did you forget to add it to the program?)";
+      return -1;
    }
    return unifId;
-
-
 }
+
+
 bool Program::checkBoundVariables()
 {
    if(!created)
@@ -447,6 +448,12 @@ bool Program::shouldProgramRecompile()
    isCompiled &= (geomShader == nullptr || geomShader->isCompiled());
    isCompiled &= (tessalationShader == nullptr || tessalationShader->isCompiled());
    return !isCompiled;
+}
+
+bool Program::hasAddedUniform(std::string name)
+{
+   return(uniforms.find(name) != uniforms.end());
+   
 }
 
 bool Program::isCreated()

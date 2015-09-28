@@ -1,11 +1,7 @@
 #include "AssimpScene.h"
 #include "GL_Logger.h"
 #include <glm/gtc/type_ptr.hpp>
-
-glm::mat3 AssimpScene::createNormalMatrix(const glm::mat4 & view, const glm::mat4 & model)
-{
-   return glm::mat3(glm::transpose(glm::inverse(view * model)));
-}
+#include "GlmUtil.h"
 
 AssimpScene::AssimpScene(Context * ctx):
    CameraScene(ctx),
@@ -82,7 +78,7 @@ void AssimpScene::render()
    }
    V = camera.getViewMatrix();
    M = model->transform.getMatrix();
-   NORM = createNormalMatrix(V, M);
+   NORM = GlmUtil::createNormalMatrix(V, M);
    MV = V*M;
    GL_Logger::LogError("Any errors before enabling..", glGetError());
    assimpProg->enable();
@@ -90,7 +86,7 @@ void AssimpScene::render()
    glUniformMatrix4fv(assimpProg->getUniform("MV"), 1, GL_FALSE, glm::value_ptr(MV));
    glUniformMatrix3fv(assimpProg->getUniform("N"), 1, GL_FALSE, glm::value_ptr(NORM));
    mat.bind(assimpProg->getUniformStruct("material"));
-   //model->render(*assimpProg);
+   model->render(*assimpProg);
 
    M = plane.transform.getMatrix();
    MV = V*M;

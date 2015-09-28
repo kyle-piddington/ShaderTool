@@ -84,7 +84,7 @@ void Transform::rotate(float angle, const glm::vec3 & axis, Space::spaceType spa
    if(space == Space::WORLD)
    {
       glm::mat4 rotMtx = glm::mat4_cast(rotation);
-      glm::vec3 localAxis = glm::vec3(rotMtx * glm::vec4(axis,0.0));
+      localAxis = glm::vec3(rotMtx * glm::vec4(axis,0.0));
    }
    glm::normalize(localAxis);
 

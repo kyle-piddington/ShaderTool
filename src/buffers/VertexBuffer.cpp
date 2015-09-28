@@ -50,3 +50,4 @@ void VertexBuffer::unbind()
 {
    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
+

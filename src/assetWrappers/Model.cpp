@@ -13,8 +13,15 @@ void Model::render(Program & prog)
    {
       (*mesh)->render(prog);
    }
-   glUniform1i(prog.getUniform("numDiffuseTextures"),0);
-   glUniform1i(prog.getUniform("numSpecularTextures"),0);
+   if(prog.hasAddedUniform("numDiffuseTextures"))
+   {
+      glUniform1i(prog.getUniform("numDiffuseTextures"),0);
+   }
+   
+   if(prog.hasAddedUniform("numSpecularTextures"))
+   {
+      glUniform1i(prog.getUniform("numSpecularTextures"),0);
+   }
 
 }
 

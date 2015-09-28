@@ -35,9 +35,10 @@ void Mesh::render(Program & program)
    Program::UniformArrayInfo diffuseTextures = program.getArray("diffuseTextures");
    Program::UniformArrayInfo specularTextures = program.getArray("specularTextures");
 
+
    for (std::vector<std::shared_ptr<Texture2D>>::iterator i = textures.begin(); i != textures.end(); ++i)
    {
-      if((*i)->textureType() == TextureType::DIFFUSE)
+      if((*i)->textureType() == TextureType::DIFFUSE && diffuseTextures.isValid)
       {
          if(numDiffuseTextures < diffuseTextures.size())
          {
@@ -46,7 +47,7 @@ void Mesh::render(Program & program)
       }
       else if((*i)->textureType() == TextureType::SPECULAR)
       {
-         if(numSpecularTextures  < specularTextures.size())
+         if(numSpecularTextures  < specularTextures.size() &&  specularTextures.isValid)
          {
             (*i)->enable(specularTextures[numSpecularTextures++]);
          }
@@ -54,8 +55,14 @@ void Mesh::render(Program & program)
    }
 
    //Set uniforms for number of textures
-   glUniform1i(program.getUniform("numDiffuseTextures"),numDiffuseTextures);
-   glUniform1i(program.getUniform("numSpecularTextures"),numSpecularTextures);
+   if(program.hasAddedUniform("numDiffuseTextures"))
+   {
+      glUniform1i(program.getUniform("numDiffuseTextures"),numDiffuseTextures);
+   }
+   if(program.hasAddedUniform("numSpecularTextures"))
+   {
+      glUniform1i(program.getUniform("numSpecularTextures"),numSpecularTextures);
+   }
 
    glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);
    vao.unbind();

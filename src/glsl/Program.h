@@ -96,18 +96,28 @@ public:
 
    /**
     * See if a program has a uniform, without adding it to the program.
-    * @param  uniform the uniform name to check
+    * @param
     * @return         >0  if exists, -1 otherwise.
     */
    GLint hasUniform(std::string uniform);
+  
+   /**
+    * See if the programmer has added a unifrom
+    * @param  uniform uniform to check
+    * @return         true if "addUniform" has been called
+    */
+   bool hasAddedUniform(std::string uniform);
+  
    /**
     * Add a GLStruct uniform to the program
     * @param  name   name of the instance in the program
     * @param  struct struct to bind the instance to
     * @return        0 if OK, -1 otherwise
-    */    
+    */
+
+
    int addUniformStruct(std::string name, GL_Structure  glStruct);
-   
+
    /**
     * Add a uniform array to the program
     * @param arr the array base name
@@ -151,7 +161,7 @@ public:
     * @return the GLint of the attribute, -1 if not found.
     */
    GLint getUniform(std::string name);
-   
+
 
    /**
     * Get a uniform from the program
@@ -159,7 +169,7 @@ public:
     * @return the GLint of the attribute, -1 if not found.
     */
    GL_Structure getUniformStruct(std::string name);
-   
+
    /**
     * Create the program. Call one of the above methods before doing this. Programs with no shaders attached will throw errors.
     */
@@ -215,7 +225,7 @@ private:
     * @return 0 if OK, -1 otherwise.
     */
    int addShader(std::shared_ptr<Shader> & whichShader, std::string shaderName, GLenum shaderType);
-   
+
    /**
     * Compile all shaders return 0 if ok, -1 otherwise.
 
@@ -227,7 +237,7 @@ private:
     * @return a tuple containing the program's ID, and the status of the program.
     */
    ProgCreationInfo createProgram();
-   
+
    std::string name;
    bool created;
 

@@ -63,6 +63,8 @@ public:
    {
       return vertsLen / floatsPerVert;
    }
+
+
 private:
    GLuint vboID;
    int vertsLen;

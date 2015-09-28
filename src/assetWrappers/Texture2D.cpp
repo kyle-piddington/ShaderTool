@@ -52,12 +52,13 @@ void Texture2D::enable(GLint samplerID)
    bfr.bind();
    glUniform1i(samplerID, texUnit->getTexUnit());
    currentBoundSampler = samplerID;
-   GL_Logger::LogError("Could not set texture uniform", glGetError());
+   GL_Logger::LogError("Could not set texture uniform for " + textureName  + " at location " + std::to_string(samplerID) , glGetError());
 }
 void Texture2D::disable()
 {
    if(texUnit != nullptr)
       texUnit->release();
+
    bfr.unbind();
    texUnit = nullptr;
 }

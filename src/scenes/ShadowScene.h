@@ -6,6 +6,7 @@
 #include "Plane.h"
 #include "Light.h"
 #include "Texture2D.h"
+#include "Model.h"
 class ShadowScene : public CameraScene
 {
 public:
@@ -16,12 +17,13 @@ public:
    virtual void cleanup();
    virtual void update();
 private:
-   void renderGeometry(GLint modelMtx, GLint normalMtx = -1, GLint texMtx = -1);
+   void renderGeometry(Program & prog, GLint modelMtx, GLint normalMtx = -1, GLint texMtx = -1);
    void renderDepthPass();
    void renderDepthMap();
    void renderGeometryWithShadows();
    Framebuffer depthBuffer;
    Program * depthPassProg, *postprocessProg, * phongTexShadowProg;
+   Model model;
    Cube renderCube[3]{Cube()};
    Plane postprocessPlane, geomPlane;
    Texture2D woodTexture;
