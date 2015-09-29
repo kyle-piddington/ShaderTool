@@ -13,9 +13,9 @@ model("assets/models/nanosuit/nanosuit.obj")
 void VisualizeNormalScene::initPrograms()
 {
    
-   visualizeNormalProgram->addVertexShader("assets/shaders/debug_vert.vs");
+   visualizeNormalProgram->addVertexShader("assets/shaders/extrude_normals_vert.vs");
+   visualizeNormalProgram->addGeometryShader("assets/shaders/extrude_normals.gs");
    visualizeNormalProgram->addFragmentShader("assets/shaders/debug_frag.fs");
-   //visualizeNormalProgram->addGeometryShader("assets/shaders/extrude_normal.gs");
    
    drawModelProg->addVertexShader("assets/shaders/tex_assimp_vert.vs");
    drawModelProg->addFragmentShader("assets/shaders/tex_assimp_frag.fs");
@@ -27,7 +27,6 @@ void VisualizeNormalScene::initialBind()
    visualizeNormalProgram->addUniform("M");
    visualizeNormalProgram->addUniform("V");
    visualizeNormalProgram->addUniform("P");
-   visualizeNormalProgram->addUniform("NORM");
 
    visualizeNormalProgram->addUniform("debugColor");
    visualizeNormalProgram->enable();
@@ -49,6 +48,7 @@ void VisualizeNormalScene::render()
 {
    glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
    renderGeometry(drawModelProg);
+   renderGeometry(visualizeNormalProgram);
    //renderGeometry(visualizeNormalProgram);
 }
 
