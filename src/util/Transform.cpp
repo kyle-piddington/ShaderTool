@@ -47,9 +47,14 @@ void Transform::setRotation(float angle, const glm::vec3 & axis)
    updateFrame();
 }
 
-void Transform::translate(const glm::vec3 & pos)
+void Transform::translate(const glm::vec3 & pos, Space::spaceType type)
 {
-   this->position += pos;
+   glm::vec3 transPosition = pos;
+   if(type == Space::LOCAL)
+   {
+      transPosition = glm::vec3(getMatrix() * glm::vec4(pos,0.0));
+   }
+   this->position += transPosition;
    isDirty = true;
  
 

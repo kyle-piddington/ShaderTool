@@ -18,9 +18,9 @@ void Camera::setPosition(glm::vec3  position)
    dirty = true;
 }
 
-void Camera::translate(glm::vec3 translation)
+void Camera::translate(glm::vec3 translation, Space::spaceType type)
 {
-  transform.translate(translation);
+  transform.translate(translation, type);
   dirty = true;
 }
 void Camera::setRotation(glm::vec3 rotation)

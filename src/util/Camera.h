@@ -12,7 +12,7 @@ class Camera
 public:
    Camera(float width, float height);
    void setPosition(glm::vec3 position);
-   void translate(glm::vec3 translation);
+   void translate(glm::vec3 translation, Space::spaceType type = Space::WORLD);
    void setRotation(glm::vec3 rotation);
    void rotate(glm::vec3 rotation);
    void lookAt(glm::vec3 position);

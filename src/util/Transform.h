@@ -43,7 +43,7 @@ public:
     * Move by a vector
     * @param pos the delta vector
     */
-   void translate(const glm::vec3 & pos);
+   void translate(const glm::vec3 & pos, Space::spaceType type = Space::WORLD);
 
    /**
     * Rotate by a set of angles

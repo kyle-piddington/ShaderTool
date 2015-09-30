@@ -18,6 +18,7 @@
 #include "ShadowScene.h"
 #include "GeometryShaderScene.h"
 #include "VisualizeNormalsScene.h"
+#include "HDRScene.h"
 INITIALIZE_EASYLOGGINGPP
 
 int main()
@@ -62,7 +63,7 @@ int main()
 
    Context * ctx = new Context(window);
    //Init scene of choice here
-   Scene * scene = new VisualizeNormalScene(ctx);
+   Scene * scene = new HDRScene(ctx);
    scene->setContext(ctx);
 
    //Create a window for the program to run in
