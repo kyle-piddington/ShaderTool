@@ -86,9 +86,10 @@ glm::vec3 pointLightColors[] = {
 BoxScene::BoxScene(Context * ctx) : Scene(ctx),
    cubeMaterial(
                "assets/textures/container2.png",
+               32.0f,
                "assets/textures/container2_specular.png",
-               "assets/textures/solid_black.png",
-               32.0f),
+               "assets/textures/solid_black.png"
+               ),
    lamp(
       glm::vec3(0.2),
       glm::vec3(0.5),

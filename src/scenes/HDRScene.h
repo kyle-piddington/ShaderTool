@@ -3,8 +3,9 @@
 #include "Cube.h"
 #include "Plane.h"
 #include "EmptyScene.h"
-#include "Texture2D.h"
 
+#include "TexturedMaterial.h"
+#include "Light.h"
 #include "FirstPersonCamera.h"
 class HDRScene : public EmptyScene
 {
@@ -18,10 +19,11 @@ class HDRScene : public EmptyScene
    private:
       Program * hdrExposureProg;
       Program * hrdProg;
+      Light lights[4];
       Plane postprocessQuad;
       Cube tunnel;
       FirstPersonCamera camera;
-      Texture2D woodTex;
+      TexturedMaterial woodTex;
 
 
 

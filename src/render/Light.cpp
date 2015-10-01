@@ -48,6 +48,15 @@ Light::attenuationStruct Light::getAttenuationForDist(float dist)
    return *(Light::attenuationTable.end() -1);
 
 }
+
+Light::Light():
+ambient(glm::vec3(0.1)),
+diffuse(glm::vec3(0.6)),
+specular(glm::vec3(0.8)),
+currentAttenuation(getAttenuationForDist(50.0))
+{
+   
+}
 Light::Light(glm::vec3 amb, glm::vec3 diff, glm::vec3 spec,float range):
 ambient(amb),
 diffuse(diff),

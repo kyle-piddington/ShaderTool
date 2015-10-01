@@ -5,7 +5,11 @@
 #include "GL_Structure.h"
 struct TexturedMaterial
 {
-   TexturedMaterial(std::string diffTexture, std::string specTexture, std::string emissionMap, float shininess);
+   TexturedMaterial(std::string diffTexture, 
+                    float shininess,
+                    std::string specTexture = "assets/textures/solid_white.jpg", 
+                    std::string emissionMap = "assets/textures/solid_black.png"
+                    );
    
    void bind(GLint diffSampler, GLint specSampler, GLint emissionSampler, GLint shininessLoc);
    void bind(const GL_Structure & glStruct);
