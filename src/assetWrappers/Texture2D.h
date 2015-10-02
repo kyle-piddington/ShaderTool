@@ -5,7 +5,7 @@
 #include <GL/glew.h>
 #include <string>
 #include "ReloadableAsset.h"
-
+#include "TextureConfig.h"
 namespace TextureType
 {
   enum type
@@ -23,7 +23,13 @@ public:
     * Create an RGB texture. (No alpha support, yet...)
     * Will also have support for loading texture metadata
     */
-   Texture2D(std::string textureName, bool enableAlphaTest = false);
+   
+   //Create a texture object without initting it.
+   Texture2D();
+   Texture2D(std::string textureName);
+   Texture2D(TextureConfig config);
+
+   void init(TextureConfig cfg);
 
    ~Texture2D();
    /**
@@ -66,10 +72,9 @@ public:
 
 
 private:
-   std::string textureName;
    int width;
    int height;
-   bool isAlpha;
+   TextureConfig conf;
    TextureBuffer bfr;
    TextureType::type texType;
    GLint currentBoundSampler;

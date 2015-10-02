@@ -9,6 +9,14 @@ shininess(shininess)
 {
 
 }
+TexturedMaterial::TexturedMaterial(TextureConfig diffTexture, float shininess, std::string specTexture, std::string emissionTexture):
+diffuseMap(diffTexture),
+specularMap(specTexture),
+emissionMap(emissionTexture),
+shininess(shininess)
+{
+
+}
 
 void TexturedMaterial::bind(GLint diffLoc, GLint specLoc, GLint emissionLoc, GLint shininessLoc)
 {

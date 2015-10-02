@@ -4,36 +4,59 @@
 #include <easyLogging++.h>
 #include "../util/FileUtils.h"
 #include "ReloadableAsset.h"
-Texture2D::Texture2D(const std::string texName, bool enableAlphaTest) : ReloadableAsset(texName),
-   textureName(texName),
-   isAlpha(enableAlphaTest),
+
+//Empty constructor
+Texture2D::Texture2D():
+bfr(GL_TEXTURE_2D),
+width(-1),
+height(-1),
+texUnit(nullptr),
+texType(TextureType::NONE)
+{
+
+}
+
+Texture2D::Texture2D(std::string name):
+bfr(GL_TEXTURE_2D),
+texUnit(nullptr),
+texType(TextureType::NONE)
+{
+   init(TextureConfig(name,GL_RGB,GL_RGB,GL_UNSIGNED_BYTE));
+}
+Texture2D::Texture2D(TextureConfig config):
    bfr(GL_TEXTURE_2D),
    texUnit(nullptr),
    texType(TextureType::NONE)
+  
 {
+   init(config);
+}
 
-   int width, height;
+
+void Texture2D::init(TextureConfig config)
+{
+   this->conf = config;
+   ReloadableAsset::init(config.getTextureName());
    int loadType = SOIL_LOAD_RGB;
-   GLenum bindType = GL_RGB;
-   if(isAlpha)
+   
+   if(config.getInputFormat() == GL_RGBA || config.getInputFormat() == GL_SRGB_ALPHA)
    {
       loadType = SOIL_LOAD_RGBA;
-      bindType = GL_RGBA;
-      bfr.setStoreFormat(GL_RGBA);
       bfr.setRepeat(GL_CLAMP_TO_EDGE);
    }
 
+   std::string textureName = config.getTextureName();
    if(!FileUtils::fExists(textureName))
    {
       LOG(ERROR) << "Could not find texture at " + textureName;
       textureName = "assets/textures/missing_texture.png";
    }
+   bfr.setStoreFormat(config.getInputFormat());
 
    unsigned char* image = SOIL_load_image(textureName.c_str(), &width, &height, 0, loadType);
-   bfr.setData(image, width, height, bindType, GL_UNSIGNED_BYTE);
+   bfr.setData(image, width, height, config.getOutputFormat(), config.getDataType());
    SOIL_free_image_data(image);
 }
-
 Texture2D::~Texture2D()
 {
    if(texUnit != nullptr)
@@ -52,7 +75,7 @@ void Texture2D::enable(GLint samplerID)
    bfr.bind();
    glUniform1i(samplerID, texUnit->getTexUnit());
    currentBoundSampler = samplerID;
-   GL_Logger::LogError("Could not set texture uniform for " + textureName  + " at location " + std::to_string(samplerID) , glGetError());
+   GL_Logger::LogError("Could not set texture uniform for " + conf.getTextureName()  + " at location " + std::to_string(samplerID) , glGetError());
 }
 void Texture2D::disable()
 {
@@ -65,23 +88,24 @@ void Texture2D::disable()
 
 void Texture2D::reload()
 {
-   int width, height;
+   int loadType = SOIL_LOAD_RGB;
+   if(conf.getInputFormat() == GL_RGBA || conf.getInputFormat() == GL_SRGB_ALPHA)
+   {
+      loadType = SOIL_LOAD_RGBA;
+      bfr.setRepeat(GL_CLAMP_TO_EDGE);
+   }
+   std::string textureName = conf.getTextureName();
    if(!FileUtils::fExists(textureName))
    {
       LOG(ERROR) << "Could not find texture at " + textureName;
       textureName = "assets/textures/missing_texture.png";
    }
-   int loadType = SOIL_LOAD_RGB;
-   GLint bindType = GL_RGB;
-   if(isAlpha)
-   {
-      loadType = SOIL_LOAD_RGBA;
-      bindType = GL_RGBA;
-   }
+   bfr.setStoreFormat(conf.getInputFormat());
 
    unsigned char* image = SOIL_load_image(textureName.c_str(), &width, &height, 0, loadType);
-   bfr.setData(image, width, height, bindType, GL_UNSIGNED_BYTE);
+   bfr.setData(image, width, height, conf.getOutputFormat(), conf.getDataType());
    SOIL_free_image_data(image);
+
 }
 
 TextureType::type Texture2D::textureType()

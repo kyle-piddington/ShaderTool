@@ -63,7 +63,7 @@ int main()
 
    Context * ctx = new Context(window);
    //Init scene of choice here
-   Scene * scene = new HDRScene(ctx);
+   Scene * scene = new BlendingScene(ctx);
    scene->setContext(ctx);
 
    //Create a window for the program to run in

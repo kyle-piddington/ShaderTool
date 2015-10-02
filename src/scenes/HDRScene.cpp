@@ -4,8 +4,9 @@
 #include "GlmUtil.h"
 HDRScene::HDRScene(Context * ctx):
    camera(ctx->getWindowWidth(),ctx->getWindowHeight()),
-   woodTex("assets/textures/wood.png", 1.0f)
+   woodTex(TextureConfig("assets/textures/wood.png",GL_SRGB,GL_RGB,GL_UNSIGNED_BYTE), 1.0f)
 {
+
    tunnel.transform.setScale(glm::vec3(5.0f, 5.0f, 55.0f));
    tunnel.transform.translate(glm::vec3(0.0,0.0,25.0));
 
@@ -29,7 +30,7 @@ void HDRScene::initPrograms()
    hdrExposureProg->addFragmentShader("assets/shaders/lighting/phong_frag_textured_pointLights.fs");
 
    hdrPostProcessProg->addVertexShader("assets/shaders/postprocess_vert.vs");
-   hdrPostProcessProg->addFragmentShader("assets/shaders/postprocess_frag_passthrough.fs");
+   hdrPostProcessProg->addFragmentShader("assets/shaders/postprocess_frag_toneMapping.fs");
 
 
 }

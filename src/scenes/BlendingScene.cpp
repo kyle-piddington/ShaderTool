@@ -5,7 +5,7 @@ BlendingScene::BlendingScene(Context * ctx) :
 CameraScene(ctx),
 metal("assets/textures/metal.png"),
 marble("assets/textures/marble.jpg"),
-window("assets/textures/window.png",true)
+window(TextureConfig("assets/textures/window.png",GL_RGBA,GL_RGBA,GL_UNSIGNED_BYTE))
 {
    alphaTexProg = createProgram("Alpha texture program");
    plane.transform.setScale(glm::vec3(5.0f));

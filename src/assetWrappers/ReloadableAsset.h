@@ -8,7 +8,10 @@
 class ReloadableAsset
 {
    public:
+      //Construct an asset, without binding a name
+      ReloadableAsset();
       ReloadableAsset(std::string path); //Construct a new asset
+      void init(std::string path);
       virtual ~ReloadableAsset() = 0;
       virtual void reload() = 0; //Reload this asset
       virtual std::string getPath() const;
