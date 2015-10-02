@@ -12,7 +12,7 @@ framebufferID(0)
 Framebuffer::Framebuffer(FramebufferConfiguration configuration):
 framebufferID(0)
 {
-   
+
    init(configuration);
 
 }
@@ -30,6 +30,16 @@ void Framebuffer::init(FramebufferConfiguration config)
       (*i)->attach();
    }
 
+   //Configure attachments
+   std::vector<GLuint> glColorAttachments;
+   int i;
+   for(i = 0; i < configuration.getNumColorAttachments(); i++)
+   {
+      glColorAttachments.push_back(GL_COLOR_ATTACHMENT0 + i);
+   }
+   glDrawBuffers(i,&(glColorAttachments[0]));
+   GL_Logger::LogError("Could not set drawbuffers");
+
    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
       LOG(ERROR)<< "ERROR::FRAMEBUFFER:: Framebuffer is not complete!";
    glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -38,7 +48,7 @@ void Framebuffer::init(FramebufferConfiguration config)
 void Framebuffer::deleteFramebuffer()
 {
    std::vector< std::shared_ptr<FramebufferAttachment> > attachments = configuration.getAttachments();
-   
+
    for (std::vector<std::shared_ptr<FramebufferAttachment > >::iterator i = attachments.begin(); i != attachments.end(); ++i)
    {
       (*i)->cleanup();
@@ -68,11 +78,14 @@ void Framebuffer::disableTexture(std::string textureID)
 
 bool Framebuffer::isCompleted()
 {
-   return framebufferID != 0 && 
+   return framebufferID != 0 &&
       glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
 }
 
 void Framebuffer::BindDefaultFramebuffer()
 {
+
    glBindFramebuffer(GL_FRAMEBUFFER,0);
 }
+
+

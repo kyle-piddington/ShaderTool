@@ -67,6 +67,8 @@ public:
    bool isCompleted();
 
 private:
+
+   
    int width, height;
    FramebufferConfiguration configuration;
    GLuint framebufferID;

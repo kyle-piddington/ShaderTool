@@ -3,12 +3,15 @@ in vec2 fragTexCoords;
 out vec4 color;
 
 uniform sampler2D screenTexture;
+uniform sampler2D bloomTexture;
 void main()
 {
 
-      const float exposure = 1.2;
+      const float exposure = 0.1;
       const float gamma = 2.2;
-      vec3 hdrColor = texture(screenTexture, fragTexCoords).rgb;
+      vec3 hdrColor = texture(screenTexture, fragTexCoords).rgb; 
+      if(gl_FragCoord.x < 400)
+         hdrColor += texture(bloomTexture, fragTexCoords).rgb;
      
        // Reinhard tone mapping
       vec3 mapped = vec3(1.0) - exp(-hdrColor * exposure);

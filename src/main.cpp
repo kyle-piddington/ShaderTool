@@ -19,6 +19,7 @@
 #include "GeometryShaderScene.h"
 #include "VisualizeNormalsScene.h"
 #include "HDRScene.h"
+#include "BloomScene.h"
 INITIALIZE_EASYLOGGINGPP
 
 int main()
@@ -63,7 +64,7 @@ int main()
 
    Context * ctx = new Context(window);
    //Init scene of choice here
-   Scene * scene = new BlendingScene(ctx);
+   Scene * scene = new BloomScene(ctx);
    scene->setContext(ctx);
 
    //Create a window for the program to run in

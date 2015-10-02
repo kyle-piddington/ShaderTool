@@ -15,6 +15,14 @@ public:
 
    }
    
+   TextureConfig(std::string texName):
+   texName(texName),
+   textureInputFmt(GL_RGB),
+   textureOutputFmt(GL_RGB),
+   textureDataType(GL_UNSIGNED_BYTE)
+   {
+
+   }
    TextureConfig(std::string texName, GLenum inputFmt, GLenum outputFmt, GLenum dataType):
       textureInputFmt(inputFmt),
       textureOutputFmt(outputFmt),

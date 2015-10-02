@@ -9,7 +9,7 @@ shininess(shininess)
 {
 
 }
-TexturedMaterial::TexturedMaterial(TextureConfig diffTexture, float shininess, std::string specTexture, std::string emissionTexture):
+TexturedMaterial::TexturedMaterial(TextureConfig diffTexture, float shininess, TextureConfig specTexture, TextureConfig emissionTexture):
 diffuseMap(diffTexture),
 specularMap(specTexture),
 emissionMap(emissionTexture),

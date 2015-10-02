@@ -111,9 +111,12 @@ public:
    void addTexturebuffer(TextureAttachment info);
    std::vector<std::shared_ptr<FramebufferAttachment> > getAttachments();
    std::shared_ptr<TextureAttachment> getTextureAttachment(std::string name) ;
-  
+   
+   int getNumColorAttachments();
    static FramebufferConfiguration DefaultFramebuffer(int w, int h);
 private:
+   int getMaxColorAttachments();
+   static int maxColorAttachments;
    std::unordered_map<std::string, std::shared_ptr<TextureAttachment> > fbTextures;
    std::vector<std::shared_ptr<FramebufferAttachment> > fbAttachments;
    bool isCompleted;

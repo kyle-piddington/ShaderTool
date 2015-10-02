@@ -1,5 +1,17 @@
 #include "FramebufferConfiguration.h"
 #include "GL_Logger.h"
+
+int FramebufferConfiguration::maxColorAttachments = -1;
+
+int FramebufferConfiguration::getMaxColorAttachments()
+{
+   if(maxColorAttachments == -1)
+   {
+      glGetIntegerv(GL_MAX_DRAW_BUFFERS, &FramebufferConfiguration::maxColorAttachments);
+      GL_Logger::LogError("COuld not get number of color attachments!");
+   }
+   return FramebufferConfiguration::maxColorAttachments;
+}
 FramebufferConfiguration::FramebufferConfiguration():
 width(-1),
 height(-1)
@@ -104,7 +116,7 @@ void TextureAttachment::attach()
       //Add the texture to the framebuffer
       glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentInfo, GL_TEXTURE_2D, tbo, 0);
       GL_Logger::LogError("Could not attach framebuffer texture " + textureName);
-
+      LOG(INFO) << "Attached framebuffer Texture attachment " << textureName;
    }
 
 }
@@ -123,6 +135,18 @@ void TextureAttachment::enableTexture(GLuint samplerID)
 
    glUniform1i(samplerID, texUnit->getTexUnit());
 
+}
+
+int FramebufferConfiguration::getNumColorAttachments(){
+   int numAttachments = 0;
+   for (auto i = fbTextures.begin(); i != fbTextures.end(); ++i)
+   {
+      if(i->second->attachmentInfo >= GL_COLOR_ATTACHMENT0 && i->second->attachmentInfo < GL_COLOR_ATTACHMENT0 + getMaxColorAttachments())
+      {
+         numAttachments++;
+      }
+   }
+   return numAttachments;
 }
 
 void TextureAttachment::disableTexture()

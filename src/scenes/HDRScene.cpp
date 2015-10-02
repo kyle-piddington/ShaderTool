@@ -4,7 +4,8 @@
 #include "GlmUtil.h"
 HDRScene::HDRScene(Context * ctx):
    camera(ctx->getWindowWidth(),ctx->getWindowHeight()),
-   woodTex(TextureConfig("assets/textures/wood.png",GL_SRGB,GL_RGB,GL_UNSIGNED_BYTE), 1.0f)
+   woodTex(TextureConfig("assets/textures/wood.png",GL_SRGB,GL_RGB,GL_UNSIGNED_BYTE), 64.0f,
+           TextureConfig("assets/textures/solid_black.png"))
 {
 
    tunnel.transform.setScale(glm::vec3(5.0f, 5.0f, 55.0f));
@@ -12,7 +13,7 @@ HDRScene::HDRScene(Context * ctx):
 
    hdrExposureProg = createProgram("Phong lighting program");
    hdrPostProcessProg = createProgram("HDR Postprocessing program");
-
+   
    FramebufferConfiguration config(ctx->getWindowWidth(),ctx->getWindowHeight());
    TextureAttachment attachment("color",GL_RGB16F,GL_RGB,GL_FLOAT,GL_COLOR_ATTACHMENT0);
    config.addTexturebuffer(attachment);
@@ -82,7 +83,7 @@ void HDRScene::initialBind()
    Program::UniformStructArrayInfo arrInfo = hdrExposureProg->getStructArray("pointLights");
    for(int i = 0; i < 4; i++)
    {
-      lights[i] = Light(glm::vec3(0.0), lightColors[i], glm::vec3(0.8), lightAttenuation[i]);
+      lights[i] = Light(glm::vec3(0.0), lightColors[i], glm::vec3(0.03), lightAttenuation[i]);
       lights[i].transform.setPosition(lightPositions[i]);
       lights[i].bind(arrInfo[i]);
    }
