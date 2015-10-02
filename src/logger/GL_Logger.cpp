@@ -5,35 +5,45 @@
 
 inline int GL_Logger::LogError( std::string description, GLenum error)
 {
+   int hasError = 0;
+   while(error != GL_NO_ERROR)
+   {
 
-   switch(error){
-      case(GL_NO_ERROR):
-         return 0;
-         break;
-      case(GL_INVALID_ENUM):
-         LOG(ERROR) << description << ": GL_INVALID_ENUM";
-         return -1;
-         break;
-      case(GL_INVALID_VALUE):
-         LOG(ERROR) << description << ": GL_INVALID_VALUE";
-         return -1;
-         break;
-      case(GL_INVALID_OPERATION):
-         LOG(ERROR) << description << ": GL_INVALID_OPERATION";
-         return -1;
-         break;
-      case(GL_INVALID_FRAMEBUFFER_OPERATION):
-         LOG(ERROR) << description << ": GL_INVALID_FRAMEBUFFER_OPERATION";
-         return -1;
-         break;
-      case(GL_OUT_OF_MEMORY):
-         LOG(ERROR) << description << ": GL_OUT_OF_MEMORY";
-         return -1;
-         break;
-      default:
-         LOG(ERROR) << description << ": Unknown error!";
-         return -2;
+
+      switch(error){
+         case(GL_NO_ERROR):
+            
+            break;
+         case(GL_INVALID_ENUM):
+            LOG(ERROR) << description << ": GL_INVALID_ENUM";
+            hasError= -1;
+            break;
+         case(GL_INVALID_VALUE):
+            LOG(ERROR) << description << ": GL_INVALID_VALUE";
+            hasError= -1;
+            break;
+         case(GL_INVALID_OPERATION):
+            LOG(ERROR) << description << ": GL_INVALID_OPERATION";
+            hasError= -1;
+            break;
+         case(GL_INVALID_FRAMEBUFFER_OPERATION):
+            LOG(ERROR) << description << ": GL_INVALID_FRAMEBUFFER_OPERATION";
+            hasError= -1;
+            break;
+         case(GL_OUT_OF_MEMORY):
+            LOG(ERROR) << description << ": GL_OUT_OF_MEMORY";
+            hasError= -1;
+            break;
+         default:
+            LOG(ERROR) << description << ": Unknown error!";
+            hasError= -2;
+         
+      }
+      error = glGetError();
+
    }
+   return hasError;
+
 };
 
 int GL_Logger::CheckShader(std::string description, GLuint shader)

@@ -39,13 +39,11 @@ const GLenum TextureUnit::getGlUnit()
 void TextureUnitManager::init()
 {
 
-   int texUnits = 15;
+   int texUnits = 16;
    glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &texUnits);
    texUnits -= 1;
-   if(GL_Logger::LogError("[WARN] could not get texunits, defaulting to 16", glGetError()))
-   {
-      texUnits = 15;
-   }
+   GL_Logger::LogError("[WARN] could not get texunits, defaulting to 16", glGetError());
+   
    while(texUnits >= 0)
    {
       TextureUnit unit(texUnits, GL_TEXTURE0 + texUnits);

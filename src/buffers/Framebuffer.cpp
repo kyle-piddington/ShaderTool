@@ -59,7 +59,7 @@ void Framebuffer::unbindFrameBuffer()
 void Framebuffer::enableTexture(std::string textureID, GLint samplerID)
 {
    configuration.getTextureAttachment(textureID)->enableTexture(samplerID);
-   
+   GL_Logger::LogError("Could not attach framebuffer texture " + textureID);
 }
 void Framebuffer::disableTexture(std::string textureID)
 {

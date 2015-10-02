@@ -10,7 +10,7 @@ ShadowScene::ShadowScene(Context * ctx) :
       pointLight.transform.setPosition(glm::vec3(-2.0f, 4.0f, -1.0f));
       pointLight.transform.lookAt(glm::vec3(0.0),glm::vec3(1.0));
       FramebufferConfiguration config(1024,1024);
-      config.addTexturebuffer(TextureAttachment("depth",GL_DEPTH_COMPONENT,GL_FLOAT,GL_DEPTH_ATTACHMENT));
+      config.addTexturebuffer(TextureAttachment("depth",GL_DEPTH_COMPONENT,GL_DEPTH_COMPONENT,GL_FLOAT,GL_DEPTH_ATTACHMENT));
       depthBuffer.init(config);
       depthBuffer.bindFrameBuffer();
       glDrawBuffer(GL_NONE);

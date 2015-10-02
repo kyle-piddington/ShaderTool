@@ -23,7 +23,7 @@ struct PointLight{
    vec3 ambient;
    vec3 diffuse;
    vec3 specular;
-  
+
    float constant;
    float linear;
    float quadratic;
@@ -31,7 +31,7 @@ struct PointLight{
 
 #define NR_POINT_LIGHTS 8
 uniform PointLight pointLights[NR_POINT_LIGHTS];
-uniform int numPointLights
+uniform int numPointLights;
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
@@ -46,14 +46,14 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
 
    vec3 ambient  = light.ambient * vec3(texture(material.diffuse,fragTexCoords));
-   vec3 diffuse  =  light.diffuse * diff * vec3(texture(material.diffuse,fragTexCoords));
+   vec3 diffuse  = light.diffuse * diff * vec3(texture(material.diffuse,fragTexCoords));
    vec3 specular = light.specular * spec * vec3(texture(material.specular,fragTexCoords));
-   
+
    float dist    = length(lightPosView - fragPos);
    float attenuation = 1.0f / (light.constant + light.linear * dist +
              light.quadratic * (dist * dist));
 
-   return (ambient + specular + diffuse) * attenuation;
+   return (ambient + specular + diffuse ) * attenuation;
 }
 
 
@@ -72,6 +72,9 @@ void main()
    }
    vec3 emission = vec3(texture(material.emission,fragTexCoords));
    result += emission;
-   //result += vec(0.5);
+   if(numPointLights == 0)
+   {
+      result = texture(material.diffuse,fragTexCoords).xyz;
+   }
    color = vec4(result,1.0) ;
 }

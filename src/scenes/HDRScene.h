@@ -7,6 +7,7 @@
 #include "TexturedMaterial.h"
 #include "Light.h"
 #include "FirstPersonCamera.h"
+#include "Framebuffer.h"
 class HDRScene : public EmptyScene
 {
    public:
@@ -18,11 +19,12 @@ class HDRScene : public EmptyScene
       void cleanup();
    private:
       Program * hdrExposureProg;
-      Program * hrdProg;
+      Program * hdrPostProcessProg;
       Light lights[4];
       Plane postprocessQuad;
       Cube tunnel;
       FirstPersonCamera camera;
+      Framebuffer framebuffer;
       TexturedMaterial woodTex;
 
 

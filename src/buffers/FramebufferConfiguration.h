@@ -71,13 +71,16 @@ private:
 struct TextureAttachment : FramebufferAttachment
 {
    GLenum attachmentInfo;
+   GLenum inputComponentType;
    GLenum outputComponentType;
    GLenum outputComponentStorage;
+ 
    std::string textureName;
-   TextureAttachment(std::string textureName, GLenum outputComponentType, GLenum outputComponentStorage, GLenum attachmentInfo):
+   TextureAttachment(std::string textureName, GLenum inputComponentType, GLenum outputComponentType, GLenum outputComponentStorage, GLenum attachmentInfo):
    textureName(textureName),
    attachmentInfo(attachmentInfo),
    outputComponentType(outputComponentType),
+   inputComponentType(inputComponentType),
    outputComponentStorage(outputComponentStorage),
    tbo(0)
    {}

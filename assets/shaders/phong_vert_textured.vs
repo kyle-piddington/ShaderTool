@@ -17,6 +17,6 @@ void main()
 {
    gl_Position = P * V * M *  vec4(position, 1.0);
    fragPos = (V * M * vec4(position, 1.0)).xyz;
-   fragNor = N * normal;
+   fragNor = (N * -normal);
    fragTexCoords = vertTexCoords;
 }

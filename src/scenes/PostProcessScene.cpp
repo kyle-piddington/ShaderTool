@@ -36,12 +36,18 @@ void PostProcessScene::initialBind()
    texProg->addUniform("tex");
 
    postprocessProg->addUniform("screenTexture");
+   postprocessProg->addUniform("M");
 
    glm::mat4 P;
    texProg->enable();
    P = camera.getPerspectiveMatrix();
    glUniformMatrix4fv(texProg->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
    texProg->disable();
+
+   postprocessProg->enable();
+   glm::mat4 I(1.0);
+   glUniformMatrix4fv(postprocessProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(I));
+   postprocessProg->disable();
 
    glClearColor(0.2,0.2,0.2,1.0);
 }
@@ -55,7 +61,7 @@ void PostProcessScene::render()
    renderGeometry();
 
    Framebuffer::BindDefaultFramebuffer();
-   glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+   glClearColor(0.2f, 0.2f, 0.2f, 0.2f);
    glClear(GL_COLOR_BUFFER_BIT);
    glDisable(GL_DEPTH_TEST);
    renderFrameBuffer();
@@ -92,6 +98,7 @@ void PostProcessScene::renderFrameBuffer()
 {
 
    postprocessProg->enable();
+
    fbo.enableTexture("color",postprocessProg->getUniform("screenTexture"));
    renderPlane.render();
    postprocessProg->disable();

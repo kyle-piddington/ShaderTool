@@ -41,7 +41,7 @@ FramebufferConfiguration FramebufferConfiguration::DefaultFramebuffer(int w, int
    FramebufferConfiguration config(w,h);
    RenderbufferAttachment attachment(GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT);
    config.addRenderbuffer(attachment);
-   TextureAttachment tbuffer("color", GL_RGB,GL_UNSIGNED_BYTE,GL_COLOR_ATTACHMENT0);
+   TextureAttachment tbuffer("color", GL_RGB, GL_RGB, GL_UNSIGNED_BYTE,GL_COLOR_ATTACHMENT0);
    config.addTexturebuffer(tbuffer);
    return config;
 }
@@ -49,6 +49,12 @@ FramebufferConfiguration FramebufferConfiguration::DefaultFramebuffer(int w, int
 //@TODO, better error handling
 std::shared_ptr<TextureAttachment> FramebufferConfiguration::getTextureAttachment(std::string name)
 {
+   if(fbTextures.find(name) == fbTextures.end())
+   {
+      LOG(ERROR) << "Could not find a texture in the framebuffer named " << name;
+      return nullptr;
+   }
+
    return fbTextures[name];
 }
 
@@ -76,7 +82,7 @@ void RenderbufferAttachment::cleanup()
    glDeleteRenderbuffers(1, &rbo);
 }
 
-//@TODO, learn how to use texture attachments to framebuffers
+
 void TextureAttachment::attach()
 {
    if(tbo == 0)
@@ -85,7 +91,7 @@ void TextureAttachment::attach()
       glBindTexture(GL_TEXTURE_2D, tbo);
       GL_Logger::LogError("Could activate texture at tbo id " + std::to_string(tbo), glGetError());
 
-      glTexImage2D(GL_TEXTURE_2D, 0, outputComponentType,
+      glTexImage2D(GL_TEXTURE_2D, 0, inputComponentType,
                 width, height, 0, outputComponentType,
                 outputComponentStorage, NULL);
       GL_Logger::LogError("Could set texture data in texturebuffer " + std::to_string(tbo), glGetError());
@@ -97,6 +103,7 @@ void TextureAttachment::attach()
 
       //Add the texture to the framebuffer
       glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentInfo, GL_TEXTURE_2D, tbo, 0);
+      GL_Logger::LogError("Could not attach framebuffer texture " + textureName);
 
    }
 
@@ -104,6 +111,7 @@ void TextureAttachment::attach()
 
 void TextureAttachment::enableTexture(GLuint samplerID)
 {
+
    if(texUnit == nullptr)
    {
       texUnit = std::make_shared<TextureUnit>(TextureUnitManager::requestTextureUnit());
