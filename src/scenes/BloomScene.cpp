@@ -3,11 +3,12 @@
 #include "Light.h"
 #include "GlmUtil.h"
 #include "Keyboard.h"
+#include <unistd.h>
 BloomScene::BloomScene(Context * ctx):
    camera(ctx->getWindowWidth(),ctx->getWindowHeight()),
    woodTex(TextureConfig("assets/textures/wood.png",GL_SRGB,GL_RGB,GL_UNSIGNED_BYTE), 64.0f,
            TextureConfig("assets/textures/solid_black.png")),
-   numBlurs(5)
+   numBlurs(0)
 {
 
    tunnel.transform.setScale(glm::vec3(5.0f, 5.0f, 55.0f));
@@ -26,7 +27,7 @@ BloomScene::BloomScene(Context * ctx):
    extractionBuffer.init(config);
 
    TextureAttachment blurAttachment("color",GL_RGB16F,GL_RGB,GL_FLOAT,GL_COLOR_ATTACHMENT0);
-   FramebufferConfiguration blurConfig(ctx->getWindowWidth(),ctx->getWindowHeight());
+   FramebufferConfiguration blurConfig(ctx->getWindowWidth()/2.0,ctx->getWindowHeight()/2.0);
    blurConfig.addTexturebuffer(blurAttachment);
    blurConfig.addRenderbuffer(RenderbufferAttachment(GL_DEPTH24_STENCIL8,GL_DEPTH_STENCIL_ATTACHMENT));
    blurBuffer.init(blurConfig);
@@ -136,48 +137,44 @@ void BloomScene::render()
 
    //Perform Gaussian blur
 
-
+   glViewport(0,0,getContext()->getWindowWidth()/2,getContext()->getWindowHeight()/2);
    blurBuffer.getActiveBuffer().bindFrameBuffer();
    gaussBlurProg->enable();
+   glClearColor(0.0,0.0,0.0,1.0);
    glClear(GL_COLOR_BUFFER_BIT);
    glDisable(GL_DEPTH_TEST);
    extractionBuffer.enableTexture("bloomColor",gaussBlurProg->getUniform("blurTexture"));
    glUniform1i(gaussBlurProg->getUniform("blurHorizontal"),1);
    postprocessQuad.render();
    blurBuffer.swap();
-   blurBuffer.getActiveBuffer().bindFrameBuffer();
-   blurBuffer.getPassiveBuffer().enableTexture("color",gaussBlurProg->getUniform("blurTexture"));
-   glUniform1i(gaussBlurProg->getUniform("blurHorizontal"),0);
-   postprocessQuad.render();
-   blurBuffer.swap();
-
-
+   
+   bool blurHoriz = false;
    for(int i = 0; i < numBlurs; i++)
    {
       //Horizontal blur
       blurBuffer.getActiveBuffer().bindFrameBuffer();
       blurBuffer.getPassiveBuffer().enableTexture("color",gaussBlurProg->getUniform("blurTexture"));
-      glUniform1i(gaussBlurProg->getUniform("blurHorizontal"),1);
+      glUniform1i(gaussBlurProg->getUniform("blurHorizontal"),blurHoriz);
       postprocessQuad.render();
-      
-
       blurBuffer.swap();
-      //Vertical blur
+      blurHoriz = !blurHoriz;
       blurBuffer.getActiveBuffer().bindFrameBuffer();
       blurBuffer.getPassiveBuffer().enableTexture("color",gaussBlurProg->getUniform("blurTexture"));
-      glUniform1i(gaussBlurProg->getUniform("blurHorizontal"),0);
+      glUniform1i(gaussBlurProg->getUniform("blurHorizontal"),blurHoriz);
       postprocessQuad.render();
-      
       blurBuffer.swap();
-   }
+      
+     //usleep(250.0);
 
+   }
+   std::cout << "Performing " << numBlurs << "blurs " << std::endl;
    blurBuffer.getActiveBuffer().unbindFrameBuffer();
-   //blurBuffer.swap();
+   blurBuffer.swap();
    gaussBlurProg->disable();
 
 
 
-
+    glViewport(0,0,getContext()->getWindowWidth(),getContext()->getWindowHeight());
    glClearColor(0.2,0.2,0.2,1.0);
    glClear(GL_COLOR_BUFFER_BIT);
    framebufferCombineProg->enable();

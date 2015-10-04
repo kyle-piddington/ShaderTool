@@ -74,7 +74,7 @@ struct TextureAttachment : FramebufferAttachment
    GLenum inputComponentType;
    GLenum outputComponentType;
    GLenum outputComponentStorage;
- 
+
    std::string textureName;
    TextureAttachment(std::string textureName, GLenum inputComponentType, GLenum outputComponentType, GLenum outputComponentStorage, GLenum attachmentInfo):
    textureName(textureName),
@@ -97,23 +97,50 @@ private:
 /**
  * The FramebufferConfiguration object provides a Framebuffer with all the attachments and information
  * it needs to successfully be created. In addition, it provides access to the textues for enabling and disabling them.
- * 
+ *
  */
 class FramebufferConfiguration
 {
 public:
 
    int width, height;
+   /**
+    * Create a new framebuffer
+    */
    FramebufferConfiguration(int width, int height);
    FramebufferConfiguration();
-   
+
+   /**
+    * Add a renderbuffer target to the framebuffer.
+    * Renderbuffers cannot be sampled like textures, and should
+    * only be used for non-sampling routines, like depth testing and stenciling
+    * @param renderbufferInfo The info descibing this buffer.
+    */
    void addRenderbuffer(RenderbufferAttachment renderbufferInfo);
+
+   /**
+    * Add a texturebuffer target to the framebuffer
+    * Texturebuffers 
+    * @param info [description]
+    */
    void addTexturebuffer(TextureAttachment info);
    std::vector<std::shared_ptr<FramebufferAttachment> > getAttachments();
    std::shared_ptr<TextureAttachment> getTextureAttachment(std::string name) ;
-   
+
+   /**
+    * Determine how many GL_Color_Attachments have been taken up so by this configuration
+    * @return the number of attachments taken
+    */
    int getNumColorAttachments();
+
+   /**
+    * Create a default framebuffer object
+    * @param  w The width of the FBO
+    * @param  h the height of the FBO
+    * @return   a new framebuffer object containing a renderbuffer, and a color textureboffer.
+    */
    static FramebufferConfiguration DefaultFramebuffer(int w, int h);
+
 private:
    int getMaxColorAttachments();
    static int maxColorAttachments;

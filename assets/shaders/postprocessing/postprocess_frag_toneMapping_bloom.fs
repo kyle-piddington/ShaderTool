@@ -7,10 +7,10 @@ uniform sampler2D bloomTexture;
 void main()
 {
 
-      const float exposure = 0.1;
+      const float exposure = 1.1;
       const float gamma = 2.2;
       vec3 hdrColor = texture(screenTexture, fragTexCoords).rgb; 
-      if(gl_FragCoord.x < 400)
+      if(gl_FragCoord.x < 800)
          hdrColor += texture(bloomTexture, fragTexCoords).rgb;
      
        // Reinhard tone mapping
