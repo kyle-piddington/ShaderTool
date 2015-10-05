@@ -7,7 +7,7 @@ uniform sampler2D bloomTexture;
 void main()
 {
 
-      const float exposure = 1.1;
+      const float exposure = 0.5;
       const float gamma = 2.2;
       vec3 hdrColor = texture(screenTexture, fragTexCoords).rgb; 
       if(gl_FragCoord.x < 800)

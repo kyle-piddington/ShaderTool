@@ -20,6 +20,7 @@
 #include "VisualizeNormalsScene.h"
 #include "HDRScene.h"
 #include "BloomScene.h"
+#include "DeferredRenderScene.h"
 INITIALIZE_EASYLOGGINGPP
 
 int main()
