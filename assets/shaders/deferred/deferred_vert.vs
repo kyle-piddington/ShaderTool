@@ -18,6 +18,6 @@ void main()
    vec4 fragPosition =   M * vec4(position,1.0);
    fragPos = fragPosition.xyz;
    gl_Position = P * V * fragPosition;
-   fragNor = N * normal;
+   fragNor = normalize(N * normal);
    fragTexCoords = vertTexCoords;
 }

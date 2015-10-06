@@ -1,6 +1,8 @@
 #include "DeferredRenderScene.h"
 #include <glm/gtc/type_ptr.hpp>
 #include "GlmUtil.h"
+
+#define NR_LIGHTS 32
 DeferredRenderScene::DeferredRenderScene(Context * ctx):
 CameraScene(ctx),
 currentRenderType(RENDER_POSITION),
@@ -26,7 +28,7 @@ void DeferredRenderScene::initPrograms()
    deferredGBufferProg->addFragmentShader("assets/shaders/deferred/deferred_frag.fs");
 
    postProcessProg->addVertexShader("assets/shaders/postprocess_vert.vs");
-   postProcessProg->addFragmentShader("assets/shaders/deferred/deferred_debug.fs");
+   postProcessProg->addFragmentShader("assets/shaders/deferred/deferred_simpleLight.fs");
 
 }
 
@@ -48,12 +50,46 @@ void DeferredRenderScene::initialBind()
    postProcessProg->addUniform("posTexture");
    postProcessProg->addUniform("norTexture");
    postProcessProg->addUniform("albedo_specTexture");
-   postProcessProg->addUniform("renderType");
+   postProcessProg->addUniform("viewPos");
+   GL_Structure lightStruct;
+   lightStruct.addAttribute("pos");
+   lightStruct.addAttribute("color");
+   lightStruct.addAttribute("Linear");
+   lightStruct.addAttribute("Quadratic");
+   postProcessProg->addStructArray("lights",NR_LIGHTS,lightStruct);
+
+
+
+
+
    glClearColor(0.1,0.1,0.1,1.0);
    
    postProcessProg->enable();
    glm::mat4 I (1.0);
    glUniformMatrix4fv(postProcessProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(I));
+   
+
+   Program::UniformStructArrayInfo info = postProcessProg->getStructArray("lights");
+
+   srand(13);
+   for (GLuint i = 0; i < NR_LIGHTS; i++)
+   {
+        // Calculate slightly random offsets
+      GLfloat xPos = ((rand() % 100) / 100.0) * 6.0 - 3.0;
+      GLfloat yPos = ((rand() % 100) / 100.0) * 6.0 - 4.0;
+      GLfloat zPos = ((rand() % 100) / 100.0) * 6.0 - 3.0;
+      glm::vec3 pos(xPos, yPos, zPos);
+        // Also calculate random color
+      GLfloat rColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
+      GLfloat gColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
+      GLfloat bColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
+      glm::vec3 color(rColor, gColor, bColor);
+      glUniform3fv(info[i]["pos"],1,glm::value_ptr(pos));
+      glUniform3fv(info[i]["color"],1,glm::value_ptr(color));
+      glUniform1f(info[i]["Linear"],0.7);
+      glUniform1f(info[i]["Quadratic"],1.8);
+   }
+
    postProcessProg->disable();
 
    deferredGBufferProg->enable();
@@ -61,26 +97,28 @@ void DeferredRenderScene::initialBind()
    glUniformMatrix4fv(deferredGBufferProg->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
 
 
+
 }
 
 void DeferredRenderScene::render()
 {
    gBuffer.bindFrameBuffer();
-   glClearColor(0.1,0.1,0.1,1.0);
+   glClearColor(0.0,0.0,0.0,0.0);
    
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
    deferredGBufferProg->enable();
    glm::mat4 V = camera.getViewMatrix();
+
    glUniformMatrix4fv(deferredGBufferProg->getUniform("V"),1,GL_FALSE,glm::value_ptr(V));
    cryModel.transform.setScale(glm::vec3(0.25));
    for(int i = -1; i <= 1; i++)
    {
       for(int j = -1; j <= 1; j++)
       {
-         cryModel.transform.setPosition(glm::vec3(3*i,0,3*j));
+         cryModel.transform.setPosition(glm::vec3(3 * i,-3.0,3 * j));
          glUniformMatrix4fv(deferredGBufferProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(cryModel.transform.getMatrix()));
-         glm::mat3 N = GlmUtil::createNormalMatrix(camera.getViewMatrix(),cryModel.transform.getMatrix());
+         glm::mat3 N = GlmUtil::createNormalMatrix(glm::mat4(1.0),cryModel.transform.getMatrix());
          glUniformMatrix3fv(deferredGBufferProg->getUniform("N"),1,GL_FALSE,glm::value_ptr(N));
          cryModel.render(*deferredGBufferProg);
       }
@@ -91,10 +129,12 @@ void DeferredRenderScene::render()
    
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    postProcessProg->enable();
+   glm::vec3 viewPos = camera.transform.getPosition();
+   glUniform3fv(postProcessProg->getUniform("viewPos"),1,glm::value_ptr(viewPos));
    gBuffer.enableTexture("position",postProcessProg->getUniform("posTexture"));
    gBuffer.enableTexture("normal",postProcessProg->getUniform("norTexture"));
    gBuffer.enableTexture("color",postProcessProg->getUniform("albedo_specTexture"));
-   glUniform1i(postProcessProg->getUniform("renderType"),currentRenderType);
+   
    renderPlane.render();
    postProcessProg->disable();
 

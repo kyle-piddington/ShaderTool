@@ -65,7 +65,7 @@ int main()
 
    Context * ctx = new Context(window);
    //Init scene of choice here
-   Scene * scene = new BloomScene(ctx);
+   Scene * scene = new DeferredRenderScene(ctx);
    scene->setContext(ctx);
 
    //Create a window for the program to run in
