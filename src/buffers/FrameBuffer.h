@@ -66,6 +66,8 @@ public:
     */
    bool isCompleted();
 
+   GLuint getFramebufferID();
+
 private:
 
    

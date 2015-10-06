@@ -20,6 +20,7 @@ cryModel("assets/models/nanosuit/nanosuit.obj")
 
    deferredGBufferProg = createProgram("G_Buffer fill program");
    postProcessProg = createProgram("G_Buffer display program");
+   debugProg = createProgram("Light display program");
 }
 
 void DeferredRenderScene::initPrograms()
@@ -30,6 +31,8 @@ void DeferredRenderScene::initPrograms()
    postProcessProg->addVertexShader("assets/shaders/postprocess_vert.vs");
    postProcessProg->addFragmentShader("assets/shaders/deferred/deferred_simpleLight.fs");
 
+   debugProg->addVertexShader("assets/shaders/debug_vert.vs");
+   debugProg->addFragmentShader("assets/shaders/debug_frag.fs");  
 }
 
 void DeferredRenderScene::initialBind()
@@ -59,6 +62,10 @@ void DeferredRenderScene::initialBind()
    postProcessProg->addStructArray("lights",NR_LIGHTS,lightStruct);
 
 
+   debugProg->addUniform("M");
+   debugProg->addUniform("V");
+   debugProg->addUniform("P");
+   debugProg->addUniform("debugColor");
 
 
 
@@ -85,7 +92,9 @@ void DeferredRenderScene::initialBind()
       GLfloat bColor = ((rand() % 100) / 200.0f) + 0.5; // Between 0.5 and 1.0
       glm::vec3 color(rColor, gColor, bColor);
       glUniform3fv(info[i]["pos"],1,glm::value_ptr(pos));
+      lightPositions.push_back(pos);
       glUniform3fv(info[i]["color"],1,glm::value_ptr(color));
+      lightColors.push_back(color);
       glUniform1f(info[i]["Linear"],0.7);
       glUniform1f(info[i]["Quadratic"],1.8);
    }
@@ -96,7 +105,9 @@ void DeferredRenderScene::initialBind()
    glm::mat4 P = camera.getPerspectiveMatrix();
    glUniformMatrix4fv(deferredGBufferProg->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
 
-
+   debugProg->enable();
+   glUniformMatrix4fv(debugProg->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
+   debugProg->disable();
 
 }
 
@@ -128,16 +139,51 @@ void DeferredRenderScene::render()
    glClearColor(1.0,1.0,1.0,1.0);
    
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   glDisable(GL_DEPTH_TEST);
    postProcessProg->enable();
    glm::vec3 viewPos = camera.transform.getPosition();
    glUniform3fv(postProcessProg->getUniform("viewPos"),1,glm::value_ptr(viewPos));
+   
+   Program::UniformStructArrayInfo info = postProcessProg->getStructArray("lights");
+   for(int i = 0; i < NR_LIGHTS; i++)
+   {
+      glm::vec3 translate = glm::vec3(sin(glfwGetTime() + i) , cos(glfwGetTime() + i), cos(i - glfwGetTime()));
+      translate += lightPositions[i];
+      glUniform3fv(info[i]["pos"],1,glm::value_ptr(translate));
+   }
    gBuffer.enableTexture("position",postProcessProg->getUniform("posTexture"));
    gBuffer.enableTexture("normal",postProcessProg->getUniform("norTexture"));
    gBuffer.enableTexture("color",postProcessProg->getUniform("albedo_specTexture"));
    
+
    renderPlane.render();
    postProcessProg->disable();
 
+
+   glEnable(GL_DEPTH_TEST);
+   //Blit depth component of framebuffer
+   glBindFramebuffer(GL_READ_FRAMEBUFFER,gBuffer.getFramebufferID());
+   glBindFramebuffer(GL_DRAW_FRAMEBUFFER,0); 
+   glBlitFramebuffer(
+      0, 0, getContext()->getWindowWidth(), getContext()->getWindowHeight(), 0, 0, getContext()->getWindowWidth(), getContext()->getWindowHeight(), GL_DEPTH_BUFFER_BIT, GL_NEAREST
+   );
+   
+   Framebuffer::BindDefaultFramebuffer();
+   debugProg->enable();
+   glUniformMatrix4fv(debugProg->getUniform("V"),1,GL_FALSE,glm::value_ptr(V));
+   Transform cubeTransform;
+   cubeTransform.setScale(glm::vec3(0.25));
+   for(int i = 0; i < NR_LIGHTS; i++)
+   {
+      glm::vec3 translate = glm::vec3(sin(glfwGetTime() * (i%3) + i) , cos(glfwGetTime()* (i%3) + i), cos(i - glfwGetTime()));
+      translate += lightPositions[i];
+      cubeTransform.setPosition(translate);
+      glUniformMatrix4fv(debugProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(cubeTransform.getMatrix()));
+      glUniform3fv(debugProg->getUniform("debugColor"),1,glm::value_ptr(lightColors[i]));
+      cube.render();
+
+   }
+   debugProg->disable();
 }
 
 void DeferredRenderScene::update()

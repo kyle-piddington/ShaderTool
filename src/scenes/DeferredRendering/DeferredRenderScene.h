@@ -4,6 +4,7 @@
 #include "Model.h"
 #include "Plane.h"
 #include "Framebuffer.h"
+#include "Cube.h"
 class DeferredRenderScene : public CameraScene
 {
 public:
@@ -26,8 +27,12 @@ private:
    Framebuffer gBuffer;
    Program * deferredGBufferProg;
    Program * postProcessProg;
+   Program * debugProg;
    Plane renderPlane;
    Model cryModel;
+   Cube cube;
+   std::vector<glm::vec3> lightPositions;
+   std::vector<glm::vec3> lightColors;
 
 };
 #endif

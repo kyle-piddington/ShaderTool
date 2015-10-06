@@ -88,4 +88,8 @@ void Framebuffer::BindDefaultFramebuffer()
    glBindFramebuffer(GL_FRAMEBUFFER,0);
 }
 
+GLuint Framebuffer::getFramebufferID()
+{
+   return framebufferID;
+}
 
