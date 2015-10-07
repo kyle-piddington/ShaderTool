@@ -10,6 +10,7 @@ public:
    void initPrograms();
    void initialBind();
    void render();
+   void update();
    void cleanup();
 private:
 

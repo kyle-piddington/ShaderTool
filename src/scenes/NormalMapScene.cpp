@@ -66,6 +66,8 @@ normalMap("assets/textures/bricks2_normal.jpg")
    planeVAO.addAttribute(3,bfr,sizeof(Point),offsetof(Point,tangent)); // Add point attribute
 
    normalMapProg = createProgram("Normal mapping program");
+   frameDisplayProg = createProgram("Frame Display Program");
+
 }
 
 void NormalMapScene::initPrograms()
@@ -73,6 +75,10 @@ void NormalMapScene::initPrograms()
    normalMapProg->addVertexShader("assets/shaders/tex_vert.vs");
    normalMapProg->addFragmentShader("assets/shaders/tex_frag.fs");
 
+   frameDisplayProg->addVertexShader("assets/shaders/frame_vert.vs");
+   frameDisplayProg->addGeometryShader("assets/shaders/frame_geom.gs");
+   frameDisplayProg->addFragmentShader("assets/shaders/simple_geom_frag.fs");
+     
 }
 void NormalMapScene::initialBind()
 {
@@ -81,11 +87,20 @@ void NormalMapScene::initialBind()
    normalMapProg->addUniform("P");
    normalMapProg->addUniform("tex");
 
+   frameDisplayProg->addUniform("M");
+   frameDisplayProg->addUniform("V");
+   frameDisplayProg->addUniform("P");
+
+
    normalMapProg->enable();
    glm::mat4 P = camera.getPerspectiveMatrix();
    glUniformMatrix4fv(normalMapProg->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
    diffuseMap.enable(normalMapProg->getUniform("tex"));
    normalMapProg->disable();
+
+   frameDisplayProg->enable();
+   glUniformMatrix4fv(frameDisplayProg->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
+   frameDisplayProg->disable();
 }
 void NormalMapScene::render()
 {
@@ -97,9 +112,40 @@ void NormalMapScene::render()
    planeVAO.bind();
    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
    planeVAO.unbind();
+   
+   frameDisplayProg->enable();
+   glUniformMatrix4fv(frameDisplayProg->getUniform("V"),1,GL_FALSE,glm::value_ptr(V));
+   glUniformMatrix4fv(frameDisplayProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(planeTransform.getMatrix()));
+   planeVAO.bind();
+   glDrawElements(GL_POINTS, 4, GL_UNSIGNED_INT, 0);
+   planeVAO.unbind();
+   frameDisplayProg->disable();
+   
+   
 
 
 
+}
+
+void NormalMapScene::update()
+{
+   CameraScene::update();
+   if(Keyboard::isKeyDown(GLFW_KEY_W))
+   {
+      planeTransform.rotate(0.05,glm::vec3(1.0,0.0,0.0),Space::LOCAL);
+   }
+   if(Keyboard::isKeyDown(GLFW_KEY_S))
+   {
+     planeTransform.rotate(-0.05,glm::vec3(1.0,0.0,0.0),Space::LOCAL);
+   }
+   if(Keyboard::isKeyDown(GLFW_KEY_A))
+   {
+      planeTransform.rotate(0.05,glm::vec3(0.0,1.0,0.0),Space::LOCAL);
+   }
+   if(Keyboard::isKeyDown(GLFW_KEY_D))
+   {
+     planeTransform.rotate(-0.05,glm::vec3(0.0,1.0,0.0),Space::LOCAL);
+   }
 }
 void NormalMapScene::cleanup()
 {
