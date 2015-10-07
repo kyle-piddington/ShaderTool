@@ -163,7 +163,7 @@ void DeferredRenderScene::render()
    glEnable(GL_DEPTH_TEST);
    //Blit depth component of framebuffer
    glBindFramebuffer(GL_READ_FRAMEBUFFER,gBuffer.getFramebufferID());
-   glBindFramebuffer(GL_DRAW_FRAMEBUFFER,0); 
+   glBindFramebuffer(GL_DRAW_FRAMEBUFFER,0);
    glBlitFramebuffer(
       0, 0, getContext()->getWindowWidth(), getContext()->getWindowHeight(), 0, 0, getContext()->getWindowWidth(), getContext()->getWindowHeight(), GL_DEPTH_BUFFER_BIT, GL_NEAREST
    );

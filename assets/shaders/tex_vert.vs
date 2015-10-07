@@ -6,6 +6,7 @@ layout (location = 2) in vec2 vertTexCoords;
 uniform mat4 M;
 uniform mat4 V;
 uniform mat4 P;
+
 out vec2 fragTexCoords;
 out vec3 fragPos;
 

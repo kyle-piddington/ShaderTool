@@ -20,9 +20,9 @@ GeometryShaderScene::GeometryShaderScene(Context * ctx)
 
 void GeometryShaderScene::initPrograms()
 {
-   geomProgram->addVertexShader("assets/shaders/simple_geom_vert.vs");
-   geomProgram->addGeometryShader("assets/shaders/simple_geom.gs");
-   geomProgram->addFragmentShader("assets/shaders/simple_geom_frag.fs");
+  geomProgram->addVertexShader("assets/shaders/simple_geom_vert.vs");
+  geomProgram->addGeometryShader("assets/shaders/simple_geom.gs");
+  geomProgram->addFragmentShader("assets/shaders/simple_geom_frag.fs");
 }
 void GeometryShaderScene::initialBind()
 {
