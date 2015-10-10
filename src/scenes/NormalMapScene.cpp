@@ -22,9 +22,11 @@ glm::vec3 NormalMapScene::getTangent(Point & pa, Point & pb, Point & pc)
 }
 NormalMapScene::NormalMapScene(Context * ctx):
 CameraScene(ctx),
-diffuseMap("assets/textures/bricks2.jpg"),
-normalMap("assets/textures/bricks2_normal.jpg")
+diffuseMat("assets/textures/brickwall.jpg",32),
+normalMap("assets/textures/brickwall_normal.jpg"),
+light(glm::vec3(0.1),glm::vec3(0.6),glm::vec3(0.8),50)
 {
+   light.transform.setPosition(glm::vec3(1.0));
    std::vector<Point> pts;
    pts.push_back(Point());
    pts.push_back(Point());
@@ -72,8 +74,8 @@ normalMap("assets/textures/bricks2_normal.jpg")
 
 void NormalMapScene::initPrograms()
 {
-   normalMapProg->addVertexShader("assets/shaders/tex_vert.vs");
-   normalMapProg->addFragmentShader("assets/shaders/tex_frag.fs");
+   normalMapProg->addVertexShader("assets/shaders/tex_vert_normalMap.vs");
+   normalMapProg->addFragmentShader("assets/shaders/phong_frag_normalMap.fs");
 
    frameDisplayProg->addVertexShader("assets/shaders/frame_vert.vs");
    frameDisplayProg->addGeometryShader("assets/shaders/frame_geom.gs");
@@ -85,8 +87,10 @@ void NormalMapScene::initialBind()
    normalMapProg->addUniform("M");
    normalMapProg->addUniform("V");
    normalMapProg->addUniform("P");
-   normalMapProg->addUniform("tex");
-
+   normalMapProg->addUniform("viewPos");
+   normalMapProg->addUniformStruct("pointLight",Light::getStruct());
+   normalMapProg->addUniformStruct("material",TexturedMaterial::getStruct());
+   normalMapProg->addUniform("normalMap");
    frameDisplayProg->addUniform("M");
    frameDisplayProg->addUniform("V");
    frameDisplayProg->addUniform("P");
@@ -95,18 +99,25 @@ void NormalMapScene::initialBind()
    normalMapProg->enable();
    glm::mat4 P = camera.getPerspectiveMatrix();
    glUniformMatrix4fv(normalMapProg->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
-   diffuseMap.enable(normalMapProg->getUniform("tex"));
+   light.bind(normalMapProg->getUniformStruct("pointLight"));
+   diffuseMat.bind(normalMapProg->getUniformStruct("material"));
+   normalMap.enable(normalMapProg->getUniform("normalMap"));
    normalMapProg->disable();
-
    frameDisplayProg->enable();
+
    glUniformMatrix4fv(frameDisplayProg->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
    frameDisplayProg->disable();
+
+
+   glClearColor(0.0,0.0,0.0,1.0);
 }
 void NormalMapScene::render()
 {
    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
    normalMapProg->enable();
    glm::mat4 V = camera.getViewMatrix();
+   glm::vec3 vPos = camera.transform.getPosition();
+   glUniform3fv(normalMapProg->getUniform("viewPos"),1,glm::value_ptr(vPos));
    glUniformMatrix4fv(normalMapProg->getUniform("V"),1,GL_FALSE,glm::value_ptr(V));
    glUniformMatrix4fv(normalMapProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(planeTransform.getMatrix()));
    planeVAO.bind();
@@ -120,8 +131,6 @@ void NormalMapScene::render()
    glDrawElements(GL_POINTS, 4, GL_UNSIGNED_INT, 0);
    planeVAO.unbind();
    frameDisplayProg->disable();
-   
-   
 
 
 
@@ -149,5 +158,7 @@ void NormalMapScene::update()
 }
 void NormalMapScene::cleanup()
 {
+   normalMap.disable();
+   diffuseMat.unbind();
 
 }

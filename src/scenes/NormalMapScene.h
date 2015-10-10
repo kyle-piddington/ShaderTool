@@ -3,6 +3,8 @@
 #include "CameraScene.h"
 #include "Texture2D.h"
 #include "VertexArrayObject.h"
+#include "TexturedMaterial.h"
+#include "Light.h"
 class NormalMapScene : public CameraScene
 {
 public:
@@ -25,8 +27,9 @@ private:
    glm::vec3 getTangent(Point & pa, Point & pb, Point & pc);
    Program * frameDisplayProg;
    Program * normalMapProg;
-   Texture2D diffuseMap;
+   TexturedMaterial diffuseMat;
    Texture2D normalMap;
+   Light light;
    VertexArrayObject planeVAO;
    Transform planeTransform;
 };
