@@ -114,8 +114,6 @@ public:
     * @param  struct struct to bind the instance to
     * @return        0 if OK, -1 otherwise
     */
-
-
    int addUniformStruct(std::string name, GL_Structure  glStruct);
 
    /**

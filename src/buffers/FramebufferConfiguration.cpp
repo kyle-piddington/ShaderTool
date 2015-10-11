@@ -39,7 +39,7 @@ void FramebufferConfiguration::addTexturebuffer(TextureAttachment info)
    std::shared_ptr<FramebufferAttachment> fbAttachment = texAtch;
    fbAttachment->setWidthHeight(width,height);
    fbAttachments.push_back(fbAttachment);
-   fbTextures[texAtch->textureName] = texAtch;
+   fbTextures[texAtch->config.getTextureName()] = texAtch;
 
 }
 
@@ -53,7 +53,9 @@ FramebufferConfiguration FramebufferConfiguration::DefaultFramebuffer(int w, int
    FramebufferConfiguration config(w,h);
    RenderbufferAttachment attachment(GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT);
    config.addRenderbuffer(attachment);
-   TextureAttachment tbuffer("color", GL_RGB, GL_RGB, GL_UNSIGNED_BYTE,GL_COLOR_ATTACHMENT0);
+   TextureAttachment tbuffer(
+      TextureConfig("color", GL_RGB, GL_RGB, GL_UNSIGNED_BYTE)
+      ,GL_COLOR_ATTACHMENT0);
    config.addTexturebuffer(tbuffer);
    return config;
 }
@@ -103,20 +105,31 @@ void TextureAttachment::attach()
       glBindTexture(GL_TEXTURE_2D, tbo);
       GL_Logger::LogError("Could activate texture at tbo id " + std::to_string(tbo), glGetError());
 
-      glTexImage2D(GL_TEXTURE_2D, 0, inputComponentType,
-                width, height, 0, outputComponentType,
-                outputComponentStorage, NULL);
+      glTexImage2D(GL_TEXTURE_2D, 0, config.getInputFormat(),
+                width, height, 0, config.getOutputFormat(),
+                config.getDataType(), NULL);
       GL_Logger::LogError("Could set texture data in texturebuffer " + std::to_string(tbo), glGetError());
 
       //Generate a texture to write this FBO to.
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, config.getMinFilter());
+      GL_Logger::LogError("Could not configure framebuffer texture min filter " + config.getTextureName());
+    
+      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, config.getMagFilter());
+      GL_Logger::LogError("Could not configure framebuffer texture max filter" + config.getTextureName());
+    
+      glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,config.getWrapModeS());
+      GL_Logger::LogError("Could not configure framebuffer texture wrap S " + config.getTextureName());
+    
+      glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,config.getWrapModeT());
+      GL_Logger::LogError("Could not configure framebuffer texture  wrap T" + config.getTextureName());
+    
+
       glBindTexture(GL_TEXTURE_2D, 0);
 
       //Add the texture to the framebuffer
       glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentInfo, GL_TEXTURE_2D, tbo, 0);
-      GL_Logger::LogError("Could not attach framebuffer texture " + textureName);
-      LOG(INFO) << "Attached framebuffer Texture attachment " << textureName;
+      GL_Logger::LogError("Could not attach framebuffer texture " + config.getTextureName());
+      LOG(INFO) << "Attached framebuffer Texture attachment " << config.getTextureName();
    }
 
 }

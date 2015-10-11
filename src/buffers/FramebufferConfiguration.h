@@ -5,6 +5,7 @@
 #include <easyLogging++.h>
 #include <unordered_map>
 #include "TextureUnitManager.h"
+#include "TextureConfig.h"
 /**
  * A FramebufferAttachment can either be a renderbuffer or texturebuffer
  * and are attached to the framebuffer when it is being configured
@@ -71,17 +72,10 @@ private:
 struct TextureAttachment : FramebufferAttachment
 {
    GLenum attachmentInfo;
-   GLenum inputComponentType;
-   GLenum outputComponentType;
-   GLenum outputComponentStorage;
-
-   std::string textureName;
-   TextureAttachment(std::string textureName, GLenum inputComponentType, GLenum outputComponentType, GLenum outputComponentStorage, GLenum attachmentInfo):
-   textureName(textureName),
+   TextureConfig config;
+   TextureAttachment(TextureConfig config, GLenum attachmentInfo):
    attachmentInfo(attachmentInfo),
-   outputComponentType(outputComponentType),
-   inputComponentType(inputComponentType),
-   outputComponentStorage(outputComponentStorage),
+   config(config),
    tbo(0)
    {}
    void attach();

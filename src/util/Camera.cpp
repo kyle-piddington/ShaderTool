@@ -7,8 +7,8 @@ Camera::Camera(float width, float height):
    height(height),
    dirty(true),
    currentViewMatrix(glm::mat4(1.0)),
-   currentPerspectiveMtx(glm::perspective(fov,aspectRatio,0.1f,100.0f)),
-   currentOrthographicsMtx(glm::ortho(-2.f,2.0f,-2.f/aspectRatio,2.0f/aspectRatio,0.1f,100.f))
+   currentPerspectiveMtx(glm::perspective(fov,aspectRatio,0.1f,50.0f)),
+   currentOrthographicsMtx(glm::ortho(-2.f,2.0f,-2.f/aspectRatio,2.0f/aspectRatio,0.1f,50.f))
 {
 
 }

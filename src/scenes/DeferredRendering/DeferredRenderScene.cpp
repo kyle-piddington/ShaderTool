@@ -9,9 +9,21 @@ currentRenderType(RENDER_POSITION),
 cryModel("assets/models/nanosuit/nanosuit.obj")
 {
    FramebufferConfiguration cfg(ctx->getWindowWidth(),ctx->getWindowHeight());
-   TextureAttachment posBfr("position",GL_RGB16F,GL_RGB,GL_FLOAT,GL_COLOR_ATTACHMENT0);
-   TextureAttachment norBfr("normal",GL_RGB16F,GL_RGB,GL_FLOAT,GL_COLOR_ATTACHMENT1);
-   TextureAttachment spec_albedoBfr("color",GL_RGBA,GL_RGBA,GL_FLOAT,GL_COLOR_ATTACHMENT2);
+   TextureConfig posBfrConfig("position",GL_RGB16F,GL_RGB,GL_FLOAT);
+   posBfrConfig.setTextureFilter(GL_NEAREST);
+   TextureAttachment posBfr(posBfrConfig,GL_COLOR_ATTACHMENT0);
+ 
+   TextureConfig norBfrConfig("normal",GL_RGB16F,GL_RGB,GL_FLOAT);
+   posBfrConfig.setTextureFilter(GL_NEAREST);
+ 
+   TextureAttachment norBfr(norBfrConfig,GL_COLOR_ATTACHMENT1);
+ 
+   TextureConfig spec_albedoConfig("color",GL_RGBA,GL_RGBA,GL_FLOAT);
+   posBfrConfig.setTextureFilter(GL_NEAREST);
+   
+
+   TextureAttachment spec_albedoBfr(spec_albedoConfig,GL_COLOR_ATTACHMENT2);
+   
    cfg.addTexturebuffer(posBfr);
    cfg.addTexturebuffer(norBfr);
    cfg.addTexturebuffer(spec_albedoBfr);

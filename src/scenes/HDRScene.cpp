@@ -15,7 +15,7 @@ HDRScene::HDRScene(Context * ctx):
    hdrPostProcessProg = createProgram("HDR Postprocessing program");
    
    FramebufferConfiguration config(ctx->getWindowWidth(),ctx->getWindowHeight());
-   TextureAttachment attachment("color",GL_RGB16F,GL_RGB,GL_FLOAT,GL_COLOR_ATTACHMENT0);
+   TextureAttachment attachment(TextureConfig("color",GL_RGB16F,GL_RGB,GL_FLOAT),GL_COLOR_ATTACHMENT0);
    config.addTexturebuffer(attachment);
    config.addRenderbuffer(RenderbufferAttachment(GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT));
    framebuffer.init(config);

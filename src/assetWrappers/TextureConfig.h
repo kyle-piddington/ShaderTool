@@ -12,6 +12,12 @@ class TextureConfig
    GLenum textureOutputFmt;
    //How the texture should be stored
    GLenum textureDataType;
+
+   GLenum wrapModeS;
+   GLenum wrapModeT;
+   GLenum filterModeMin;
+   GLenum filterModeMag;
+   
    std::string texName;
 public:
    /**
@@ -30,7 +36,11 @@ public:
    texName(texName),
    textureInputFmt(GL_RGB),
    textureOutputFmt(GL_RGB),
-   textureDataType(GL_UNSIGNED_BYTE)
+   textureDataType(GL_UNSIGNED_BYTE),
+   wrapModeS( GL_REPEAT),
+   wrapModeT( GL_REPEAT),
+   filterModeMin( GL_LINEAR),
+   filterModeMag( GL_LINEAR)
    {
 
    }
@@ -42,7 +52,11 @@ public:
       textureInputFmt(inputFmt),
       textureOutputFmt(outputFmt),
       textureDataType(dataType),
-      texName(texName)
+      texName(texName),
+      wrapModeS( GL_REPEAT),
+      wrapModeT( GL_REPEAT),
+      filterModeMin( GL_LINEAR),
+      filterModeMag( GL_LINEAR)
    {
 
    }
@@ -73,7 +87,55 @@ public:
    {
       return texName;
    }
+   GLenum getMinFilter() const
+   {
+      return filterModeMin;
+   }
+   GLenum getMagFilter() const
+   {
+      return filterModeMag;
+   }
+   GLenum getWrapModeS() const
+   {
+      return wrapModeS;
+   }
+   GLenum getWrapModeT() const
+   {
+      return wrapModeT;
+   }
 
+   //Setter methods
+
+   void setWrapMode(GLenum wrap)
+   {
+      wrapModeS = wrap;
+      wrapModeT = wrap;
+   }
+
+   void setWrapModeS(GLenum wrap)
+   {
+      wrapModeS = wrap;
+   }
+   void setWrapModeT(GLenum wrap)
+   {
+      wrapModeT = wrap;
+   }
+
+   void setTextureFilter(GLenum filter)
+   {
+      filterModeMin = filter;
+      filterModeMag = filter;
+   }
+   void setMinTextureFilter(GLenum filter)
+   {
+      filterModeMin = filter;
+   }
+   void setMaxTextureFilter(GLenum filter)
+   {
+      filterModeMag = filter;
+   }
+
+   
 
 };
 #endif

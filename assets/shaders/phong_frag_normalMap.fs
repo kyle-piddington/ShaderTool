@@ -38,7 +38,7 @@ void main()
 {
   vec3 texColor = texture(material.diffuse,fs_in.fragTexCoords).rgb;
   vec3 norm = 2*(texture(normalMap,fs_in.fragTexCoords).xyz) - 1.0;
-
+  
   //Ambient
   vec3 ambient = pointLight.ambient *  texColor;
 

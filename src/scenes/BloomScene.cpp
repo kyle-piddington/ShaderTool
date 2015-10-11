@@ -19,14 +19,14 @@ BloomScene::BloomScene(Context * ctx):
    gaussBlurProg = createProgram("Gaussian Blur Program");
 
    FramebufferConfiguration config(ctx->getWindowWidth(),ctx->getWindowHeight());
-   TextureAttachment attachment("color",GL_RGB16F,GL_RGB,GL_FLOAT,GL_COLOR_ATTACHMENT0);
+   TextureAttachment attachment(TextureConfig("color",GL_RGB16F,GL_RGB,GL_FLOAT),GL_COLOR_ATTACHMENT0);
    config.addTexturebuffer(attachment);
-   TextureAttachment attachment2("bloomColor",GL_RGB16F,GL_RGB,GL_FLOAT,GL_COLOR_ATTACHMENT1);
+   TextureAttachment attachment2(TextureConfig("bloomColor",GL_RGB16F,GL_RGB,GL_FLOAT),GL_COLOR_ATTACHMENT1);
    config.addTexturebuffer(attachment2);
    config.addRenderbuffer(RenderbufferAttachment(GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT));
    extractionBuffer.init(config);
 
-   TextureAttachment blurAttachment("color",GL_RGB16F,GL_RGB,GL_FLOAT,GL_COLOR_ATTACHMENT0);
+   TextureAttachment blurAttachment(TextureConfig("color",GL_RGB16F,GL_RGB,GL_FLOAT),GL_COLOR_ATTACHMENT0);
    FramebufferConfiguration blurConfig(ctx->getWindowWidth()/2.0,ctx->getWindowHeight()/2.0);
    blurConfig.addTexturebuffer(blurAttachment);
    blurConfig.addRenderbuffer(RenderbufferAttachment(GL_DEPTH24_STENCIL8,GL_DEPTH_STENCIL_ATTACHMENT));

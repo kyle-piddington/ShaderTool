@@ -141,19 +141,19 @@ void NormalMapScene::update()
    CameraScene::update();
    if(Keyboard::isKeyDown(GLFW_KEY_W))
    {
-      planeTransform.rotate(0.05,glm::vec3(1.0,0.0,0.0),Space::LOCAL);
+      planeTransform.rotate(0.02,glm::vec3(1.0,0.0,0.0),Space::LOCAL);
    }
    if(Keyboard::isKeyDown(GLFW_KEY_S))
    {
-     planeTransform.rotate(-0.05,glm::vec3(1.0,0.0,0.0),Space::LOCAL);
+     planeTransform.rotate(-0.02,glm::vec3(1.0,0.0,0.0),Space::LOCAL);
    }
    if(Keyboard::isKeyDown(GLFW_KEY_A))
    {
-      planeTransform.rotate(0.05,glm::vec3(0.0,1.0,0.0),Space::LOCAL);
+      planeTransform.rotate(0.02,glm::vec3(0.0,1.0,0.0),Space::LOCAL);
    }
    if(Keyboard::isKeyDown(GLFW_KEY_D))
    {
-     planeTransform.rotate(-0.05,glm::vec3(0.0,1.0,0.0),Space::LOCAL);
+     planeTransform.rotate(-0.02,glm::vec3(0.0,1.0,0.0),Space::LOCAL);
    }
 }
 void NormalMapScene::cleanup()
