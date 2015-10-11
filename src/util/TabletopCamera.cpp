@@ -37,6 +37,13 @@ void TabletopCamera::update(const Context * ctx)
    setPosition(glm::vec3(0,0,radius));
 }
 
+void TabletopCamera::rotate(float dPhi, float dTheta)
+{
+   phi += dPhi;
+   theta += dTheta;
+   centerPoint.setRotation(glm::vec3(phi,theta,0.0));
+
+}
 
 
 

@@ -23,6 +23,7 @@ texType(TextureType::NONE)
 {
    init(TextureConfig(name,GL_RGB,GL_RGB,GL_UNSIGNED_BYTE));
 }
+
 Texture2D::Texture2D(TextureConfig config):
    bfr(GL_TEXTURE_2D),
    texUnit(nullptr),
@@ -57,6 +58,20 @@ void Texture2D::init(TextureConfig config)
    bfr.setData(image, width, height, config.getOutputFormat(), config.getDataType());
    SOIL_free_image_data(image);
 }
+
+void Texture2D::init(TextureConfig config, const void * data, int texwidth, int texheight)
+{
+
+   this->conf = config;
+   this->width = texwidth;
+   this->height = texheight;
+   bfr.setStoreFormat(config.getInputFormat());
+   bfr.setRepeat(config.getWrapModeS());
+   bfr.setMagnifyFiltering(config.getMagFilter());
+   bfr.setMinifyFilter(config.getMinFilter());
+   bfr.setData(data, texwidth, texheight, config.getOutputFormat(), config.getDataType());
+}
+
 Texture2D::~Texture2D()
 {
    if(texUnit != nullptr)
@@ -69,7 +84,7 @@ void Texture2D::enable(GLint samplerID)
    if(texUnit == nullptr)
    {
       texUnit = std::make_shared<TextureUnit>(TextureUnitManager::requestTextureUnit());
-      glActiveTexture(texUnit->getGlUnit());
+      //glActiveTexture(texUnit->getGlUnit());  
       GL_Logger::LogError("Could not activate texture", glGetError());
    }
    bfr.bind();

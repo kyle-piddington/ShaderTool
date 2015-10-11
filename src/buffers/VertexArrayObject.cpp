@@ -10,7 +10,6 @@ VertexArrayObject::VertexArrayObject()
 
 VertexArrayObject::~VertexArrayObject()
 {
-   std::cout << "Deleted VAO @" << vaoID << std::endl;
    glDeleteVertexArrays(1, &vaoID);
    GL_Logger::LogError("Delete VAO", glGetError());
 }

@@ -17,6 +17,7 @@ class ReloadableAsset
       virtual std::string getPath() const;
    private:
       std::string path;
+      bool isBeingWatched;
 };
 
 #endif

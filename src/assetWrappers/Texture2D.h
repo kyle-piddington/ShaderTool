@@ -29,8 +29,16 @@ public:
    Texture2D(std::string textureName);
    Texture2D(TextureConfig config);
 
-   void init(TextureConfig cfg);
 
+
+  void init(TextureConfig cfg);
+  
+  /**
+   * Init the texture with some custom data
+   * @param cfg  the texture configuration
+   * @param data the data to init the texture buffer with.
+   */
+  void init(TextureConfig cfg, const void * data, int width, int height);
    ~Texture2D();
    /**
     * Enable the texture on the shader

@@ -1,4 +1,6 @@
 #define GLEW_STATIC
+#define ELPP_DISABLE_INFO_LOGS
+
 #include <GL/glew.h>
 #include <easylogging++.h>
 #include "Window.h"
@@ -22,6 +24,8 @@
 #include "BloomScene.h"
 #include "DeferredRenderScene.h"
 #include "NormalMapScene.h"
+#include "SSAOScene.h"
+
 INITIALIZE_EASYLOGGINGPP
 
 int main()
@@ -66,7 +70,7 @@ int main()
 
    Context * ctx = new Context(window);
    //Init scene of choice here
-   Scene * scene = new DeferredRenderScene(ctx);
+   Scene * scene = new SSAOScene(ctx);
    scene->setContext(ctx);
 
    //Create a window for the program to run in

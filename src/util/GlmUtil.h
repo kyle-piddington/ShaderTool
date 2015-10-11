@@ -6,5 +6,9 @@ struct GlmUtil
    {
       return glm::mat3(glm::transpose(glm::inverse(view * model)));
    }
+   static float lerp(float a, float b, float f)
+   {
+      return a + f * (b - a);
+   }
 };
 #endif
