@@ -1,12 +1,20 @@
 #include "Cube.h"
 #include "Vertex.h"
 
+
+
 #define cubeSize 0.5
 
-Cube::Cube()
+std::shared_ptr<VertexArrayObject> Cube::cubeVao = nullptr;
+int Cube::numInds = 0;
+bool Cube::initted = false;
+
+void Cube::initVAO()
 {
+   Cube::cubeVao = std::shared_ptr<VertexArrayObject>(new VertexArrayObject());
    float side = 1.0f;
    float side2 = side / 2.0f;
+   VertexBuffer bufferData;
 
    float v[24*8] = {
         // Front
@@ -52,27 +60,36 @@ Cube::Cube()
         16,17,18,16,18,19,
         20,21,22,20,22,23
     };
-
-
    bufferData.setData(v,24*8);
    ElementBufferObject ebo;
    ebo.setData(el,36);
-   cubeVao.addAttribute(0,bufferData,  8 * sizeof(GLfloat));
-   cubeVao.addAttribute(1,bufferData,  8 * sizeof(GLfloat), 3 * sizeof(GLfloat));
-   cubeVao.addAttribute(2, bufferData, 8 * sizeof(GLfloat), 6 * sizeof(GLfloat),2);
-   cubeVao.addElementArray(ebo);
+   cubeVao->addAttribute(0,bufferData,  8 * sizeof(GLfloat));
+   cubeVao->addAttribute(1,bufferData,  8 * sizeof(GLfloat), 3 * sizeof(GLfloat));
+   cubeVao->addAttribute(2, bufferData, 8 * sizeof(GLfloat), 6 * sizeof(GLfloat),2);
+   cubeVao->addElementArray(ebo);
    numInds = ebo.getNumIndicies();
+   Cube::initted = true;
+}
+Cube::Cube()
+{
 
 }
 
 Cube::~Cube()
 {
 }
-
+std::shared_ptr<VertexArrayObject> Cube::getVAO()
+{
+  if(!Cube::initted)
+  {
+    Cube::initVAO();
+  }
+  return Cube::cubeVao;
+}
 void Cube::render()
 {
-   cubeVao.bind();
+   getVAO()->bind();
    glDrawElements(GL_TRIANGLES, numInds, GL_UNSIGNED_INT, 0);
-   cubeVao.unbind();
+   getVAO()->unbind();
 
 }

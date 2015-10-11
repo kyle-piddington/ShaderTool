@@ -1,5 +1,4 @@
 #define GLEW_STATIC
-#define ELPP_DISABLE_INFO_LOGS
 
 #include <GL/glew.h>
 #include <easylogging++.h>

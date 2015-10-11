@@ -14,8 +14,11 @@ public:
    void render();
    Transform transform;
 private:
-   int numInds;
-   VertexArrayObject cubeVao;
-   VertexBuffer bufferData;
+   std::shared_ptr<VertexArrayObject>  getVAO();
+   static std::shared_ptr<VertexArrayObject> cubeVao;
+   static bool initted;
+   static void initVAO();
+   static int numInds;
+
 };
 #endif
