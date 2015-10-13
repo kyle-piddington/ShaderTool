@@ -21,12 +21,14 @@ private:
    void renderSSAO();
    void renderSSAOMap();
    void blurSSAO();
+   void renderDeferred();
    std::vector<glm::vec3> generateSampleKernal(int numSamples);
    Framebuffer gBuffer, ssaoBuffer, ssaoBlurBuffer;
    Program * deferredGBufferProg;
    Program * ssaoProgram;
    Program * postProcessProg;
    Program * ssaoBlurProgram;
+   Program * finalPassProgram;
    Plane renderPlane;
    Plane geomPlane;
    Model cryModel;

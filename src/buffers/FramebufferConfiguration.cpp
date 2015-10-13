@@ -140,12 +140,13 @@ void TextureAttachment::enableTexture(GLuint samplerID)
    if(texUnit == nullptr)
    {
       texUnit = std::make_shared<TextureUnit>(TextureUnitManager::requestTextureUnit());
-      glActiveTexture(texUnit->getGlUnit());
+      //glActiveTexture(texUnit->getGlUnit());
       GL_Logger::LogError("Could not activate framebuffer texture", glGetError());
    }
+   glActiveTexture(texUnit->getGlUnit());
+  
    glBindTexture(GL_TEXTURE_2D,tbo);
    GL_Logger::LogError("Could activate texture at tbo id " + std::to_string(tbo), glGetError());
-
    glUniform1i(samplerID, texUnit->getTexUnit());
 
 }

@@ -69,8 +69,11 @@ cryModel("assets/models/nanosuit/nanosuit.obj")
 
    deferredGBufferProg = createProgram("SSAO GBuffer fill program");
    ssaoProgram = createProgram("SSAO creation program");
+   
    postProcessProg = createProgram("Display AO map program");
    ssaoBlurProgram = createProgram("SSAO blur program");
+   finalPassProgram = createProgram("Final Pass Program");
+
    geomPlane.transform.setScale(glm::vec3(20.0));
    geomPlane.transform.setPosition(glm::vec3(0,-1,0));
 
@@ -94,6 +97,9 @@ void SSAOScene::initPrograms()
 
    postProcessProg->addVertexShader("assets/shaders/postprocess_vert.vs");
    postProcessProg->addFragmentShader("assets/shaders/deferred/ssao_displayResult.fs");
+
+   finalPassProgram->addVertexShader("assets/shaders/postprocess_vert.vs");
+   finalPassProgram->addFragmentShader("assets/shaders/deferred/deferred_simpleLight_ambient.fs");
 }
 
 void SSAOScene::initialBind()
@@ -116,7 +122,23 @@ void SSAOScene::initialBind()
 
    postProcessProg->addUniform("aoTexture");
 
-   postProcessProg->disable();
+   finalPassProgram->addUniform("posTexture");
+   finalPassProgram->addUniform("norTexture");
+   finalPassProgram->addUniform("albedo_specTexture");
+   finalPassProgram->addUniform("ambient");
+   finalPassProgram->addUniform("viewPos");
+   GL_Structure light;
+   light.addAttribute("pos");
+   light.addAttribute("color");
+   light.addAttribute("Linear");
+   light.addAttribute("Quadratic");
+
+   finalPassProgram->addUniformStruct("light",light);
+
+   
+
+
+
 
    deferredGBufferProg->enable();
    glm::mat4 P = camera.getPerspectiveMatrix();
@@ -136,6 +158,22 @@ void SSAOScene::initialBind()
    glUniformMatrix4fv(ssaoProgram->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
    ssaoNoise.enable(ssaoProgram->getUniform("noiseTexture"));
    ssaoProgram->disable();
+
+
+   //Light properties
+   const GLfloat linear = 0.09/3;
+   const GLfloat quadratic = 0.032/3;
+   glm::vec3 lightPos = glm::vec3(2.0, 4.0, -2.0);
+   glm::vec3 lightColor = glm::vec3(0.5, 0.5, 0.9);
+   
+   finalPassProgram->enable();
+   GL_Structure lightStruct = finalPassProgram->getUniformStruct("light");
+   glUniform3fv(lightStruct["pos"],1,glm::value_ptr(lightPos));
+   glUniform3fv(lightStruct["color"],1,glm::value_ptr(lightColor));
+   glUniform1f(lightStruct["Linear"],linear);
+   glUniform1f(lightStruct["Quadratic"],quadratic);
+   finalPassProgram->disable();
+
 }
 
 void SSAOScene::render()
@@ -143,17 +181,17 @@ void SSAOScene::render()
    renderGeomoetry();
    renderSSAO();
    blurSSAO();
-   renderSSAOMap();
+   renderDeferred();
 }
 
 void SSAOScene::renderGeomoetry()
 {
 
+   deferredGBufferProg->enable();
    gBuffer.bindFrameBuffer();
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    glEnable(GL_DEPTH_TEST);
    GL_Logger::LogError("Error before rendering geometry");
-   deferredGBufferProg->enable();
    glm::mat4 V = camera.getViewMatrix();
    glUniformMatrix4fv(deferredGBufferProg->getUniform("V"),1,GL_FALSE,glm::value_ptr(V));
    //Render plane
@@ -167,7 +205,8 @@ void SSAOScene::renderGeomoetry()
    cryModel.render(*deferredGBufferProg);
    deferredGBufferProg->disable();
    gBuffer.unbindFrameBuffer();
-   
+   glDisable(GL_DEPTH_TEST);
+ 
    GL_Logger::LogError("Error when rendering geometry");
 
 }
@@ -203,6 +242,20 @@ void SSAOScene::blurSSAO()
    ssaoBlurProgram->disable();
 
 }
+
+void SSAOScene::renderDeferred()
+{
+   finalPassProgram->enable();
+   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   gBuffer.enableTexture("positionDepth",finalPassProgram->getUniform("posTexture"));
+   gBuffer.enableTexture("normal",finalPassProgram->getUniform("norTexture"));
+   gBuffer.enableTexture("color",finalPassProgram->getUniform("albedo_specTexture"));
+   ssaoBlurBuffer.enableTexture("occlusion",finalPassProgram->getUniform("ambient"));
+   glm::vec3 viewPos = camera.transform.getPosition();
+   glUniform3fv(finalPassProgram->getUniform("viewPos"),1,glm::value_ptr(viewPos));
+   renderPlane.render();
+   finalPassProgram->disable();
+}
 std::vector<glm::vec3> SSAOScene::generateSampleKernal(int numSamples)
 {
    std::vector<glm::vec3> sampleKernal; //Generate a sample within a unit sphere
@@ -228,7 +281,7 @@ std::vector<glm::vec3> SSAOScene::generateSampleKernal(int numSamples)
 void SSAOScene::update()
 {
    CameraScene::update();
-   camera.rotate(0,M_PI/200.0);
+   //camera.rotate(0,M_PI/200.0);
 
 }
 void SSAOScene::cleanup()

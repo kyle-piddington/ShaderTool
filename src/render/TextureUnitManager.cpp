@@ -64,6 +64,7 @@ TextureUnit TextureUnitManager::requestTextureUnit()
       TextureUnit ret = unitQueue.top();
       unitQueue.pop();
       ret.active = true;
+      LOG(INFO) << "Leasing unit " + std::to_string(ret.getTexUnit());
       return ret;
    }
    else

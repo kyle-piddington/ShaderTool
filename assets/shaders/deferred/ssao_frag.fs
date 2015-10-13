@@ -1,6 +1,7 @@
 #version 330 core
 #define KERN_SIZE 64
 #define RADIUS 1.0
+#define POWER 2
 layout (location = 0) out float ssaoMap;
 
 in vec2 fragTexCoords;
@@ -48,7 +49,7 @@ void main()
       occlusion += (sampleDepth >= sample.z ? 1.0 : 0.0) * rangeCheck;          
    }
    occlusion = 1 - (occlusion/KERN_SIZE);
-   ssaoMap = occlusion;
+   ssaoMap = pow(occlusion,POWER);
 
 }
 

@@ -29,5 +29,6 @@ void main()
    gNormal = normalize(fragNor);
     // And the diffuse per-fragment color
    gAlbedoSpec.rgb = vec3(0.95);
+   gAlbedoSpec.a = 1.0;
 }
 
