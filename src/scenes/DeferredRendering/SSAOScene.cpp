@@ -111,6 +111,10 @@ void SSAOScene::initialBind()
    deferredGBufferProg->addUniform("V");
    deferredGBufferProg->addUniform("P");
    deferredGBufferProg->addUniform("N");
+   deferredGBufferProg->addUniform("numSpecularTextures");
+   deferredGBufferProg->addUniformArray("specularTextures",2);
+   deferredGBufferProg->addUniform("numDiffuseTextures");
+   deferredGBufferProg->addUniformArray("diffuseTextures",3);
 
    ssaoProgram->addUniform("gPositionDepth");
    ssaoProgram->addUniform("gNormal");
@@ -127,6 +131,7 @@ void SSAOScene::initialBind()
    finalPassProgram->addUniform("albedo_specTexture");
    finalPassProgram->addUniform("ambient");
    finalPassProgram->addUniform("viewPos");
+   finalPassProgram->addUniform("time");
    GL_Structure light;
    light.addAttribute("pos");
    light.addAttribute("color");
@@ -253,6 +258,7 @@ void SSAOScene::renderDeferred()
    ssaoBlurBuffer.enableTexture("occlusion",finalPassProgram->getUniform("ambient"));
    glm::vec3 viewPos = camera.transform.getPosition();
    glUniform3fv(finalPassProgram->getUniform("viewPos"),1,glm::value_ptr(viewPos));
+   glUniform1f(finalPassProgram->getUniform("time"),glfwGetTime());
    renderPlane.render();
    finalPassProgram->disable();
 }

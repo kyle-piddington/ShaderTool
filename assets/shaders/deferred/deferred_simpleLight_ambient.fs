@@ -19,7 +19,7 @@ struct Light{
 
 uniform Light light;
 uniform vec3 viewPos;
-
+uniform float time;
 
 void main()
 {
@@ -28,8 +28,12 @@ void main()
    vec3 albedo = texture(albedo_specTexture,fragTexCoords).rgb;
    float specularIntensity = texture(albedo_specTexture,fragTexCoords).a;
 
-   vec3 lighting =  0.3*texture(ambient,fragTexCoords).rrr; //Ambient
-   
+   vec3 lighting = vec3(0.25) * albedo;
+
+   if(gl_FragCoord.x < (sin(time)*0.5 + 0.5) * 800)
+   {
+      lighting =  albedo*0.3*texture(ambient,fragTexCoords).rrr; //Ambient
+   }
    vec3 viewDir = normalize(viewPos-fragPos);
 
 

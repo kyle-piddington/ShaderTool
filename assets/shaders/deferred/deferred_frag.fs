@@ -18,20 +18,20 @@ uniform sampler2D specularTextures[MAX_SPECULAR_TEXTURES];
 uniform int numSpecularTextures;
 
 void main()
-{    
+{
     // Store the fragment position vector in the first gbuffer texture
     gPosition = fragPos;
     // Also store the per-fragment normals into the gbuffer
     gNormal = normalize(fragNor);
     // And the diffuse per-fragment color
-   gAlbedoSpec = vec4(0.0);
-   for(int i = 0; i < numDiffuseTextures; i++)
-   {
+    gAlbedoSpec = vec4(0.0);
+    for(int i = 0; i < numDiffuseTextures; i++)
+    {
       gAlbedoSpec.rgb += texture(diffuseTextures[i], fragTexCoords).rgb;
-   }
-   for(int i = 0; i < numSpecularTextures; i++)
-   {
+    }
+    for(int i = 0; i < numSpecularTextures; i++)
+    {
       gAlbedoSpec.a += texture(specularTextures[i], fragTexCoords).r;
-   }
- 
-}  
+    }
+    
+}

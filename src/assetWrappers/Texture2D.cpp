@@ -84,7 +84,6 @@ void Texture2D::enable(GLint samplerID)
    if(texUnit == nullptr)
    {
       texUnit = std::make_shared<TextureUnit>(TextureUnitManager::requestTextureUnit());
-      glActiveTexture(texUnit->getGlUnit());  
       GL_Logger::LogError("Could not activate texture", glGetError());
    }
    glActiveTexture(texUnit->getGlUnit());  

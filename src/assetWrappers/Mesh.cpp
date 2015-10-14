@@ -31,7 +31,7 @@ void Mesh::render(Program & program)
    vao.bind();
    int numDiffuseTextures = 0;
    int numSpecularTextures = 0;
-
+   
    Program::UniformArrayInfo diffuseTextures = program.getArray("diffuseTextures");
    Program::UniformArrayInfo specularTextures = program.getArray("specularTextures");
 
