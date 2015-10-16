@@ -49,8 +49,7 @@ void BlendingScene::initialBind()
    glm::mat4 P;
    alphaTexProg->enable();
    P = camera.getPerspectiveMatrix();
-   glUniformMatrix4fv(alphaTexProg->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
-   alphaTexProg->disable();
+   alphaTexProg->getUniform("P").bind(P);
    glEnable(GL_BLEND);
    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
    glClearColor(0.2,0.2,0.2,1.0);
@@ -67,17 +66,17 @@ void BlendingScene::render()
    cube1.transform.setScale(glm::vec3(1.0));
    cube2.transform.setScale(glm::vec3(1.0));
 
-   glUniformMatrix4fv(alphaTexProg->getUniform("V"),1,GL_FALSE,glm::value_ptr(V));
+   alphaTexProg->getUniform("V").bind(V);
    //Draw the two containers
-   marble.enable(alphaTexProg->getUniform("tex"));
-   glUniformMatrix4fv(alphaTexProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(cube1.transform.getMatrix()));
+   marble.enable(alphaTexProg->getUniform("tex").getID());
+   alphaTexProg->getUniform("M").bind(cube1.transform.getMatrix());
    cube1.render();
-   glUniformMatrix4fv(alphaTexProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(cube2.transform.getMatrix()));
+   alphaTexProg->getUniform("M").bind(cube2.transform.getMatrix());
    cube2.render();
    marble.disable();
    //Draw the base plane
-   metal.enable(alphaTexProg->getUniform("tex"));
-   glUniformMatrix4fv(alphaTexProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(plane.transform.getMatrix()));
+   metal.enable(alphaTexProg->getUniform("tex").getID());
+   alphaTexProg->getUniform("M").bind(plane.transform.getMatrix());
    plane.render();
    metal.disable();
 
@@ -87,11 +86,11 @@ void BlendingScene::render()
    });
 
 
-   window.enable(alphaTexProg->getUniform("tex"));
+   window.enable(alphaTexProg->getUniform("tex").getID());
    for(int i = 0; i < 5; i++)
    {
       windowQuad.transform.setPosition(sortedTransparentObjects[i]);
-       glUniformMatrix4fv(alphaTexProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(windowQuad.transform.getMatrix()));
+      alphaTexProg->getUniform("M").bind(windowQuad.transform.getMatrix());
       windowQuad.render();
    }
    window.disable();

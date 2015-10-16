@@ -58,13 +58,13 @@ void CubemapScene::initialBind()
    glm::mat4 P;
    texProg->enable();
    P = camera.getPerspectiveMatrix();
-   glUniformMatrix4fv(texProg->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
+   texProg->getUniform("P").bind(P);
 
    skyboxProg->enable();
-   glUniformMatrix4fv(skyboxProg->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
+   skyboxProg->getUniform("P").bind(P);
 
    reflectProg->enable();
-   glUniformMatrix4fv(reflectProg->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
+   reflectProg->getUniform("P").bind(P);
 
 
    skyboxProg->disable();
@@ -79,8 +79,8 @@ void CubemapScene::render()
    glm::mat4 V;
    V = camera.getViewMatrix();
    texProg->enable();
-   glUniformMatrix4fv(texProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(cube.transform.getMatrix()));
-   glUniformMatrix4fv(texProg->getUniform("V"),1,GL_FALSE,glm::value_ptr(V));
+   texProg->getUniform("M").bind(cube.transform.getMatrix());
+   texProg->getUniform("V").bind(V);
 
    //crate.enable(texProg->getUniform("tex"));
    //cube.render();
@@ -89,13 +89,13 @@ void CubemapScene::render()
 
    reflectProg->enable();
    //reflectCube.transform.rotate(glm::vec3(M_PI/128.0,M_PI/200.0,0));
-   glUniformMatrix4fv(reflectProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(reflectCube.transform.getMatrix()));
+   reflectProg->getUniform("M").bind(reflectCube.transform.getMatrix());
    glm::mat3 N = GlmUtil::createNormalMatrix(glm::mat4(1.0),reflectCube.transform.getMatrix());
-   glUniformMatrix3fv(reflectProg->getUniform("N"),1,GL_FALSE,glm::value_ptr(N));
-   glUniformMatrix4fv(reflectProg->getUniform("V"),1,GL_FALSE,glm::value_ptr(V));
+   reflectProg->getUniform("N").bind(N);
+   reflectProg->getUniform("V").bind(V);
    glm::vec3 camPos = camera.getPosition();
-   glUniform3fv(reflectProg->getUniform("cameraPos"),1,glm::value_ptr(camPos));
-   cubeMap.enable(reflectProg->getUniform("skybox"));
+   reflectProg->getUniform("cameraPos").bind(camPos);
+   cubeMap.enable(reflectProg->getUniform("skybox").getID());
    reflectCube.render();
    
 
@@ -103,9 +103,9 @@ void CubemapScene::render()
    glm::mat4 skyView = glm::mat4(glm::mat3(V));
    skyboxProg->enable();
    glDepthFunc(GL_LEQUAL);
-   glUniformMatrix4fv(skyboxProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(skyboxCube.transform.getMatrix()));
-   glUniformMatrix4fv(skyboxProg->getUniform("V"),1,GL_FALSE,glm::value_ptr(skyView));
-   cubeMap.enable(skyboxProg->getUniform("skybox"));
+   skyboxProg->getUniform("M").bind(skyboxCube.transform.getMatrix());
+   skyboxProg->getUniform("V").bind(skyView);
+   cubeMap.enable(skyboxProg->getUniform("skybox").getID());
    skyboxCube.render();
    //cubeMap.disable();
    skyboxProg->disable();

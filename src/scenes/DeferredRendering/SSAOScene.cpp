@@ -140,14 +140,9 @@ void SSAOScene::initialBind()
 
    finalPassProgram->addUniformStruct("light",light);
 
-   
-
-
-
-
    deferredGBufferProg->enable();
    glm::mat4 P = camera.getPerspectiveMatrix();
-   glUniformMatrix4fv(deferredGBufferProg->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
+   deferredGBufferProg->getUniform("P").bind(P);
 
    ssaoProgram->enable();
    Program::UniformArrayInfo infos = ssaoProgram->getArray("samples");
@@ -160,8 +155,8 @@ void SSAOScene::initialBind()
       glUniform3fv(infos[i],1,glm::value_ptr(sampleKernal[i]));
    }
    GL_Logger::LogError("Could not set samples correctly");
-   glUniformMatrix4fv(ssaoProgram->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
-   ssaoNoise.enable(ssaoProgram->getUniform("noiseTexture"));
+   ssaoProgram->getUniform("P").bind(P);
+   ssaoNoise.enable(ssaoProgram->getUniform("noiseTexture").getID());
    ssaoProgram->disable();
 
 
@@ -184,9 +179,17 @@ void SSAOScene::initialBind()
 void SSAOScene::render()
 {
    renderGeomoetry();
+   GL_Logger::LogError("Problem in Geom");
+
    renderSSAO();
+   GL_Logger::LogError("Problem in SSAO Render");
+   
    blurSSAO();
+   GL_Logger::LogError("Problem in SSAO Blur");
+   
    renderDeferred();
+   GL_Logger::LogError("Problem in FinalPass");
+   
 }
 
 void SSAOScene::renderGeomoetry()
@@ -198,15 +201,19 @@ void SSAOScene::renderGeomoetry()
    glEnable(GL_DEPTH_TEST);
    GL_Logger::LogError("Error before rendering geometry");
    glm::mat4 V = camera.getViewMatrix();
-   glUniformMatrix4fv(deferredGBufferProg->getUniform("V"),1,GL_FALSE,glm::value_ptr(V));
+   deferredGBufferProg->getUniform("V").bind(V);
    //Render plane
-   glUniformMatrix4fv(deferredGBufferProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(geomPlane.transform.getMatrix()));
+   deferredGBufferProg->getUniform("M").bind(geomPlane.transform.getMatrix());
    glm::mat3 N = GlmUtil::createNormalMatrix(camera.getViewMatrix(),geomPlane.transform.getMatrix());
-   glUniformMatrix3fv(deferredGBufferProg->getUniform("N"),1,GL_FALSE,glm::value_ptr(N));
+   deferredGBufferProg->getUniform("N").bind(N);
+   GL_Logger::LogError("Problem in Geom");
+
    geomPlane.render();
-   glUniformMatrix4fv(deferredGBufferProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(cryModel.transform.getMatrix()));
+   deferredGBufferProg->getUniform("M").bind(cryModel.transform.getMatrix());
    N = GlmUtil::createNormalMatrix(camera.getViewMatrix(),cryModel.transform.getMatrix());
-   glUniformMatrix3fv(deferredGBufferProg->getUniform("N"),1,GL_FALSE,glm::value_ptr(N));
+   deferredGBufferProg->getUniform("N").bind(N);
+   GL_Logger::LogError("Problem in Geom");
+
    cryModel.render(*deferredGBufferProg);
    deferredGBufferProg->disable();
    gBuffer.unbindFrameBuffer();
@@ -220,9 +227,9 @@ void SSAOScene::renderSSAO()
    ssaoBuffer.bindFrameBuffer();
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    ssaoProgram->enable();
-   ssaoNoise.enable(ssaoProgram->getUniform("noiseTexture"));
-   gBuffer.enableTexture("positionDepth",ssaoProgram->getUniform("gPositionDepth"));
-   gBuffer.enableTexture("normal",ssaoProgram->getUniform("gNormal"));
+   ssaoNoise.enable(ssaoProgram->getUniform("noiseTexture").getID());
+   gBuffer.enableTexture("positionDepth",ssaoProgram->getUniform("gPositionDepth").getID());
+   gBuffer.enableTexture("normal",ssaoProgram->getUniform("gNormal").getID());
    renderPlane.render();
    ssaoProgram->disable();
    ssaoBuffer.unbindFrameBuffer();
@@ -231,7 +238,7 @@ void SSAOScene::renderSSAOMap()
 {
    postProcessProg->enable();
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   ssaoBlurBuffer.enableTexture("occlusion",postProcessProg->getUniform("aoTexture"));
+   ssaoBlurBuffer.enableTexture("occlusion",postProcessProg->getUniform("aoTexture").getID());
    renderPlane.render();
    postProcessProg->disable();
 
@@ -241,7 +248,7 @@ void SSAOScene::blurSSAO()
    ssaoBlurProgram->enable();
    ssaoBlurBuffer.bindFrameBuffer();
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   ssaoBuffer.enableTexture("occlusion",ssaoBlurProgram->getUniform("ssaoInput"));
+   ssaoBuffer.enableTexture("occlusion",ssaoBlurProgram->getUniform("ssaoInput").getID());
    renderPlane.render();
    ssaoBlurBuffer.unbindFrameBuffer();
    ssaoBlurProgram->disable();
@@ -252,13 +259,13 @@ void SSAOScene::renderDeferred()
 {
    finalPassProgram->enable();
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   gBuffer.enableTexture("positionDepth",finalPassProgram->getUniform("posTexture"));
-   gBuffer.enableTexture("normal",finalPassProgram->getUniform("norTexture"));
-   gBuffer.enableTexture("color",finalPassProgram->getUniform("albedo_specTexture"));
-   ssaoBlurBuffer.enableTexture("occlusion",finalPassProgram->getUniform("ambient"));
+   gBuffer.enableTexture("positionDepth",finalPassProgram->getUniform("posTexture").getID());
+   gBuffer.enableTexture("normal",finalPassProgram->getUniform("norTexture").getID());
+   gBuffer.enableTexture("color",finalPassProgram->getUniform("albedo_specTexture").getID());
+   ssaoBlurBuffer.enableTexture("occlusion",finalPassProgram->getUniform("ambient").getID());
    glm::vec3 viewPos = camera.transform.getPosition();
-   glUniform3fv(finalPassProgram->getUniform("viewPos"),1,glm::value_ptr(viewPos));
-   glUniform1f(finalPassProgram->getUniform("time"),glfwGetTime());
+   finalPassProgram->getUniform("viewPos").bind(viewPos);
+   finalPassProgram->getUniform("time").bind((float)glfwGetTime());
    renderPlane.render();
    finalPassProgram->disable();
 }

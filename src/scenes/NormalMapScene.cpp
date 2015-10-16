@@ -98,14 +98,14 @@ void NormalMapScene::initialBind()
 
    normalMapProg->enable();
    glm::mat4 P = camera.getPerspectiveMatrix();
-   glUniformMatrix4fv(normalMapProg->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
+   normalMapProg->getUniform("P").bind(P);
    light.bind(normalMapProg->getUniformStruct("pointLight"));
    diffuseMat.bind(normalMapProg->getUniformStruct("material"));
-   normalMap.enable(normalMapProg->getUniform("normalMap"));
+   normalMap.enable(normalMapProg->getUniform("normalMap").getID());
    normalMapProg->disable();
    frameDisplayProg->enable();
 
-   glUniformMatrix4fv(frameDisplayProg->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
+   frameDisplayProg->getUniform("P").bind(P);
    frameDisplayProg->disable();
 
 
@@ -117,16 +117,16 @@ void NormalMapScene::render()
    normalMapProg->enable();
    glm::mat4 V = camera.getViewMatrix();
    glm::vec3 vPos = camera.transform.getPosition();
-   glUniform3fv(normalMapProg->getUniform("viewPos"),1,glm::value_ptr(vPos));
-   glUniformMatrix4fv(normalMapProg->getUniform("V"),1,GL_FALSE,glm::value_ptr(V));
-   glUniformMatrix4fv(normalMapProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(planeTransform.getMatrix()));
+   normalMapProg->getUniform("viewPos").bind(vPos);
+   normalMapProg->getUniform("V").bind(V);
+   normalMapProg->getUniform("M").bind(planeTransform.getMatrix());
    planeVAO.bind();
    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
    planeVAO.unbind();
    
    frameDisplayProg->enable();
-   glUniformMatrix4fv(frameDisplayProg->getUniform("V"),1,GL_FALSE,glm::value_ptr(V));
-   glUniformMatrix4fv(frameDisplayProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(planeTransform.getMatrix()));
+   frameDisplayProg->getUniform("V").bind(V);
+   frameDisplayProg->getUniform("M").bind(planeTransform.getMatrix());
    planeVAO.bind();
    glDrawElements(GL_POINTS, 4, GL_UNSIGNED_INT, 0);
    planeVAO.unbind();

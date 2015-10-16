@@ -57,11 +57,11 @@ void Mesh::render(Program & program)
    //Set uniforms for number of textures
    if(program.hasAddedUniform("numDiffuseTextures"))
    {
-      glUniform1i(program.getUniform("numDiffuseTextures"),numDiffuseTextures);
+      program.getUniform("numDiffuseTextures").bind(numDiffuseTextures);
    }
    if(program.hasAddedUniform("numSpecularTextures"))
    {
-      glUniform1i(program.getUniform("numSpecularTextures"),numSpecularTextures);
+      program.getUniform("numSpecularTextures").bind(numSpecularTextures);
    }
 
    glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);

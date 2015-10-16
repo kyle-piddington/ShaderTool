@@ -7,6 +7,7 @@
 #include "GL_Structure.h"
 #include "Shader.h"
 #include <unordered_map>
+#include "GLSLParser.h"
 namespace ProgramStatus
 {
   enum CreateStatus
@@ -158,7 +159,7 @@ public:
     * @param name the attribute name
     * @return the GLint of the attribute, -1 if not found.
     */
-   GLint getUniform(std::string name);
+   GLSLParser::UniformObject getUniform(std::string name);
 
 
    /**
@@ -232,6 +233,11 @@ private:
    int compileAllShaders();
 
    /**
+    * Retrieve the type of a uniform in the program.
+    */
+   GLSLParser::GLSLType getUniformType(GLuint id);
+
+   /**
     * Create and link a shader program.
     * @return a tuple containing the program's ID, and the status of the program.
     */
@@ -248,7 +254,7 @@ private:
    std::shared_ptr<Shader> tessalationShader;
 
    std::unordered_map<std::string, GLuint> attributes;
-   std::unordered_map<std::string, GLint> uniforms;
+   std::unordered_map<std::string, GLSLParser::UniformObject> uniforms;
    std::unordered_map<std::string, GL_Structure> uniformStructs;
 
    std::unordered_map<std::string, bool> boundAttributes;

@@ -44,12 +44,12 @@ void OutlineScene::initialBind()
    glm::mat4 P;
    texProg->enable();
    P = camera.getPerspectiveMatrix();
-   glUniformMatrix4fv(texProg->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
+   texProg->getUniform("P").bind(P);
    texProg->disable();
 
    outlineTextureProgram->enable();
-   glUniform3f(outlineTextureProgram->getUniform("debugColor"),0.04, 0.28, 0.26);
-   glUniformMatrix4fv(outlineTextureProgram->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
+   outlineTextureProgram->getUniform("debugColor").bind(glm::vec3(0.04, 0.28, 0.26));
+   outlineTextureProgram->getUniform("P").bind(P);
    outlineTextureProgram->disable();
    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);  
    glEnable(GL_STENCIL_TEST);
@@ -70,18 +70,18 @@ void OutlineScene::render()
    cube1.transform.setScale(glm::vec3(1.0));
    cube2.transform.setScale(glm::vec3(1.0));
 
-   glUniformMatrix4fv(texProg->getUniform("V"),1,GL_FALSE,glm::value_ptr(V));
+   texProg->getUniform("V").bind(V);
    //Draw the two containers
-   marble.enable(texProg->getUniform("tex"));
-   glUniformMatrix4fv(texProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(cube1.transform.getMatrix()));
+   marble.enable(texProg->getUniform("tex").getID());
+   texProg->getUniform("M").bind(cube1.transform.getMatrix());
    cube1.render();
-   glUniformMatrix4fv(texProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(cube2.transform.getMatrix()));
+   texProg->getUniform("M").bind(cube2.transform.getMatrix());
    cube2.render();
    marble.disable();
 
    glStencilMask(0x00); // Disable writing to the stencil buffer
-   metal.enable(texProg->getUniform("tex"));
-   glUniformMatrix4fv(texProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(plane.transform.getMatrix()));
+   metal.enable(texProg->getUniform("tex").getID());
+   texProg->getUniform("M").bind(plane.transform.getMatrix());
    plane.render();
    metal.disable();
    texProg->disable();
@@ -91,12 +91,12 @@ void OutlineScene::render()
    GL_Logger::LogError("second program setup", glGetError());
 
    outlineTextureProgram->enable();
-   glUniformMatrix4fv(outlineTextureProgram->getUniform("V"),1,GL_FALSE,glm::value_ptr(V));
+   outlineTextureProgram->getUniform("V").bind(V);
    cube1.transform.setScale(glm::vec3(1.1));
    cube2.transform.setScale(glm::vec3(1.1));
-   glUniformMatrix4fv(outlineTextureProgram->getUniform("M"),1,GL_FALSE,glm::value_ptr(cube1.transform.getMatrix()));
+   outlineTextureProgram->getUniform("M").bind(cube1.transform.getMatrix());
    cube1.render();
-   glUniformMatrix4fv(outlineTextureProgram->getUniform("M"),1,GL_FALSE,glm::value_ptr(cube2.transform.getMatrix()));
+   outlineTextureProgram->getUniform("M").bind(cube2.transform.getMatrix());
    cube2.render();
    outlineTextureProgram->disable();
 

@@ -79,9 +79,9 @@ TEST(BasicShaderTests,queryUniformLocation)
    EXPECT_EQ(0,program.addVertexShader("test/testAssets/basicVert.vs"));
    EXPECT_EQ(0,program.addFragmentShader("test/testAssets/basicFrag.fs"));
    EXPECT_EQ(0,program.create());
-   EXPECT_EQ(-1,program.getUniform("debugColor"));
+   EXPECT_EQ(-1,program.getUniform("debugColor").getID());
    EXPECT_EQ(0,program.addUniform("debugColor"));
-   EXPECT_NE(-1,program.getUniform("debugColor"));
+   EXPECT_NE(-1,program.getUniform("debugColor").getID());
 }
 
 

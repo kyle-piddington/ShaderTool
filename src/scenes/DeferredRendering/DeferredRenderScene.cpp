@@ -85,7 +85,7 @@ void DeferredRenderScene::initialBind()
    
    postProcessProg->enable();
    glm::mat4 I (1.0);
-   glUniformMatrix4fv(postProcessProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(I));
+   postProcessProg->getUniform("M").bind(I);
    
 
    Program::UniformStructArrayInfo info = postProcessProg->getStructArray("lights");
@@ -115,10 +115,10 @@ void DeferredRenderScene::initialBind()
 
    deferredGBufferProg->enable();
    glm::mat4 P = camera.getPerspectiveMatrix();
-   glUniformMatrix4fv(deferredGBufferProg->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
-
+   deferredGBufferProg->getUniform("P").bind(P);
+ 
    debugProg->enable();
-   glUniformMatrix4fv(debugProg->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
+   debugProg->getUniform("P").bind(P);
    debugProg->disable();
 
 }
@@ -132,17 +132,16 @@ void DeferredRenderScene::render()
 
    deferredGBufferProg->enable();
    glm::mat4 V = camera.getViewMatrix();
-
-   glUniformMatrix4fv(deferredGBufferProg->getUniform("V"),1,GL_FALSE,glm::value_ptr(V));
+   deferredGBufferProg->getUniform("V").bind("V");
    cryModel.transform.setScale(glm::vec3(0.25));
    for(int i = -1; i <= 1; i++)
    {
       for(int j = -1; j <= 1; j++)
       {
          cryModel.transform.setPosition(glm::vec3(3 * i,-3.0,3 * j));
-         glUniformMatrix4fv(deferredGBufferProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(cryModel.transform.getMatrix()));
+         deferredGBufferProg->getUniform("M").bind(cryModel.transform.getMatrix());
          glm::mat3 N = GlmUtil::createNormalMatrix(glm::mat4(1.0),cryModel.transform.getMatrix());
-         glUniformMatrix3fv(deferredGBufferProg->getUniform("N"),1,GL_FALSE,glm::value_ptr(N));
+         deferredGBufferProg->getUniform("N").bind(N);
          cryModel.render(*deferredGBufferProg);
       }
    }
@@ -154,7 +153,7 @@ void DeferredRenderScene::render()
    glDisable(GL_DEPTH_TEST);
    postProcessProg->enable();
    glm::vec3 viewPos = camera.transform.getPosition();
-   glUniform3fv(postProcessProg->getUniform("viewPos"),1,glm::value_ptr(viewPos));
+   postProcessProg->getUniform("viewPos").bind(viewPos);
    
    Program::UniformStructArrayInfo info = postProcessProg->getStructArray("lights");
    for(int i = 0; i < NR_LIGHTS; i++)
@@ -163,9 +162,9 @@ void DeferredRenderScene::render()
       translate += lightPositions[i];
       glUniform3fv(info[i]["pos"],1,glm::value_ptr(translate));
    }
-   gBuffer.enableTexture("position",postProcessProg->getUniform("posTexture"));
-   gBuffer.enableTexture("normal",postProcessProg->getUniform("norTexture"));
-   gBuffer.enableTexture("color",postProcessProg->getUniform("albedo_specTexture"));
+   gBuffer.enableTexture("position",postProcessProg->getUniform("posTexture").getID());
+   gBuffer.enableTexture("normal",postProcessProg->getUniform("norTexture").getID());
+   gBuffer.enableTexture("color",postProcessProg->getUniform("albedo_specTexture").getID());
    
 
    renderPlane.render();
@@ -182,7 +181,7 @@ void DeferredRenderScene::render()
    
    Framebuffer::BindDefaultFramebuffer();
    debugProg->enable();
-   glUniformMatrix4fv(debugProg->getUniform("V"),1,GL_FALSE,glm::value_ptr(V));
+   debugProg->getUniform("V").bind(V);
    Transform cubeTransform;
    cubeTransform.setScale(glm::vec3(0.25));
    for(int i = 0; i < NR_LIGHTS; i++)
@@ -190,8 +189,8 @@ void DeferredRenderScene::render()
       glm::vec3 translate = glm::vec3(sin(glfwGetTime() * (i%3) + i) , cos(glfwGetTime()* (i%3) + i), cos(i - glfwGetTime()));
       translate += lightPositions[i];
       cubeTransform.setPosition(translate);
-      glUniformMatrix4fv(debugProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(cubeTransform.getMatrix()));
-      glUniform3fv(debugProg->getUniform("debugColor"),1,glm::value_ptr(lightColors[i]));
+      debugProg->getUniform("M").bind(cubeTransform.getMatrix());
+      debugProg->getUniform("debugColor").bind(lightColors[i]);
       cube.render();
 
    }

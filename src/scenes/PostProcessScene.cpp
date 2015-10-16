@@ -41,12 +41,12 @@ void PostProcessScene::initialBind()
    glm::mat4 P;
    texProg->enable();
    P = camera.getPerspectiveMatrix();
-   glUniformMatrix4fv(texProg->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
+   texProg->getUniform("P").bind(P);
    texProg->disable();
 
    postprocessProg->enable();
    glm::mat4 I(1.0);
-   glUniformMatrix4fv(postprocessProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(I));
+   postprocessProg->getUniform("M").bind(I);
    postprocessProg->disable();
 
    glClearColor(0.2,0.2,0.2,1.0);
@@ -76,17 +76,17 @@ void PostProcessScene::renderGeometry()
    cube1.transform.setScale(glm::vec3(1.0));
    cube2.transform.setScale(glm::vec3(1.0));
 
-   glUniformMatrix4fv(texProg->getUniform("V"),1,GL_FALSE,glm::value_ptr(V));
+   texProg->getUniform("V").bind(V);
    //Draw the two containers
-   marble.enable(texProg->getUniform("tex"));
-   glUniformMatrix4fv(texProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(cube1.transform.getMatrix()));
+   marble.enable(texProg->getUniform("tex").getID());
+   texProg->getUniform("M").bind(cube1.transform.getMatrix());
    cube1.render();
-   glUniformMatrix4fv(texProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(cube2.transform.getMatrix()));
+   texProg->getUniform("M").bind(cube2.transform.getMatrix());
    cube2.render();
    marble.disable();
 
-   metal.enable(texProg->getUniform("tex"));
-   glUniformMatrix4fv(texProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(plane.transform.getMatrix()));
+   metal.enable(texProg->getUniform("tex").getID());
+   texProg->getUniform("M").bind(plane.transform.getMatrix());
    plane.render();
    metal.disable();
    texProg->disable();
@@ -99,7 +99,7 @@ void PostProcessScene::renderFrameBuffer()
 
    postprocessProg->enable();
 
-   fbo.enableTexture("color",postprocessProg->getUniform("screenTexture"));
+   fbo.enableTexture("color",postprocessProg->getUniform("screenTexture").getID());
    renderPlane.render();
    postprocessProg->disable();
 

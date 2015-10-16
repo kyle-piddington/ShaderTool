@@ -30,8 +30,8 @@ void VisualizeNormalScene::initialBind()
 
    visualizeNormalProgram->addUniform("debugColor");
    visualizeNormalProgram->enable();
-   glUniform3f(visualizeNormalProgram->getUniform("debugColor"),1.0,0.0,1.0);
-   glUniformMatrix4fv(visualizeNormalProgram->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
+   visualizeNormalProgram->getUniform("debugColor").bind(glm::vec3(1.0,0.0,1.0));
+   visualizeNormalProgram->getUniform("P").bind(P);
    visualizeNormalProgram->disable();
 
    drawModelProg->addUniform("M");
@@ -40,7 +40,7 @@ void VisualizeNormalScene::initialBind()
    drawModelProg->addUniformArray("diffuseTextures",3);
    drawModelProg->addUniform("numDiffuseTextures");
    drawModelProg->enable();
-   glUniformMatrix4fv(drawModelProg->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
+   drawModelProg->getUniform("P").bind(P);
    drawModelProg->disable();
 }
 
@@ -57,8 +57,8 @@ void VisualizeNormalScene::renderGeometry(Program * prog)
 
    glm::mat4 V = camera.getViewMatrix();
    prog->enable();
-   glUniformMatrix4fv(prog->getUniform("V"),1,GL_FALSE,glm::value_ptr(V));
-   glUniformMatrix4fv(prog->getUniform("M"),1,GL_FALSE,glm::value_ptr(model.transform.getMatrix()));
+   prog->getUniform("V").bind(V);
+   prog->getUniform("M").bind(model.transform.getMatrix());
    model.render(*prog);
    prog->disable();
 

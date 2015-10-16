@@ -82,16 +82,16 @@ void AssimpScene::render()
    MV = V*M;
    GL_Logger::LogError("Any errors before enabling..", glGetError());
    assimpProg->enable();
-   glUniformMatrix4fv(assimpProg->getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
-   glUniformMatrix4fv(assimpProg->getUniform("MV"), 1, GL_FALSE, glm::value_ptr(MV));
-   glUniformMatrix3fv(assimpProg->getUniform("N"), 1, GL_FALSE, glm::value_ptr(NORM));
+   assimpProg->getUniform("P").bind(P);
+   assimpProg->getUniform("MV").bind(MV);
+   assimpProg->getUniform("N").bind(NORM);
    mat.bind(assimpProg->getUniformStruct("material"));
    model->render(*assimpProg);
 
    M = plane.transform.getMatrix();
    MV = V*M;
-   glUniformMatrix4fv(assimpProg->getUniform("MV"), 1, GL_FALSE, glm::value_ptr(MV));
-
+   assimpProg->getUniform("MV").bind(MV);
+   
    //cube.render();
    plane.render();
    assimpProg->disable();

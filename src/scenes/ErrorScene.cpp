@@ -49,7 +49,7 @@ void ErrorScene::render()
 
    errProgram->enable();
    errVAO.bind();
-   errTexture.enable(errProgram->getUniform("tex"));
+   errTexture.enable(errProgram->getUniform("tex").getID());
    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
    errVAO.unbind();
    errTexture.disable();

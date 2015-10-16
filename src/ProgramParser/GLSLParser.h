@@ -7,7 +7,7 @@
 #include <glm/glm.hpp>
 
 /**
- * The GLSLParser c
+ * The GLSLParser does
  */
 class GLSLParser
 {
@@ -15,33 +15,29 @@ public:
    //GLSL Types
    enum GLSLType
    {
-      GLSLinteger,
-      GLSLfloatingPt,
-      GLSLboolean,
-      GLSLvector2,
-      GLSLvector3,
-      GLSLvector4,
-      GLSLiVector1,
-      GLSLiVector2,
-      GLSLiVector3,
-      GLSLiVector4,
-      GLSLmat2,
-      GLSLmat3,
-      GLSLmat4,
-      GLSLsampler2D,
-      GLSLstructure,
-      GLSLarray
+      GLSLInvalidType = -1,
+      GLSLinteger = GL_INT,
+      GLSLfloatingPt = GL_FLOAT,
+      GLSLboolean = GL_BOOL,
+      GLSLvector2 = GL_FLOAT_VEC2,
+      GLSLvector3 = GL_FLOAT_VEC3,
+      GLSLvector4 = GL_FLOAT_VEC4,
+      GLSLmat2 = GL_FLOAT_MAT2,
+      GLSLmat3 = GL_FLOAT_MAT3,
+      GLSLmat4 = GL_FLOAT_MAT4,
+      GLSLsampler2D = GL_SAMPLER_2D,
    };
 
+   static GLSLParser::GLSLType GLEnumToGLSLType(GLenum val);
+     
 
    //A GLSLException is thrown when an incorrect type is passed into a program
-
    class GLSLTypeException: public std::exception
    {
      public:
-        GLSLTypeException(std::string src, std::string type):
+        GLSLTypeException(std::string src, std::string expType, std::string type):
          exception(),
-         err("GLSL Type error occurred in " + src + ", expected " + type)
+         err("GLSL Type error occurred in " + src + " expected " + expType + " , got " + type)
         {
 
         }
@@ -51,33 +47,46 @@ public:
         }
    private:
       std::string err;
-      
+
    };
 
    /**
-    * A UniformObject represents a 
+    * A UniformObject represents a uniform in an OpenGL Program.
+    * The object contains a name, id, and type, and can bind to the
+    * program it's in.
     */
    class UniformObject
    {
-     
+
       std::string name;
       GLint id;
       GLSLType type;
-      
-      void throwTypeError();
+
+      void throwTypeError(std::string givenType) const;
 
    public:
-      UniformObject(std::string name, GLSLType t):
-      id(-1),
+      UniformObject(std::string name, GLSLType t, GLint id = -1):
+      id(id),
       name(name),
       type(t)
       {
 
       }
-      void bind(int i);
-      void bind(float f);
-      void bind(bool b);
-      void bind(const glm::vec2 & v);
+
+
+      GLint getID() const;
+
+      void bind(int i) const;
+      void bind(float f) const;
+      void bind(bool b) const;
+      void bind(double d) const;
+      void bind(const glm::vec2 & v) const;
+      void bind(const glm::vec3 & v) const;
+      void bind(const glm::vec4 & v) const;
+      void bind(const glm::mat2 & m) const;
+      void bind(const glm::mat3 & m) const;
+      void bind(const glm::mat4 & m) const;
+
 
 
    };

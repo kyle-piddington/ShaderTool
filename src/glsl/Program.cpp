@@ -222,7 +222,13 @@ int Program::addUniform(std::string uniformName)
    }
    else
    {
-      uniforms[uniformName] = unifId;
+      GLuint uniformIdx;
+      const char* nameCST = uniformName.c_str();
+      glGetUniformIndices(shaderProgram, 1, &nameCST,
+         &uniformIdx);
+      GLSLParser::GLSLType type = getUniformType(uniformIdx);
+      
+      uniforms.emplace(uniformName,GLSLParser::UniformObject(uniformName,type,unifId));
    }
    return 0;
 }
@@ -248,18 +254,18 @@ GLint Program::getAttribute(std::string attribName)
 
 }
 
-GLint Program::getUniform(std::string unifName)
+GLSLParser::UniformObject Program::getUniform(std::string unifName)
 {
    if(!created)
    {
       LOG(ERROR) << "Program" + name + " has not been created. Call .create()";
-      return -1;
+      return GLSLParser::UniformObject("badObject",GLSLParser::GLSLInvalidType,-1);
    }
    auto unifId = uniforms.find(unifName);
    if(unifId == uniforms.end())
    {
-      LOG(WARNING) << "Program " + name + " has no attribute named " + unifName + " (Did you forget to add it to the program?)";
-      return -1;
+      LOG(WARNING) << "Program " + name + " has no uniform named " + unifName + " (Did you forget to add it to the program?)";
+      return GLSLParser::UniformObject("badObject",GLSLParser::GLSLInvalidType,-1);
    }
    else
    {
@@ -318,7 +324,7 @@ int Program::addUniformStruct(std::string name, GL_Structure glStruct)
    {
       for (std::vector<std::string>::iterator i = uniformNames.begin(); i != uniformNames.end(); ++i)
       {
-         glStruct.setUniformLocation(*i,getUniform(name + "." +*i));
+         glStruct.setUniformLocation(*i,getUniform(name + "." +*i).getID());
       }
       uniformStructs[name] = glStruct;
  
@@ -459,6 +465,21 @@ bool Program::hasAddedUniform(std::string name)
 bool Program::isCreated()
 {
    return created;
+}
+
+GLSLParser::GLSLType Program::getUniformType(GLuint id)
+{
+   GLenum type;
+   glGetActiveUniform(  shaderProgram,
+      id,
+   0,
+   nullptr,
+   nullptr,
+   &type,
+   nullptr);
+   GL_Logger::LogError("Could not get type of uniform");
+
+   return GLSLParser::GLEnumToGLSLType(type);
 }
 
 

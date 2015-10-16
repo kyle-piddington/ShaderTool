@@ -17,7 +17,10 @@ public:
    virtual void cleanup();
    virtual void update();
 private:
-   void renderGeometry(Program & prog, GLint modelMtx, GLint normalMtx = -1, GLint texMtx = -1);
+   void renderGeometry(Program & prog, 
+    const GLSLParser::UniformObject modelMtx,
+    const GLSLParser::UniformObject normalMtx = GLSLParser::UniformObject("mt",GLSLParser::GLSLInvalidType), 
+    const GLSLParser::UniformObject texMtx = GLSLParser::UniformObject("mt",GLSLParser::GLSLInvalidType));
    void renderDepthPass();
    void renderDepthMap();
    void renderGeometryWithShadows();

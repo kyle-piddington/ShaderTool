@@ -15,12 +15,12 @@ void Model::render(Program & prog)
    }
    if(prog.hasAddedUniform("numDiffuseTextures"))
    {
-      glUniform1i(prog.getUniform("numDiffuseTextures"),0);
+      prog.getUniform("numDiffuseTextures").bind(0);
    }
    
    if(prog.hasAddedUniform("numSpecularTextures"))
    {
-      glUniform1i(prog.getUniform("numSpecularTextures"),0);
+      prog.getUniform("numSpecularTextures").bind(0);
    }
 
 }

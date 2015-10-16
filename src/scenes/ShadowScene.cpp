@@ -64,7 +64,7 @@ void ShadowScene::initialBind()
 
    postprocessProg->addUniform("M");
    postprocessProg->enable();
-   glUniformMatrix4fv(postprocessProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(postprocessPlane.transform.getMatrix()));
+   postprocessProg->getUniform("M").bind(postprocessPlane.transform.getMatrix());
    postprocessProg->disable();
 
    phongTexShadowProg->addUniform("P");
@@ -79,7 +79,7 @@ void ShadowScene::initialBind()
 
    phongTexShadowProg->enable();
    glm::mat4 P = camera.getPerspectiveMatrix();
-   glUniformMatrix4fv(phongTexShadowProg->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
+   phongTexShadowProg->getUniform("P").bind(P);
    phongTexShadowProg->disable();
 
    glClearColor(0.2,0.2,0.2,1.0);
@@ -106,17 +106,17 @@ void ShadowScene::renderGeometryWithShadows()
    glViewport(0, 0, getContext()->getWindowWidth(), getContext()->getWindowHeight());
    phongTexShadowProg->enable();
    glm::mat4 V = camera.getViewMatrix();
-   woodTexture.enable(phongTexShadowProg->getUniform("diffuseTexture"));
-   depthBuffer.enableTexture("depth",phongTexShadowProg->getUniform("shadowMap"));
-   glUniformMatrix4fv(phongTexShadowProg->getUniform("V"),1,GL_FALSE,glm::value_ptr(V));
+   woodTexture.enable(phongTexShadowProg->getUniform("diffuseTexture").getID());
+   depthBuffer.enableTexture("depth",phongTexShadowProg->getUniform("shadowMap").getID());
+   phongTexShadowProg->getUniform("V").bind(V);
 
    GLfloat near_plane = 1.0f, far_plane = 7.5f;
    glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
    glm::mat4 VPMatrix = lightProjection * glm::inverse(pointLight.transform.getMatrix());
-   glUniformMatrix4fv(phongTexShadowProg->getUniform("lightSpaceMatrix"),1,GL_FALSE,glm::value_ptr(VPMatrix));
+   phongTexShadowProg->getUniform("lightSpaceMatrix").bind(VPMatrix);
 
    pointLight.bind(phongTexShadowProg->getUniformStruct("pLight"));
-   renderGeometry(*phongTexShadowProg,phongTexShadowProg->getUniform("M"),phongTexShadowProg->getUniform("NORM"), phongTexShadowProg->getUniform("T"));
+   renderGeometry(*phongTexShadowProg, phongTexShadowProg->getUniform("M"), phongTexShadowProg->getUniform("NORM"), phongTexShadowProg->getUniform("T"));
    
 
    woodTexture.disable();
@@ -133,42 +133,42 @@ void ShadowScene::renderDepthPass()
    GLfloat near_plane = 1.0f, far_plane = 7.5f;
    glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
    glm::mat4 VPMatrix = lightProjection * glm::inverse(pointLight.transform.getMatrix());
-   glUniformMatrix4fv(depthPassProg->getUniform("VPMatrix"),1,GL_FALSE,glm::value_ptr(VPMatrix));
+   depthPassProg->getUniform("VPMatrix").bind(VPMatrix);
    renderGeometry(*depthPassProg, depthPassProg->getUniform("model"));
    depthBuffer.unbindFrameBuffer();
 }
-void ShadowScene::renderGeometry(Program & prog, GLint modelMtx, GLint normalMtx, GLint texMtx)
+void ShadowScene::renderGeometry(Program & prog, const GLSLParser::UniformObject  modelMtx, const GLSLParser::UniformObject  normalMtx, const GLSLParser::UniformObject  texMtx)
 {
    glm::mat3 T(1.0);
-   if(texMtx > -1)
+   if(texMtx.getID() > -1)
    {
-      glUniformMatrix3fv(texMtx, 1, GL_FALSE, glm::value_ptr(T));
+      texMtx.bind(T);
    }
    for(int i = 0; i < 3; i++)
    {
-      glUniformMatrix4fv(modelMtx,1,GL_FALSE,glm::value_ptr(renderCube[i].transform.getMatrix()));
-      if(normalMtx != -1)
+      modelMtx.bind(renderCube[i].transform.getMatrix());
+      if(normalMtx.getID() > -1)
       {
          glm::mat3 NORM = GlmUtil::createNormalMatrix(camera.getViewMatrix(),renderCube[i].transform.getMatrix());
-         glUniformMatrix3fv(normalMtx,1,GL_FALSE,glm::value_ptr(NORM));
+         normalMtx.bind(NORM);
       }
       renderCube[i].render();
    }
-   glUniformMatrix4fv(modelMtx,1,GL_FALSE,glm::value_ptr(geomPlane.transform.getMatrix()));
-   if(normalMtx != -1)
+   modelMtx.bind(geomPlane.transform.getMatrix());
+   if(normalMtx.getID() > -1)
    {
       glm::mat3 NORM = GlmUtil::createNormalMatrix(camera.getViewMatrix(),geomPlane.transform.getMatrix());
-      glUniformMatrix3fv(normalMtx,1,GL_FALSE,glm::value_ptr(NORM));
+      normalMtx.bind(NORM);
    }
-   if(texMtx > -1)
+   if(texMtx.getID() > -1)
    {
       T[0][0] = 25;
       T[1][1] = 25;
-      glUniformMatrix3fv(texMtx, 1, GL_FALSE, glm::value_ptr(T));
+      texMtx.bind(T);
 
    }
    geomPlane.render();
-   glUniformMatrix4fv(modelMtx,1,GL_FALSE,glm::value_ptr(model.transform.getMatrix()));
+   modelMtx.bind(model.transform.getMatrix());
    model.render(prog);
 
 
@@ -186,7 +186,7 @@ void ShadowScene::renderDepthMap()
 {
    glViewport(0, 0, CameraScene::getContext()->getWindowWidth(), CameraScene::getContext()->getWindowHeight());
    postprocessProg->enable();
-   depthBuffer.enableTexture("depth",postprocessProg->getUniform("screenTexture"));
+   depthBuffer.enableTexture("depth",postprocessProg->getUniform("screenTexture").getID());
    postprocessPlane.render();
    depthBuffer.disableTexture("depth");
    postprocessProg->disable();

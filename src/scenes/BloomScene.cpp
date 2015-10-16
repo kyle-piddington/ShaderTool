@@ -72,15 +72,15 @@ void BloomScene::initialBind()
 
    glm::mat4 I(1.0);
    framebufferCombineProg->enable();
-   glUniformMatrix4fv(framebufferCombineProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(I));
+   framebufferCombineProg->getUniform("M").bind(I);
    framebufferCombineProg->disable();
    gaussBlurProg->enable();
-   glUniformMatrix4fv(gaussBlurProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(I));
+   gaussBlurProg->getUniform("M").bind(I);
    gaussBlurProg->disable();
 
    bloomRenderProg->enable();
    glm::mat4 P = camera.getPerspectiveMatrix();
-   glUniformMatrix4fv(bloomRenderProg->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
+   bloomRenderProg->getUniform("P").bind(P);
    woodTex.bind(bloomRenderProg->getUniformStruct("material"));
 
 
@@ -109,7 +109,7 @@ void BloomScene::initialBind()
       lights[i].transform.setPosition(lightPositions[i]);
       lights[i].bind(arrInfo[i]);
    }
-   glUniform1i(bloomRenderProg->getUniform("numPointLights"),4);
+   bloomRenderProg->getUniform("numPointLights").bind(4);
    bloomRenderProg->disable();
 }
 
@@ -123,11 +123,10 @@ void BloomScene::render()
    glEnable(GL_DEPTH_TEST);
    bloomRenderProg->enable();
    glm::mat4 V = camera.getViewMatrix();
-   glUniformMatrix4fv(bloomRenderProg->getUniform("V"),1,GL_FALSE,glm::value_ptr(V));
-   glUniformMatrix4fv(bloomRenderProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(tunnel.transform.getMatrix()));
+   bloomRenderProg->getUniform("V").bind(V);
+   bloomRenderProg->getUniform("M").bind(tunnel.transform.getMatrix());
    glm::mat3 N = GlmUtil::createNormalMatrix(V,tunnel.transform.getMatrix());
-
-   glUniformMatrix3fv(bloomRenderProg->getUniform("N"),1,GL_FALSE,glm::value_ptr(N));
+   bloomRenderProg->getUniform("N").bind(N);
 
    tunnel.render();
 
@@ -143,8 +142,8 @@ void BloomScene::render()
    glClearColor(0.0,0.0,0.0,1.0);
    glClear(GL_COLOR_BUFFER_BIT);
    glDisable(GL_DEPTH_TEST);
-   extractionBuffer.enableTexture("bloomColor",gaussBlurProg->getUniform("blurTexture"));
-   glUniform1i(gaussBlurProg->getUniform("blurHorizontal"),1);
+   extractionBuffer.enableTexture("bloomColor",gaussBlurProg->getUniform("blurTexture").getID());
+   gaussBlurProg->getUniform("blurHorizontal").bind(1);
    postprocessQuad.render();
    blurBuffer.swap();
    
@@ -153,14 +152,15 @@ void BloomScene::render()
    {
       //Horizontal blur
       blurBuffer.getActiveBuffer().bindFrameBuffer();
-      blurBuffer.getPassiveBuffer().enableTexture("color",gaussBlurProg->getUniform("blurTexture"));
-      glUniform1i(gaussBlurProg->getUniform("blurHorizontal"),blurHoriz);
+      blurBuffer.getPassiveBuffer().enableTexture("color",gaussBlurProg->getUniform("blurTexture").getID());
+      gaussBlurProg->getUniform("blurHorizontal").bind(blurHoriz);
       postprocessQuad.render();
       blurBuffer.swap();
       blurHoriz = !blurHoriz;
       blurBuffer.getActiveBuffer().bindFrameBuffer();
-      blurBuffer.getPassiveBuffer().enableTexture("color",gaussBlurProg->getUniform("blurTexture"));
-      glUniform1i(gaussBlurProg->getUniform("blurHorizontal"),blurHoriz);
+      blurBuffer.getPassiveBuffer().enableTexture("color",gaussBlurProg->getUniform("blurTexture").getID());
+      gaussBlurProg->getUniform("blurHorizontal").bind(blurHoriz);
+
       postprocessQuad.render();
       blurBuffer.swap();
       
@@ -178,8 +178,8 @@ void BloomScene::render()
    glClearColor(0.2,0.2,0.2,1.0);
    glClear(GL_COLOR_BUFFER_BIT);
    framebufferCombineProg->enable();
-   blurBuffer.getActiveBuffer().enableTexture("color",framebufferCombineProg->getUniform("bloomTexture"));
-   extractionBuffer.enableTexture("color",framebufferCombineProg->getUniform("screenTexture"));
+   blurBuffer.getActiveBuffer().enableTexture("color",framebufferCombineProg->getUniform("bloomTexture").getID());
+   extractionBuffer.enableTexture("color",framebufferCombineProg->getUniform("screenTexture").getID());
    postprocessQuad.render();
    framebufferCombineProg->disable();
 

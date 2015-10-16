@@ -52,13 +52,13 @@ void HDRScene::initialBind()
 
    hdrPostProcessProg->enable();
    glm::mat4 I(1.0);
-   glUniformMatrix4fv(hdrPostProcessProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(I));
+   hdrPostProcessProg->getUniform("M").bind(I);
    hdrPostProcessProg->disable();
 
 
    hdrExposureProg->enable();
    glm::mat4 P = camera.getPerspectiveMatrix();
-   glUniformMatrix4fv(hdrExposureProg->getUniform("P"),1,GL_FALSE,glm::value_ptr(P));
+   hdrExposureProg->getUniform("P").bind(P);
    woodTex.bind(hdrExposureProg->getUniformStruct("material"));
 
 
@@ -87,7 +87,7 @@ void HDRScene::initialBind()
       lights[i].transform.setPosition(lightPositions[i]);
       lights[i].bind(arrInfo[i]);
    }
-   glUniform1i(hdrExposureProg->getUniform("numPointLights"),4);
+   hdrExposureProg->getUniform("numPointLights").bind(4);
    hdrExposureProg->disable();
 }
 
@@ -101,11 +101,11 @@ void HDRScene::render()
    glEnable(GL_DEPTH_TEST);
    hdrExposureProg->enable();
    glm::mat4 V = camera.getViewMatrix();
-   glUniformMatrix4fv(hdrExposureProg->getUniform("V"),1,GL_FALSE,glm::value_ptr(V));
-   glUniformMatrix4fv(hdrExposureProg->getUniform("M"),1,GL_FALSE,glm::value_ptr(tunnel.transform.getMatrix()));
+   hdrExposureProg->getUniform("V").bind(V);
+   hdrExposureProg->getUniform("M").bind(tunnel.transform.getMatrix());
    glm::mat3 N = GlmUtil::createNormalMatrix(V,tunnel.transform.getMatrix());
 
-   glUniformMatrix3fv(hdrExposureProg->getUniform("N"),1,GL_FALSE,glm::value_ptr(N));
+   hdrExposureProg->getUniform("N").bind(N);
 
    tunnel.render();
 
@@ -116,7 +116,7 @@ void HDRScene::render()
    glClear(GL_COLOR_BUFFER_BIT);
    glDisable(GL_DEPTH_TEST);
    hdrPostProcessProg->enable();
-   framebuffer.enableTexture("color",hdrPostProcessProg->getUniform("screenTexture"));
+   framebuffer.enableTexture("color",hdrPostProcessProg->getUniform("screenTexture").getID());
    postprocessQuad.render();
    hdrPostProcessProg->disable();
 

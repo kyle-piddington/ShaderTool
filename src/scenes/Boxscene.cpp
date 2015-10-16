@@ -239,8 +239,8 @@ void BoxScene::render()
    phongProg->enable();
 
    //Camera
-   glUniformMatrix4fv(phongProg->getUniform("V"), 1, GL_FALSE, glm::value_ptr(V));
-   glUniformMatrix4fv(phongProg->getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
+   phongProg->getUniform("V").bind(V);
+   phongProg->getUniform("P").bind(P);
 
    //Lighting
    Program::UniformStructArrayInfo lampArr = phongProg->getStructArray("pointLights");
@@ -274,8 +274,8 @@ void BoxScene::render()
         cubeTransform.setRotation(glm::vec3(M_PI/12 * i, M_PI/6 * i, 0.0));
         M = cubeTransform.getMatrix();
         NORM = createNormalMatrix(V, M);
-        glUniformMatrix3fv(phongProg->getUniform("N"), 1, GL_FALSE, glm::value_ptr(NORM));
-        glUniformMatrix4fv(phongProg->getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
+        phongProg->getUniform("N").bind(NORM);
+        phongProg->getUniform("M").bind(M);
         glDrawArrays(GL_TRIANGLES,0,36);
       }
     cubeMaterial.unbind();
@@ -285,16 +285,16 @@ void BoxScene::render()
    
    lampProg->enable();
    lightVao.bind();
-   glUniformMatrix4fv(lampProg->getUniform("P"), 1, GL_FALSE, glm::value_ptr(P));
-   glUniformMatrix4fv(lampProg->getUniform("V"), 1, GL_FALSE, glm::value_ptr(V));
+   lampProg->getUniform("P").bind(P);
+   lampProg->getUniform("V").bind(V);
    for(int i = 0; i < NUM_POINT_LIGHTS; i++)
    {
         Transform mTransform;
         mTransform.setPosition(pointLightPositions[i]);
         mTransform.setScale(glm::vec3(0.2));
         M = mTransform.getMatrix();
-        glUniform3fv(lampProg->getUniform("debugColor"),1,glm::value_ptr(pointLightColors[i]));
-        glUniformMatrix4fv(lampProg->getUniform("M"), 1, GL_FALSE, glm::value_ptr(M));
+        lampProg->getUniform("debugColor").bind(pointLightColors[i]);
+        lampProg->getUniform("M").bind(M);
         glDrawArrays(GL_TRIANGLES,0,36);
    }
    
