@@ -18,8 +18,8 @@ void main()
    vec3 N = normalize(vec3(M * vec4(normal, 0.0)));
    // re-orthogonalize T with respect to NULL
    T = normalize(T - dot(T, N) * N);
-   vec3 B = cross(T,N);
+   vec3 B = -cross(T,N);
 
-   vs_out.TBN = mat3(T, B, N);
+   vs_out.TBN = transpose(mat3(T, B, N));
 
 }

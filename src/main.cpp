@@ -24,7 +24,7 @@
 #include "DeferredRenderScene.h"
 #include "NormalMapScene.h"
 #include "SSAOScene.h"
-
+#include "ParalaxMappingScene.h"
 INITIALIZE_EASYLOGGINGPP
 
 int main()
@@ -69,7 +69,7 @@ int main()
 
    Context * ctx = new Context(window);
    //Init scene of choice here
-   Scene * scene = new HDRScene(ctx);
+   Scene * scene = new ParalaxMappingScene(ctx);
    scene->setContext(ctx);
 
    //Create a window for the program to run in
