@@ -218,6 +218,12 @@ int Program::addUniform(std::string uniformName)
    if(unifId == -1)
    {
       LOG(WARNING) << "Program " + name +  " Could not bind uniform " + uniformName + " (It may not exist, or has been optimized away)";
+      //If uniform was found before, but not on a reload, set the id to -1
+      auto foundUnif = uniforms.find(uniformName);
+      if(foundUnif!= uniforms.end())
+      {
+         foundUnif->second.setID(-1);
+      }
       return -1;
    }
    else
@@ -227,8 +233,18 @@ int Program::addUniform(std::string uniformName)
       glGetUniformIndices(shaderProgram, 1, &nameCST,
          &uniformIdx);
       GLSLParser::GLSLType type = getUniformType(uniformIdx);
-      
-      uniforms.emplace(uniformName,GLSLParser::UniformObject(uniformName,type,unifId));
+         
+      auto foundUnif = uniforms.find(uniformName);
+      if(foundUnif!= uniforms.end())
+      {
+         foundUnif->second.setID(unifId);
+      }
+      else
+      {
+         auto empl = uniforms.emplace(uniformName,GLSLParser::UniformObject(uniformName,type,unifId));
+      }
+      //If Not inserting a new uniform, set the ID to -1
+     
    }
    return 0;
 }

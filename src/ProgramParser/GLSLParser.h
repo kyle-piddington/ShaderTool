@@ -57,13 +57,15 @@ public:
     */
    class UniformObject
    {
-
+      friend class Program;
       std::string name;
       GLint id;
       GLSLType type;
 
       void throwTypeError(std::string givenType) const;
-
+      //Protected setID method allows Program to update the id on a rebind, without changing the type.
+      //This method is protected to discourage manually setting the ID's
+      void setID(int i);
    public:
       UniformObject(std::string name, GLSLType t, GLint id = -1):
       id(id),

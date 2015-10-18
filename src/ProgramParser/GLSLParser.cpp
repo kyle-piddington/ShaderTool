@@ -155,4 +155,7 @@ GLint GLSLParser::UniformObject::getID() const
    return id;
 }
 
-
+void GLSLParser::UniformObject::setID(GLint id)
+{
+   this->id = id;
+}
