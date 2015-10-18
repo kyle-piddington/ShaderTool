@@ -132,7 +132,7 @@ void DeferredRenderScene::render()
 
    deferredGBufferProg->enable();
    glm::mat4 V = camera.getViewMatrix();
-   deferredGBufferProg->getUniform("V").bind("V");
+   deferredGBufferProg->getUniform("V").bind(V);
    cryModel.transform.setScale(glm::vec3(0.25));
    for(int i = -1; i <= 1; i++)
    {
