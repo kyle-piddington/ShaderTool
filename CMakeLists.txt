@@ -1,7 +1,9 @@
 cmake_minimum_required (VERSION 3.0)
 
 project (GraphicsEngine)
-enable_testing()
+
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -O3 ")
+option(test "Build all tests." ON) # Makes boolean 'test' available.
 
 
 #Get Source variables
@@ -29,15 +31,11 @@ include_directories(${GraphicsEngine_INCLUDE_DIRS})
 #LIB=-DGL_GLEXT_PROTOTYPES -lglut -lGL -lGLU
 #LIB_OSX=-framework GLUT -framework OpenGL
 
-find_package(PkgConfig REQUIRED)
-pkg_search_module(GLFW REQUIRED glfw3)
-INCLUDE_DIRECTORIES(${GLFW_INCLUDE_DIRS})
-
-
+FIND_LIBRARY(GLFW3_LIB glfw3)
 FIND_LIBRARY(GLEW_LIB GLEW)
 FIND_LIBRARY(SOIL_LIB SOIL)
 FIND_LIBRARY(ASSIMP_LIB assimp)
-list(APPEND EXTRA_LIBS ${GLFW_LIBRARIES} ${ASSIMP_LIB} ${GLEW_LIB} ${SOIL_LIB})
+list(APPEND EXTRA_LIBS ${GLFW_LIBRARIES} ${ASSIMP_LIB} ${GLEW_LIB} ${SOIL_LIB} ${GLFW3_LIB})
 
 IF(APPLE)
    FIND_LIBRARY(OpenGL_LIBRARY OpenGL)
@@ -55,39 +53,55 @@ ELSE()
    SET(EXTRA_LIBS ${GLUT_LIBRARY} ${GL_LIBRARY} ${GLU_LIBRARY})
 ENDIF()
 
+list(REMOVE_ITEM GraphicsEngine_SOURCES ${PROJECT_SOURCE_DIR}/src/main.cpp)
 
-#GoogleTest Support
-add_subdirectory("lib/gtest")
+add_library(GraphicsEngine_lib ${GraphicsEngine_SOURCES})
+#Add C++ 11
+add_executable(GraphicsEngine ${PROJECT_SOURCE_DIR}/src/main.cpp)
 
-SET(GraphicsEngine_Test_SOURCES ${GraphicsEngine_SOURCES})
-list(REMOVE_ITEM GraphicsEngine_Test_SOURCES ${PROJECT_SOURCE_DIR}/src/main.cpp)
-
-enable_testing()
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g ")
-
-include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR}) 
-set(GraphicsEngine_Test GraphicsEngine_test)
-include_directories(${GTEST_INCLUDE_DIRS})
-
-file(GLOB_RECURSE TEST_SRC_FILES "test/*.cpp")
-
-
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g  -O3 ")
-add_executable(${GraphicsEngine_Test} ${GraphicsEngine_Test_SOURCES} ${TEST_SRC_FILES})
+target_link_libraries(GraphicsEngine GraphicsEngine_lib)
+target_link_libraries(GraphicsEngine ${EXTRA_LIBS})
 if (APPLE)
-  target_link_libraries(${GraphicsEngine_Test} "-framework OpenGL -framework CoreFoundation -framework CoreServices")
+    target_link_libraries(GraphicsEngine "-framework OpenGL -framework CoreFoundation -framework CoreServices")
 endif()
 
-target_link_libraries(${GraphicsEngine_Test} ${EXTRA_LIBS} gtest)
-add_test( ${GraphicsEngine_Test} ${GraphicsEngine_Test} )
 
-#Add C++ 11
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -O3 ")
-add_executable (GraphicsEngine ${GraphicsEngine_SOURCES})
-target_link_libraries(GraphicsEngine ${EXTRA_LIBS})
 
-if (APPLE)
-  target_link_libraries(GraphicsEngine "-framework OpenGL -framework CoreFoundation -framework CoreServices")
+if (test)
+  # This adds another subdirectory, which has 'project(gtest)'.
+  add_subdirectory(lib/gtest)
+
+  enable_testing()
+  file(GLOB_RECURSE TEST_SRC_FILES "test/*.cpp")
+
+  # Include the gtest library. gtest_SOURCE_DIR is available due to
+  # 'project(gtest)' above.
+  include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+
+
+  ##############
+  # Unit Tests
+  ##############
+  #Gather all unit tests.
+  file(GLOB_RECURSE TEST_SRC_FILES "test/*.cpp")
+
+  #Add tests to the executable
+  add_executable(GraphicsEngine_test ${PROJECT_SOURCE_DIR}/test/main.cpp ${TEST_SRC_FILES})
+
+  # Standard linking to gtest executables (If you want to use GoogleTests's prebuilt main file).
+  target_link_libraries(GraphicsEngine_test gtest)
+
+  # Extra linking for the project.
+  target_link_libraries(GraphicsEngine_test GraphicsEngine_lib)
+  target_link_libraries(GraphicsEngine_test ${EXTRA_LIBS})
+
+  #Add apple libs
+  if (APPLE)
+    target_link_libraries(GraphicsEngine_test "-framework OpenGL -framework CoreFoundation -framework CoreServices")
+  endif()
+
+
+
 endif()
 
 

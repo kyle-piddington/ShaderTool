@@ -23,7 +23,6 @@ void GLFWHandler::mouseButtonCallback(GLFWwindow* window, int button, int action
 
 void GLFWHandler::update()
 {
-   
    Keyboard::update();
    Mouse::update();
 }
