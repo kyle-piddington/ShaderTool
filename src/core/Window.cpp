@@ -52,6 +52,7 @@ void Window::run()
          }
          if(currentScene->canRenderScene())
          {
+
             currentScene->update();
             currentScene->render();
          }

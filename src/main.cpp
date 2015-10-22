@@ -25,6 +25,7 @@
 #include "NormalMapScene.h"
 #include "SSAOScene.h"
 #include "ParalaxMappingScene.h"
+#include "InstancingScene.h"
 INITIALIZE_EASYLOGGINGPP
 
 int main()
@@ -38,7 +39,7 @@ int main()
    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
-   GLFWwindow * window = glfwCreateWindow(800,600, "LearnOpenGL", nullptr, nullptr);
+   GLFWwindow * window = glfwCreateWindow(800,600, "CDTI Display", nullptr, nullptr);
 
    if (window == nullptr)
    {
@@ -69,7 +70,7 @@ int main()
 
    Context * ctx = new Context(window);
    //Init scene of choice here
-   Scene * scene = new HDRScene(ctx);
+   Scene * scene = new InstancingScene(ctx);
    scene->setContext(ctx);
 
    //Create a window for the program to run in

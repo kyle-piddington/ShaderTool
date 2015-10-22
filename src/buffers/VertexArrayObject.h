@@ -45,6 +45,7 @@ public:
     * Unbind the vertex array object
     */
    void unbind();
+
 private:
    int stride;
    GLboolean normalized;

@@ -2,7 +2,7 @@
 
 ErrorScene::ErrorScene() : EmptyScene(),
 errProgram(nullptr),
-errTexture("assets/textures/awesomeface.png")
+errTexture("assets/textures/CDTI_Display.png")
 {
    
    GLfloat vertices[] = {
