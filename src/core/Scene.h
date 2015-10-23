@@ -23,7 +23,7 @@ public:
    virtual void initPrograms() = 0;
 
    /**
-    * Bind an initial set of data to the scene. This function is called once 
+    * Bind an initial set of data to the scene. This function is called once
     * per loading of the scene.
     */
    virtual void initialBind() = 0;
@@ -36,9 +36,9 @@ public:
     * Update the scene. this function is called every frame
     */
    virtual void update() = 0;
-   
+
    /**
-    * Cleanup the scene before destroying data. This function is called on a shader error, or before 
+    * Cleanup the scene before destroying data. This function is called on a shader error, or before
     * changing scenes.
     */
    virtual void cleanup();
@@ -59,7 +59,7 @@ public:
     * @return true if there were no issues compiling
     */
    bool compilePrograms();
-  
+
    /**
     * Add a new program to the scene.
     * @param  programName The program to create
@@ -72,15 +72,20 @@ public:
     */
    void setContext(Context * ctx);
 
+
    /**
     * Retrieve the context of the scene
     * @return the current context.
     */
    Context * getContext();
+
+   void updateGlobalUniforms();
+
+   void initGlobalUniforms();
 private:
 
-   std::vector<Program *> requiredPrograms;
-   Context * ctx;
+  std::vector<Program *> requiredPrograms;
+  Context * ctx;
 
 };
 #endif

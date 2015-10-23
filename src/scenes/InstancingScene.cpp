@@ -47,6 +47,7 @@ EmptyScene()
 
 void InstancingScene::initialBind()
 {
+   instanceProgram->addUniform("time");
    glClearColor(0.0,0.0,0.0,1.0);
 }
 void InstancingScene::initPrograms()
@@ -63,4 +64,7 @@ void InstancingScene::render()
    glDrawArraysInstanced(GL_TRIANGLES,0,6,100);
    quadVAO.unbind();
    instanceProgram->disable();
+}
+void InstancingScene::update()
+{
 }

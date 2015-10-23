@@ -70,3 +70,26 @@ void Scene::setContext(Context * context)
 {
    this->ctx = context;
 }
+
+
+void Scene::initGlobalUniforms()
+{
+   for (std::vector<Program *>::iterator i = requiredPrograms.begin(); i != requiredPrograms.end(); ++i)
+   {
+      std::cout << "Trying to add uniform" << std::endl; 
+      (*i)->addUniform("iGlobalTime");
+   }
+}
+void Scene::updateGlobalUniforms()
+{
+   for (std::vector<Program *>::iterator i = requiredPrograms.begin(); i != requiredPrograms.end(); ++i)
+   {
+      if((*i)->hasUniform("iGlobalTime"))
+      {
+
+         (*i)->enable();
+         (*i)->getUniform("iGlobalTime").bind(glfwGetTime());
+      }
+   }
+   glUseProgram(0);
+}

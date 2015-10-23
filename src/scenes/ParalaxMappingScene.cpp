@@ -68,7 +68,7 @@ light(glm::vec3(0.1),glm::vec3(0.6),glm::vec3(0.8),50)
    planeVAO.addAttribute(2,bfr,sizeof(Point),offsetof(Point,texCoords),2); // Add point attribute
    planeVAO.addAttribute(3,bfr,sizeof(Point),offsetof(Point,tangent)); // Add point attribute
 
-   paralaxMapProg = createProgram("Normal mapping program");
+   paralaxMapProg = createProgram("Paralax mapping program");
    frameDisplayProg = createProgram("Frame Display Program");
 
 }

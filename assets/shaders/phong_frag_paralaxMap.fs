@@ -34,14 +34,16 @@ uniform sampler2D normalMap;
 uniform sampler2D depthMap;
 uniform PointLight pointLight;
 
+uniform float iGlobalTime;
 
-const float height_scale = 0.1;
 
 vec2 paralaxMapping(vec2 texCoords, vec3 viewDir)
 {
    // number of depth layers
     const float minLayers = 10;
     const float maxLayers = 20;
+    float height_scale = 0.1 + 0.05 * sin(iGlobalTime);
+
     float numLayers = mix(maxLayers, minLayers, abs(dot(vec3(0.0, 0.0, 1.0), viewDir)));  
   // calculate the size of each layer
     float layerDepth = 1.0 / numLayers;

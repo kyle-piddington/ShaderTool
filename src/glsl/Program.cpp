@@ -25,7 +25,7 @@ Program::~Program()
       glDeleteProgram(shaderProgram);
 
    }
-     
+
 }
 int Program::addVertexShader(std::string shaderSrc)
 {
@@ -87,7 +87,7 @@ int Program::create()
          return 0;
       }
    }
-   else 
+   else
    {
       if(programStatus.status == ProgramStatus::OK)
       {
@@ -99,7 +99,7 @@ int Program::create()
          created = true;
          return 0;
       }
-      else 
+      else
       {
          //Program could not compile, but is not going to fail
          if (created)
@@ -135,7 +135,7 @@ Program::ProgCreationInfo Program::createProgram()
    }
    if(vertShader!= nullptr && vertShader->isCompiled() && fragShader!=nullptr && fragShader->isCompiled())
    {
-      
+
       prog.program = glCreateProgram();
       err |= GL_Logger::LogError("Could not create program" + name, glGetError());
       glAttachShader(prog.program,vertShader->getID());
@@ -233,7 +233,7 @@ int Program::addUniform(std::string uniformName)
       glGetUniformIndices(shaderProgram, 1, &nameCST,
          &uniformIdx);
       GLSLParser::GLSLType type = getUniformType(uniformIdx);
-         
+
       auto foundUnif = uniforms.find(uniformName);
       if(foundUnif!= uniforms.end())
       {
@@ -244,7 +244,7 @@ int Program::addUniform(std::string uniformName)
          auto empl = uniforms.emplace(uniformName,GLSLParser::UniformObject(uniformName,type,unifId));
       }
       //If Not inserting a new uniform, set the ID to -1
-     
+
    }
    return 0;
 }
@@ -290,21 +290,21 @@ GLSLParser::UniformObject Program::getUniform(std::string unifName)
    }
 }
 
-GLint Program::hasUniform(std::string unifName)
+bool Program::hasUniform(std::string unifName)
 {
    if(!created)
    {
       LOG(ERROR) << "Program " + name + " has not been created. Call .create()";
-      return -1;
+      return false;
    }
+
    GLint unifId = glGetUniformLocation(shaderProgram, unifName.c_str());
    GL_Logger::LogError("Could not search program " + name, glGetError());
    if(unifId == -1)
    {
-      LOG(WARNING) << "Program " + name + " has no uniform named " + unifName + " (Did you forget to add it to the program?)";
-      return -1;
+      return false;
    }
-   return unifId;
+   return true;
 }
 
 
@@ -343,7 +343,7 @@ int Program::addUniformStruct(std::string name, GL_Structure glStruct)
          glStruct.setUniformLocation(*i,getUniform(name + "." +*i).getID());
       }
       uniformStructs[name] = glStruct;
- 
+
       return 0;
    }
    else
@@ -430,12 +430,12 @@ GL_Structure Program::getUniformStruct(std::string name)
 }
 const Program::UniformArrayInfo  & Program::getArray(std::string name)
 {
-  
+
   if(arrays.find(name) != arrays.end())
      return arrays[name];
    else
    {
-     
+
       return emptyUniformArray;
    }
 }
@@ -475,7 +475,7 @@ bool Program::shouldProgramRecompile()
 bool Program::hasAddedUniform(std::string name)
 {
    return(uniforms.find(name) != uniforms.end());
-   
+
 }
 
 bool Program::isCreated()

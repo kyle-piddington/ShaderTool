@@ -89,6 +89,12 @@ public:
       void bind(const glm::mat3 & m) const;
       void bind(const glm::mat4 & m) const;
 
+      /**
+      * See if this uniform is valid;
+      * @return true if valid.
+      */
+     bool isValid();
+
 
 
    };

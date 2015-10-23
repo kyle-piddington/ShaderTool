@@ -70,7 +70,7 @@ int main()
 
    Context * ctx = new Context(window);
    //Init scene of choice here
-   Scene * scene = new InstancingScene(ctx);
+   Scene * scene = new ParalaxMappingScene(ctx);
    scene->setContext(ctx);
 
    //Create a window for the program to run in

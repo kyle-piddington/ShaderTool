@@ -100,7 +100,7 @@ public:
     * @param
     * @return         >0  if exists, -1 otherwise.
     */
-   GLint hasUniform(std::string uniform);
+   bool hasUniform(std::string uniform);
   
    /**
     * See if the programmer has added a unifrom

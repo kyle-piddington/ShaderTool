@@ -11,9 +11,11 @@ public:
    void initPrograms();
    void initialBind();
    void render();
+   void update();
 private:
    Program * instanceProgram;
    VertexArrayObject quadVAO;
+
 
 
 };
