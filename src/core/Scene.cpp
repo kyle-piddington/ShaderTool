@@ -72,13 +72,24 @@ void Scene::setContext(Context * context)
 }
 
 
+/**
+ * Add Time, iGlobalTime, iWindowResolution
+ */
 void Scene::initGlobalUniforms()
 {
    for (std::vector<Program *>::iterator i = requiredPrograms.begin(); i != requiredPrograms.end(); ++i)
    {
       std::cout << "Trying to add uniform" << std::endl; 
-      (*i)->addUniform("iGlobalTime");
+      if((*i)->hasUniform("iGlobalTime"))
+         (*i)->addUniform("iGlobalTime");
+      if((*i)->hasUniform("iWindowResolution"))
+      {
+         (*i)->addUniform("iWindowResolution");
+         (*i)->enable();
+         (*i)->getUniform("iWindowResolution").bind(glm::vec2(getContext()->getWindowWidth(),getContext()->getWindowHeight()));
+      }
    }
+   glUseProgram(0);
 }
 void Scene::updateGlobalUniforms()
 {
@@ -86,9 +97,14 @@ void Scene::updateGlobalUniforms()
    {
       if((*i)->hasUniform("iGlobalTime"))
       {
+         GLSLParser::UniformObject timeObj = (*i)->getUniform("iGlobalTime");
+         if(timeObj.isValid())
+         {
 
-         (*i)->enable();
-         (*i)->getUniform("iGlobalTime").bind(glfwGetTime());
+            (*i)->enable();
+            timeObj.bind(glfwGetTime());
+
+         }
       }
    }
    glUseProgram(0);

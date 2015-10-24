@@ -297,13 +297,19 @@ bool Program::hasUniform(std::string unifName)
       LOG(ERROR) << "Program " + name + " has not been created. Call .create()";
       return false;
    }
-
-   GLint unifId = glGetUniformLocation(shaderProgram, unifName.c_str());
-   GL_Logger::LogError("Could not search program " + name, glGetError());
-   if(unifId == -1)
+   if(uniforms.find(unifName) == uniforms.end() &&
+      uniformStructs.find(unifName) == uniformStructs.end() &&
+      arrays.find(unifName) == arrays.end() &&
+      structArrays.find(unifName) == structArrays.end())
    {
-      return false;
+      GLint unifId = glGetUniformLocation(shaderProgram, unifName.c_str());
+      GL_Logger::LogError("Could not search program " + name, glGetError());
+      if(unifId == -1)
+      {
+         return false;
+      }
    }
+
    return true;
 }
 
