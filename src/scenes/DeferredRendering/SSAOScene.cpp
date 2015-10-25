@@ -139,6 +139,7 @@ void SSAOScene::initialBind()
    light.addAttribute("Quadratic");
 
    finalPassProgram->addUniformStruct("light",light);
+   GL_Logger::LogError("Could not set light correctly");
 
    deferredGBufferProg->enable();
    glm::mat4 P = camera.getPerspectiveMatrix();

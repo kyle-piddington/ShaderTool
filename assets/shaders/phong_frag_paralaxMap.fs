@@ -43,8 +43,7 @@ vec2 paralaxMapping(vec2 texCoords, vec3 viewDir)
    // number of depth layers
     const float minLayers = 10;
     const float maxLayers = 20;
-    float abSplit = sin(iGlobalTime) * 0.5 + 0.5;
-    float height_scale = (gl_FragCoord.x > iWindowResolution.x * abSplit ? 0:0.1);
+    float height_scale = 0.2;
 
     float numLayers = mix(maxLayers, minLayers, abs(dot(vec3(0.0, 0.0, 1.0), viewDir)));  
   // calculate the size of each layer

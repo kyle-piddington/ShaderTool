@@ -33,7 +33,7 @@ void Window::run()
       if(currentScene->canRenderScene())
       {
          currentScene->initialBind();
-         currentScene->initGlobalUniforms();
+         //currentScene->initGlobalUniforms();
       }
       //While not esc pressed
       while(!glfwWindowShouldClose(currentWindow))
@@ -51,12 +51,12 @@ void Window::run()
             if(currentScene->compilePrograms())
             {
                currentScene->initialBind();
-               currentScene->initGlobalUniforms();
+               //currentScene->initGlobalUniforms();
             }
          }
          if(currentScene->canRenderScene())
          {
-            currentScene->updateGlobalUniforms();
+            //currentScene->updateGlobalUniforms();
             currentScene->update();
             currentScene->render();
          }

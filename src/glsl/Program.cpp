@@ -365,7 +365,13 @@ int Program::addUniformArray(std::string name, int len)
    std::vector<GLint> locs;
    for(int i = 0; i < len; i++)
    {
-      GLint loc = hasUniform(name + "[" + std::to_string(i) + "]");
+      std::string unifName = name + "[" + std::to_string(i) + "]";
+      GLint loc = glGetUniformLocation(shaderProgram, unifName.c_str());
+   
+      if(loc == -1)
+      {
+         LOG(ERROR) << "Could not find array uniform " << unifName << std::endl;
+      }
       canAddArray &= (loc != -1);
       locs.push_back(loc);
    }
@@ -401,7 +407,8 @@ int Program::addStructArray(std::string name, int len, GL_Structure  template_st
          GL_Structure glStruct(template_struct);
          for (std::vector<std::string>::iterator atrb = uniformNames.begin(); atrb != uniformNames.end(); ++atrb)
          {
-            GLint unifLoc = hasUniform(name + "[" + std::to_string(i) + "]" + "." +*atrb);
+            std::string unifName = name + "["+std::to_string(i)+"]."+*atrb;
+            GLint unifLoc = glGetUniformLocation(shaderProgram,unifName.c_str());
             canAddStruct &= (unifLoc != -1);
             canAddStruct &= (glStruct.setUniformLocation(*atrb,unifLoc) == 0);
          }
