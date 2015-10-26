@@ -17,7 +17,7 @@ crate("assets/textures/container.jpg")
    texProg = createProgram("Texture display program");
    skyboxProg = createProgram("Skybox program");
    reflectProg = createProgram("Reflection program");
-   skyboxCube.transform.setScale(glm::vec3(100));
+   skyboxCube.transform.setScale(glm::vec3(50));
    //reflectCube.transform.setPosition(glm::vec3(2,0,0));
 }
 
