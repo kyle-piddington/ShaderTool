@@ -17,7 +17,7 @@
 #include "SSAOScene.h"
 #include "ParalaxMappingScene.h"
 #include "InstancingScene.h"
-
+#include "AnimScene.h"
 
 
 

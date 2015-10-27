@@ -45,7 +45,7 @@ void Texture2D::init(TextureConfig config)
       loadType = SOIL_LOAD_RGBA;
       bfr.setRepeat(GL_CLAMP_TO_EDGE);
    }
-
+   LOG(ERROR) << "Loading texture" << config.getTextureName();
    std::string textureName = config.getTextureName();
    if(!FileUtils::fExists(textureName))
    {

@@ -2,15 +2,35 @@
 #include "GL_Logger.h"
 Mesh::Mesh(std::vector<Vertex> vertices,
            std::vector<GLuint> indices,
-            std::vector<std::shared_ptr<Texture2D>> textures):
+           std::vector<std::shared_ptr<Texture2D>> textures,
+           std::vector<int> boneInds,
+           std::vector<float>boneWeights):
    vertices(vertices),
    indices(indices),
-   textures(textures)
+   textures(textures),
+   processBones(false)
    {
+      if(boneInds.size() > 0 && boneWeights.size())
+      {
+         if(boneInds.size() == boneWeights.size())
+         {
 
+            processBones = true;
+            boneIndBuffer = std::unique_ptr<VertexBuffer>(new VertexBuffer());
+            boneWeightBuffer = std::unique_ptr<VertexBuffer>(new VertexBuffer());
+              
+         }
+         else
+         {
+            LOG(WARNING) << "Bone inds and bone weights do not match!";
+         }
+      }
       setupMesh();
    }
+Mesh::~Mesh()
+{
 
+}
 void Mesh::setupMesh()
 {
    vBuffer.setData(vertices);

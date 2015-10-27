@@ -1,7 +1,7 @@
 #include "Model.h"
 #include "easyLogging++.h"
 #include "TextureManager.h"
-
+#include <glm/gtc/type_ptr.hpp>
 
 Model::Model(std::string path)
 {
@@ -28,28 +28,68 @@ void Model::render(Program & prog)
 void Model::loadModel(std::string path)
 {
    Assimp::Importer importer;
-   const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+   const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_GenSmoothNormals| aiProcess_FlipUVs);
    if(!scene || scene->mFlags == AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
    {
       LOG(ERROR) << "Could not load scene at " << path << "," << importer.GetErrorString();
       return;
    }
    this->directory = path.substr(0, path.find_last_of('/'));
-   this->processNode(scene->mRootNode, scene);
+   if(scene)
+   {
+      //Load all bones first.
+      this->loadBones(scene->mRootNode);
+      this->processNode(scene->mRootNode, scene);
+      //Set the binding matricies of the skeleton
+      skeleton.finalize();
+  
+   }
+   else ("Could not load mesh at " + path);
 }
 
+/**
+ * Recursivly load the skeleton for this model.
+ * @param node the root node, or a recursive node.
+ */
+void Model::loadBones(aiNode * node)
+{
+   processBone(node);
+   for(int i = 0; i < node->mNumChildren; i++)
+   {
+      loadBones(node->mChildren[i]);
+   }
+}
+/**
+ * Process a bone
+ * @param node the node to process.
+ */
+void Model::processBone(aiNode * node)
+{
+   std::string parentName = "";
+   if(node->mParent)
+   {
+      parentName = node->mParent->mName.data;
+   }
+   //assimp matricies are transposed
+   skeleton.addBone(node->mName.data,glm::transpose(glm::make_mat4(&node->mTransformation.a1)),parentName);
+
+}
 
 void Model::processNode(aiNode * node, const aiScene * scene)
 {
-   for(GLuint i = 0; i < node->mNumMeshes; i++)
+   if(node != nullptr)
    {
-      aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-      this->meshes.push_back(this->processMesh(mesh, scene));
-   }
-    // Then do the same for each of its children
-   for(GLuint i = 0; i < node->mNumChildren; i++)
-   {
-      this->processNode(node->mChildren[i], scene);
+      for(GLuint i = 0; i < node->mNumMeshes; i++)
+      {
+         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+         this->meshes.push_back(this->processMesh(mesh, scene));
+      }
+      processBone(node);
+       // Then do the same for each of its children
+      for(GLuint i = 0; i < node->mNumChildren; i++)
+      {
+         this->processNode(node->mChildren[i], scene);
+      }
    }
 }
 
@@ -58,6 +98,9 @@ std::shared_ptr<Mesh> Model::processMesh(aiMesh * mesh, const aiScene * scene)
    std::vector<Vertex> vertices;
    std::vector<GLuint> indices;
    std::vector<std::shared_ptr<Texture2D>> textures;
+   std::vector<GLuint> boneIDs;
+   std::vector<float> boneWeights;
+
    for(GLuint i = 0; i < mesh->mNumVertices; i++)
    {
       Vertex vertex;
@@ -85,7 +128,6 @@ std::shared_ptr<Mesh> Model::processMesh(aiMesh * mesh, const aiScene * scene)
       }
 
       vertices.push_back(vertex);
-
    }
 
    for(GLuint i = 0; i < mesh->mNumFaces; i++)
@@ -94,6 +136,8 @@ std::shared_ptr<Mesh> Model::processMesh(aiMesh * mesh, const aiScene * scene)
       for(GLuint j = 0; j < face.mNumIndices; j++)
          indices.push_back(face.mIndices[j]);
    }
+
+
 
    aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
    std::vector< std::shared_ptr<Texture2D> > diffuseMaps = this->loadMaterialTextures(material,

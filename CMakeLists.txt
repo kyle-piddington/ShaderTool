@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 3.0)
 
 project (GraphicsEngine)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -O3 ")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g ")
 option(test "Build all tests." ON) # Makes boolean 'test' available.
 
 

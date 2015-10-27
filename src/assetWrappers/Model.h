@@ -6,6 +6,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 #include "Transform.h"
+#include "Skeleton.h"
 /**
  * An Assimp renderable model
  */
@@ -20,12 +21,16 @@ private:
    std::vector< std::shared_ptr<Mesh> > meshes;
    std::string directory;
    void loadModel(std::string path);
+   void loadBones(aiNode * node);
    void processNode(aiNode * node, const aiScene * scene);
+   void processBone(aiNode * node);
+
    std::shared_ptr<Mesh> processMesh(aiMesh * mesh, const aiScene * scene);
    std::vector<std::shared_ptr<Texture2D> > loadMaterialTextures(
       aiMaterial * mat, aiTextureType type,
       TextureType::type texType);
 
+   Skeleton skeleton;
 
 };
 

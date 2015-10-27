@@ -14,12 +14,17 @@ VertexArrayObject::~VertexArrayObject()
    GL_Logger::LogError("Delete VAO", glGetError());
 }
 
-void VertexArrayObject::addAttribute(GLuint location, VertexBuffer & bfr, GLint stride, GLint offset,  GLint size, GLboolean normalized)
+void VertexArrayObject::addAttribute(GLuint location, VertexBuffer & bfr, GLint stride, GLint offset,  GLint size, GLboolean normalized, GLenum type)
 {
    //bind VAO
    glBindVertexArray(vaoID);
    bfr.bind();
-   glVertexAttribPointer(location, size, GL_FLOAT, normalized, stride, (GLvoid *) offset);
+   if(type == GL_FLOAT)
+      glVertexAttribPointer(location, size, type, normalized, stride, (const GLvoid *) offset);
+   else if(type == GL_INT)
+   {
+      glVertexAttribIPointer(location,size,type,stride,(const GLvoid *) offset);
+   }
    glEnableVertexAttribArray(location);
    glBindVertexArray(0);
    GL_Logger::LogError("Initialize VAO", glGetError());

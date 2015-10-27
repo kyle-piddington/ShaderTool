@@ -19,7 +19,7 @@ public:
     * @param stride     the stride of the buffer
     * @param normalized normalize the buffer
     */
-   void addAttribute(GLuint location, VertexBuffer & bfr,  GLint stride = 3 * sizeof(float), GLint offset = 0, GLint size = 3, GLboolean normalized = GL_FALSE);
+   void addAttribute(GLuint location, VertexBuffer & bfr,  GLint stride = 3 * sizeof(float), GLint offset = 0, GLint size = 3, GLboolean normalized = GL_FALSE, GLenum type = GL_FLOAT);
 
    /**
     * Add an element array to the VAO
