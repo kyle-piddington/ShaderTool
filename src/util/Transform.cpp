@@ -47,6 +47,11 @@ void Transform::setRotation(float angle, const glm::vec3 & axis)
    updateFrame();
 }
 
+void Transform::setRotation(const glm::quat & quat)
+{
+   this->rotation = quat;
+}
+
 void Transform::translate(const glm::vec3 & pos, Space::spaceType type)
 {
    glm::vec3 transPosition = pos;
@@ -186,6 +191,10 @@ glm::vec3 Transform::forward() const
    return glm::vec3(localForward);
 }
 
+glm::vec3 Transform::getScale() const
+{
+   return scale;
+}
 void Transform::updateFrame()
 {
 

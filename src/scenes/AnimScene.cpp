@@ -13,11 +13,14 @@ AnimScene::AnimScene(Context * ctx):
    {
       model = new Model("assets/models/guard/boblampclean.md5mesh");
       assimpProg = createProgram("Assimp model viewer");
+      debugProg = createProgram("Debug program");
       camera.setPosition(glm::vec3(0,0,2));
       light1.transform.setPosition(glm::vec3(2.3f, -1.6f, -3.0f));
       light2.transform.setPosition(glm::vec3(-1.7f, 0.9f, 1.0f));
       model->transform.setScale(glm::vec3(0.03));
       model->transform.setRotation(glm::vec3(-M_PI/2,0,0));
+
+   
    
    }
 
@@ -27,6 +30,9 @@ AnimScene::~AnimScene()
 }
 void AnimScene::initPrograms()
 {
+   debugProg->addVertexShader("assets/shaders/debug_vert.vs");
+   debugProg->addFragmentShader("assets/shaders/debug_frag.fs");
+   
    assimpProg->addVertexShader("assets/shaders/assimp_vert.vs");
    assimpProg->addFragmentShader("assets/shaders/assimp_frag.fs");
 }
@@ -36,6 +42,11 @@ void AnimScene::initialBind()
    assimpProg->addUniform("MV");
    assimpProg->addUniform("P");
    assimpProg->addUniform("N");
+
+   debugProg->addUniform("M");
+   debugProg->addUniform("V");
+   debugProg->addUniform("P");
+
 
 
    assimpProg->addUniformArray("diffuseTextures",3);
@@ -56,6 +67,10 @@ void AnimScene::initialBind()
     GL_Logger::LogError("Any errors after lighting..", glGetError());
    assimpProg->disable();
 
+   debugProg->enable();
+   debugProg->getUniform("P").bind(camera.getPerspectiveMatrix());
+   debugProg->disable();
+
    //glEnable(GL_CULL_FACE);
    //glCullFace(GL_BACK);
 
@@ -66,7 +81,8 @@ void AnimScene::initialBind()
 void AnimScene::render()
 {
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+   glEnable(GL_DEPTH_TEST);
+   
    glm::mat4 M, V, P, MV;
    glm::mat3 NORM;
    if(Keyboard::isKeyToggled(GLFW_KEY_O))
@@ -93,14 +109,23 @@ void AnimScene::render()
    MV = V*M;
    assimpProg->getUniform("MV").bind(MV);
    
+
+
    //cube.render();
    plane.render();
    assimpProg->disable();
+   glDisable(GL_DEPTH_TEST);
+   debugProg->enable();
+   debugProg->getUniform("V").bind(V);
+   debugProg->getUniform("M").bind(model->transform.getMatrix());
+   model->renderSkeleton();
+   debugProg->disable();
 
 }
 
 void AnimScene::update()
 {
+   model->animate("imported_0",glfwGetTime());
    CameraScene::update();
    if(Keyboard::key(GLFW_KEY_L))
    {

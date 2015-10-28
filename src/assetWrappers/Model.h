@@ -7,6 +7,8 @@
 #include <assimp/postprocess.h>
 #include "Transform.h"
 #include "Skeleton.h"
+#include "SkeletonRenderer.h"
+#include "SkeletalAnimation.h"
 /**
  * An Assimp renderable model
  */
@@ -15,6 +17,8 @@ class Model
 public:
    Model(std::string path);
    void render(Program & prog);
+   void renderSkeleton();
+   void animate(std::string animName, float time);
    Transform transform;
 
 private:
@@ -31,7 +35,12 @@ private:
       TextureType::type texType);
 
    Skeleton skeleton;
+   SkeletonRenderer skelRenderer;
+   //Animate the model with a loaded animation.
 
+
+//Load this somewhere else so it's not duplicated per model
+   std::unordered_map<std::string, SkeletalAnimation> animations;
 };
 
 #endif

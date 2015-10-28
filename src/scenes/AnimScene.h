@@ -27,6 +27,7 @@ private:
    Light light1, light2;
    Model * model;
    Program * assimpProg;
+   Program * debugProg;
    Plane plane;
    Cube cube;
    glm::mat3 createNormalMatrix(const glm::mat4 & view, const glm::mat4 & model);

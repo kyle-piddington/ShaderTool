@@ -13,35 +13,50 @@ class Bone{
       friend class Skeleton;
       //Consider inverse heierchy
       //Raw ptr since skeleton handles allocation of bones
-      Bone * parentBone;
+      int parentBoneIdx;
       glm::mat4 offsetTransform;
+      glm::mat4 localAnimTransform;
       glm::mat4 bindTransform;
       glm::mat4 animTransform;
+
       std::string name;
       int idx;
       Bone(std::string name, int boneIdx,glm::mat4 offsetTransform);
 
 
-      glm::mat4 getBindMatrix()
-      {
-         return bindTransform;
-      }
-      glm::mat4 getAnimMatrix()
-      {
-         return animTransform;
-      }
-      void setParent(Bone * const bone);
-      bool isRoot()
-      {
-         return parentBone != nullptr;
-      }
-   public:
+    
+      void setParent(int parentBoneIdx);
+      
+      public:
       void setAnimatedTransform(glm::mat4 animTransform);
 
       int getIndex()
       {
          return idx;
       }
+
+      glm::mat4 getBindMatrix()
+      {
+         return bindTransform;
+      }
+      glm::mat4 getOffsetMatrix()
+      {
+         return offsetTransform;
+      }
+      glm::mat4 getAnimMatrix()
+      {
+         return animTransform;
+      }
+      bool isRoot()
+      {
+         return parentBoneIdx == -1;
+      }
+      int getParentIdx()
+      {
+         return parentBoneIdx;
+      }
+      
+
 
 };
 class Skeleton
@@ -57,6 +72,7 @@ public:
 
    //This is awful, refactor to use better shared_ptr's later.
    Bone * const getBone(std::string boneName);
+
    void addBone(std::string boneName, glm::mat4 boneMtx, std::string parent);
    /**
     * Commit all parent->child relationshps and pre-multiply the bind matricies.
@@ -65,6 +81,10 @@ public:
    void finalize();
 
    /**
+    * Update all animated transforms
+    */
+    void finalizeAnimation();
+   /**
     * Bind the default pose.
     * By default, also bind the identiy matrix into the animation slot.
     * @param prog [description]
@@ -72,6 +92,14 @@ public:
    void bindPose(Program * prog);
 
    void bindAnimatedBones(Program * prog);
+
+   /**
+    * Get all the bones
+    */
+   std::vector<Bone> & getAllBones()
+   {
+      return bones;
+   }
 
 
 };

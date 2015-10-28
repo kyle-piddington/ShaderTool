@@ -3,7 +3,8 @@
 #include "TextureManager.h"
 #include <glm/gtc/type_ptr.hpp>
 
-Model::Model(std::string path)
+Model::Model(std::string path):
+skelRenderer(skeleton)
 {
    loadModel(path);
 }
@@ -42,8 +43,18 @@ void Model::loadModel(std::string path)
       this->processNode(scene->mRootNode, scene);
       //Set the binding matricies of the skeleton
       skeleton.finalize();
+      skeleton.finalizeAnimation();
   
+      for(int anims = 0; anims < scene->mNumAnimations; anims++)
+      {
+         SkeletalAnimation anim = SkeletalAnimation::importFromAssimp(scene->mAnimations[anims]);
+         std::cout << "Adding animation " << anim.getAnimationName() << std::endl;
+         animations[anim.getAnimationName()] = anim;
+      }
    }
+
+
+
    else ("Could not load mesh at " + path);
 }
 
@@ -59,6 +70,7 @@ void Model::loadBones(aiNode * node)
       loadBones(node->mChildren[i]);
    }
 }
+
 /**
  * Process a bone
  * @param node the node to process.
@@ -171,3 +183,38 @@ std::vector<std::shared_ptr<Texture2D> > Model::loadMaterialTextures(
    return textures;
 }
 
+void Model::renderSkeleton()
+{
+   skelRenderer.render();
+}
+
+void Model::animate(std::string animName, float time)
+{
+   auto anim = animations.find(animName);
+   if(anim != animations.end())
+   {
+      SkeletalAnimation animation = anim->second;
+      float tick = animation.getTickForTime(time);
+      const std::vector<SkeletalAnimation::BoneAnimation> & bones = animation.getAnimationData();
+      for (std::vector<const SkeletalAnimation::BoneAnimation>::iterator i = bones.begin(); i != bones.end(); ++i)
+      {
+         Bone * const boneptr  = skeleton.getBone(i->getBoneName());
+         if(boneptr != nullptr)
+         {
+            boneptr->setAnimatedTransform(i->getTransformAtTick(tick).getMatrix());
+         }
+         else
+         {
+            LOG(WARNING) << "Could not find bone named " << i->getBoneName();
+         }
+      }
+   }
+   else
+   {
+      LOG(WARNING) << "Could not find animation named " << animName;
+   }
+
+   //Update the bone heiearchy after setting all of the animated transforms.
+   skeleton.finalizeAnimation();
+  
+}

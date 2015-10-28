@@ -39,6 +39,12 @@ public:
     * @param axis  the axis to rotate on
     */
    void setRotation(float angle, const glm::vec3 & axis);
+
+    /* Set the rotation using a straight quaternion
+    * @param angle the angle
+    * @param axis  the axis to rotate on
+    */
+   void setRotation(const glm::quat & q);
    /**
     * Move by a vector
     * @param pos the delta vector
@@ -77,6 +83,11 @@ public:
     * @return [description]
     */
    glm::quat getRotation() const;
+
+   /**
+    * Get the scale of the transform
+    */
+   glm::vec3 getScale() const;
 
    /**
     * Get a 4x4 transform matrix representing this transform
