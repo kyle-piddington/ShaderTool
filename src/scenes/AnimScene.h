@@ -26,7 +26,7 @@ public:
 private:
    Light light1, light2;
    Model * model;
-   Program * assimpProg;
+   Program * animProg;
    Program * debugProg;
    Plane plane;
    Cube cube;

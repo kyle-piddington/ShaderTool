@@ -50,6 +50,8 @@ void Transform::setRotation(float angle, const glm::vec3 & axis)
 void Transform::setRotation(const glm::quat & quat)
 {
    this->rotation = quat;
+   isDirty = true;
+   updateFrame();
 }
 
 void Transform::translate(const glm::vec3 & pos, Space::spaceType type)

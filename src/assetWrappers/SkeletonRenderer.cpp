@@ -22,6 +22,7 @@ void SkeletonRenderer::bindSkeleton()
    for (std::vector<Bone>::iterator i = bones.begin(); i != bones.end(); ++i)
    {
       //Add the position to the array
+      
       bonePositions[i->getIndex()] = 
          glm::vec3(i->getAnimMatrix() * i->getOffsetMatrix() * glm::vec4(0.0,0.0,0.0,1.0));
 

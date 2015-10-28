@@ -27,8 +27,7 @@ private:
    void loadModel(std::string path);
    void loadBones(aiNode * node);
    void processNode(aiNode * node, const aiScene * scene);
-   void processBone(aiNode * node);
-
+   std::vector<VertexBoneData> processMeshBoneData(aiMesh * mesh);
    std::shared_ptr<Mesh> processMesh(aiMesh * mesh, const aiScene * scene);
    std::vector<std::shared_ptr<Texture2D> > loadMaterialTextures(
       aiMaterial * mat, aiTextureType type,
@@ -41,6 +40,7 @@ private:
 
 //Load this somewhere else so it's not duplicated per model
    std::unordered_map<std::string, SkeletalAnimation> animations;
+   
 };
 
 #endif

@@ -1,5 +1,5 @@
 #include "Skeleton.h"
-
+#include <glm/gtc/type_ptr.hpp>
 Bone::Bone(std::string name, int boneIdx, glm::mat4 offsetTransform):
 name(name),
 offsetTransform(offsetTransform),
@@ -13,9 +13,10 @@ parentBoneIdx(-1)
 }
 
 
-void Bone::setAnimatedTransform(glm::mat4 animTransform)
+
+void Bone::setAnimatedTransform(glm::mat4 transform)
 {
-   this->localAnimTransform = animTransform;
+   this->localAnimTransform = transform;
 }
 
 void Bone::setParent(int parentBoneIdx)
@@ -29,9 +30,37 @@ Skeleton::Skeleton()
 }
 Skeleton::~Skeleton()
 {
-   
+
 }
 
+int Skeleton::getNumBones()
+{
+   return bones.size();
+}
+void Skeleton::importBonesFromAssimp(aiNode * node, BoneTreeNode & thisNode)
+{
+   int boneIdx = addBone(std::string(node->mName.data),glm::transpose(glm::make_mat4(&node->mTransformation.a1)));
+
+   thisNode.boneIdx = boneIdx;
+   for(int i = 0; i < node->mNumChildren; i++)
+   {
+      thisNode.children.push_back(BoneTreeNode());
+      importBonesFromAssimp(node->mChildren[i],thisNode.children.back());
+   }
+
+
+}
+void Skeleton::importBonesFromAssimp(aiNode * node)
+{
+   rootInverseTransform = glm::transpose(glm::make_mat4(&node->mTransformation.a1));
+   rootInverseTransform = glm::inverse(rootInverseTransform);
+   for(int i = 0; i < node->mNumChildren; i++)
+   {
+      boneRoot.children.push_back(BoneTreeNode());
+      importBonesFromAssimp(node->mChildren[i],boneRoot.children.back());
+   }
+   
+}
 Bone * const Skeleton::getBone(std::string boneName)
 {
    auto boneId = boneMap.find(boneName);
@@ -46,66 +75,52 @@ Bone * const Skeleton::getBone(std::string boneName)
    }
 }
 
-
-void Skeleton::addBone(std::string boneName, glm::mat4 boneMtx, std::string parentName)
+/**
+ * Returns index of added bone
+ */
+int Skeleton::addBone(std::string boneName, glm::mat4 boneMtx)
 {
-   heiarchy[boneName] = parentName;
    Bone bone(boneName,bones.size(),boneMtx);
-   boneMap[boneName] = bone.getIndex();
    bones.push_back(bone);
+   boneMap[boneName] = bone.getIndex();
+ 
+   return bone.getIndex();
 
 }
 
 
 
+void Skeleton::finalize(BoneTreeNode & node, int pIdx)
+{
+   bones[node.boneIdx].parentBoneIdx = pIdx;
+   for (std::vector<BoneTreeNode>::iterator i = node.children.begin(); i != node.children.end(); ++i)
+   {
+      finalize(*i,node.boneIdx);
+   }
+}
 void Skeleton::finalize()
 {
-   for (std::vector<Bone>::iterator i = bones.begin(); i != bones.end(); ++i)
+   for (std::vector<BoneTreeNode>::iterator i = boneRoot.children.begin(); i != boneRoot.children.end(); ++i)
    {
-      if(i->name != "")
-      {
-         if(heiarchy[i->name] != "")
-         {
-            int pIdx = boneMap[(heiarchy[i->name])];
-            i->setParent(pIdx);
-         }
-      }
-      i->setAnimatedTransform(i->offsetTransform);
+      finalize(*i, -1);
    }
-
-   // for (std::vector<Bone>::iterator i = bones.begin(); i != bones.end(); ++i)
-   // {
-   //    glm::mat4 parentMtx(1.0);
-   //    if(!i->isRoot())
-   //    {
-   //       Bone parent = bones[i->parentBoneIdx];
-   //       //Recurse up the hiearchy and generate the final bind matrix
-   //       while(!parent.isRoot())
-   //       {
-   //          parentMtx = parent.offsetTransform * parentMtx;
-   //          parent = bones[parent.parentBoneIdx];
-   //       }
-   //    }
-   //    i->bindTransform = parentMtx * i->offsetTransform;
-   // }
+   
 }
 
-void Skeleton::finalizeAnimation()
+void Skeleton::finalizeAnimation(BoneTreeNode & node, glm::mat4 parentMtx)
 {
-   for (std::vector<Bone>::iterator i = bones.begin(); i != bones.end(); ++i)
+   glm::mat4 aMtx = parentMtx * bones[node.boneIdx].localAnimTransform;
+   bones[node.boneIdx].animTransform = aMtx;
+   for (std::vector<BoneTreeNode>::iterator i = node.children.begin(); i != node.children.end(); ++i)
    {
-      glm::mat4 parentMtx(1.0);
-      if(!i->isRoot())
-      {
-         Bone parent = bones[i->parentBoneIdx];
-         //Recurse up the hiearchy and generate the final bind matrix
-         while(!parent.isRoot())
-         {
-            parentMtx = parent.localAnimTransform * parentMtx;
-            parent = bones[parent.parentBoneIdx];
-         }
-      }
-      i->animTransform = parentMtx * i->localAnimTransform;
+      finalizeAnimation(*i, aMtx);
+   }
+}
+void Skeleton::finalizeAnimation()
+{  
+   for (std::vector<BoneTreeNode>::iterator i = boneRoot.children.begin(); i != boneRoot.children.end(); ++i)
+   {
+      finalizeAnimation(*i,glm::mat4(1.0));
    }
 }
 
@@ -113,8 +128,13 @@ void Skeleton::bindPose(Program * prog)
 {
 
 }
-void Skeleton::bindAnimatedBones(Program * prog)
+void Skeleton::bindAnimatedBones(Program & prog)
 {
+   Program::UniformArrayInfo boneUniforms = prog.getArray("gBones");
+   for(int i = 0; i < bones.size(); i++)
+   {
+      glUniformMatrix4fv(boneUniforms[i],1,GL_FALSE,glm::value_ptr(bones[i].getAnimMatrix()));
+   }
 
 }
 

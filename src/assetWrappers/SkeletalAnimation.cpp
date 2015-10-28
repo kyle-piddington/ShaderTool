@@ -208,7 +208,7 @@ SkeletalAnimation SkeletalAnimation::importFromAssimp(aiAnimation * aiAnim)
       {
          aiQuatKey  key = nodeAnim->mRotationKeys[rotKeys];
          RotationKeyFrame frame(
-            glm::normalize(glm::quat(key.mValue.w,key.mValue.x,key.mValue.y,key.mValue.z)),
+            glm::quat(key.mValue.w,key.mValue.x,key.mValue.y,key.mValue.z),
             key.mTime);
          boneAnim.addFrame(frame);
       }

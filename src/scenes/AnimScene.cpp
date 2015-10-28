@@ -11,8 +11,8 @@ AnimScene::AnimScene(Context * ctx):
    plane(3,3)
 
    {
-      model = new Model("assets/models/guard/boblampclean.md5mesh");
-      assimpProg = createProgram("Assimp model viewer");
+      model = new Model("assets/models/movecube/movecube.dae");
+      animProg = createProgram("Animation viewer");
       debugProg = createProgram("Debug program");
       camera.setPosition(glm::vec3(0,0,2));
       light1.transform.setPosition(glm::vec3(2.3f, -1.6f, -3.0f));
@@ -33,39 +33,40 @@ void AnimScene::initPrograms()
    debugProg->addVertexShader("assets/shaders/debug_vert.vs");
    debugProg->addFragmentShader("assets/shaders/debug_frag.fs");
    
-   assimpProg->addVertexShader("assets/shaders/assimp_vert.vs");
-   assimpProg->addFragmentShader("assets/shaders/assimp_frag.fs");
+   animProg->addVertexShader("assets/shaders/skeleton/skel_vert.vs");
+   animProg->addFragmentShader("assets/shaders/assimp_frag.fs");
 }
 
 void AnimScene::initialBind()
 {
-   assimpProg->addUniform("MV");
-   assimpProg->addUniform("P");
-   assimpProg->addUniform("N");
-
+   animProg->addUniform("M");
+   animProg->addUniform("V");
+   animProg->addUniform("P");
+   animProg->addUniformArray("gBones",100);
+   animProg->addUniformArray("gBinds",100);
    debugProg->addUniform("M");
    debugProg->addUniform("V");
    debugProg->addUniform("P");
 
 
 
-   assimpProg->addUniformArray("diffuseTextures",3);
+   animProg->addUniformArray("diffuseTextures",3);
 
-   assimpProg->addStructArray("pointLights",2,Light::getStruct());
-   assimpProg->addUniform("numDiffuseTextures");
+   animProg->addStructArray("pointLights",2,Light::getStruct());
+   animProg->addUniform("numDiffuseTextures");
 
-   assimpProg->addUniformArray("specularTextures",2);
-   assimpProg->addUniform("numSpecularTextures");
+   animProg->addUniformArray("specularTextures",2);
+   animProg->addUniform("numSpecularTextures");
 
-   assimpProg->addUniformStruct("material",Material::getStruct());
+   animProg->addUniformStruct("material",Material::getStruct());
 
    glClearColor(0.1,0.1,0.1,1.0);
 
-   assimpProg->enable();
-   light1.bind(assimpProg->getStructArray("pointLights")[0]);
-   light2.bind(assimpProg->getStructArray("pointLights")[1]);
+   animProg->enable();
+   light1.bind(animProg->getStructArray("pointLights")[0]);
+   light2.bind(animProg->getStructArray("pointLights")[1]);
     GL_Logger::LogError("Any errors after lighting..", glGetError());
-   assimpProg->disable();
+   animProg->disable();
 
    debugProg->enable();
    debugProg->getUniform("P").bind(camera.getPerspectiveMatrix());
@@ -98,27 +99,26 @@ void AnimScene::render()
    NORM = GlmUtil::createNormalMatrix(V, M);
    MV = V*M;
    GL_Logger::LogError("Any errors before enabling..", glGetError());
-   assimpProg->enable();
-   assimpProg->getUniform("P").bind(P);
-   assimpProg->getUniform("MV").bind(MV);
-   assimpProg->getUniform("N").bind(NORM);
-   mat.bind(assimpProg->getUniformStruct("material"));
-   model->render(*assimpProg);
+   animProg->enable();
+   animProg->getUniform("P").bind(P);
+   animProg->getUniform("M").bind(M);
+   animProg->getUniform("V").bind(V);
+   mat.bind(animProg->getUniformStruct("material"));
+   model->render(*animProg);
 
    M = plane.transform.getMatrix();
-   MV = V*M;
-   assimpProg->getUniform("MV").bind(MV);
+   animProg->getUniform("M").bind(M);
    
 
 
    //cube.render();
    plane.render();
-   assimpProg->disable();
+   animProg->disable();
    glDisable(GL_DEPTH_TEST);
    debugProg->enable();
    debugProg->getUniform("V").bind(V);
    debugProg->getUniform("M").bind(model->transform.getMatrix());
-   model->renderSkeleton();
+   //model->renderSkeleton();
    debugProg->disable();
 
 }

@@ -10,6 +10,7 @@ skelRenderer(skeleton)
 }
 void Model::render(Program & prog)
 {
+   skeleton.bindAnimatedBones(prog);
    for (std::vector<std::shared_ptr<Mesh> >::iterator mesh = meshes.begin(); mesh != meshes.end(); ++mesh)
    {
       (*mesh)->render(prog);
@@ -64,28 +65,9 @@ void Model::loadModel(std::string path)
  */
 void Model::loadBones(aiNode * node)
 {
-   processBone(node);
-   for(int i = 0; i < node->mNumChildren; i++)
-   {
-      loadBones(node->mChildren[i]);
-   }
+   skeleton.importBonesFromAssimp(node);
 }
 
-/**
- * Process a bone
- * @param node the node to process.
- */
-void Model::processBone(aiNode * node)
-{
-   std::string parentName = "";
-   if(node->mParent)
-   {
-      parentName = node->mParent->mName.data;
-   }
-   //assimp matricies are transposed
-   skeleton.addBone(node->mName.data,glm::transpose(glm::make_mat4(&node->mTransformation.a1)),parentName);
-
-}
 
 void Model::processNode(aiNode * node, const aiScene * scene)
 {
@@ -96,7 +78,6 @@ void Model::processNode(aiNode * node, const aiScene * scene)
          aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
          this->meshes.push_back(this->processMesh(mesh, scene));
       }
-      processBone(node);
        // Then do the same for each of its children
       for(GLuint i = 0; i < node->mNumChildren; i++)
       {
@@ -105,14 +86,29 @@ void Model::processNode(aiNode * node, const aiScene * scene)
    }
 }
 
+std::vector<VertexBoneData> Model::processMeshBoneData(aiMesh * mesh)
+{
+   std::vector<VertexBoneData> bData;
+   bData.resize(mesh->mNumVertices);
+   for(int bone = 0; bone < mesh->mNumBones; bone++)
+   {
+      std::string boneName(mesh->mBones[bone]->mName.data);
+      Bone * skelBone = skeleton.getBone(boneName);
+      for(int weight = 0; weight < mesh->mBones[bone]->mNumWeights; weight++)
+      {
+         float boneWeight = mesh->mBones[bone]->mWeights[weight].mWeight;
+         float idx = mesh->mBones[bone]->mWeights[weight].mVertexId;
+         bData[idx].addBoneData(skelBone->getIndex(),boneWeight);
+      }
+   }
+   return bData;
+}
 std::shared_ptr<Mesh> Model::processMesh(aiMesh * mesh, const aiScene * scene)
 {
    std::vector<Vertex> vertices;
    std::vector<GLuint> indices;
    std::vector<std::shared_ptr<Texture2D>> textures;
-   std::vector<GLuint> boneIDs;
-   std::vector<float> boneWeights;
-
+  
    for(GLuint i = 0; i < mesh->mNumVertices; i++)
    {
       Vertex vertex;
@@ -138,8 +134,18 @@ std::shared_ptr<Mesh> Model::processMesh(aiMesh * mesh, const aiScene * scene)
       {
          vertex.texCoords = glm::vec2(0.0);
       }
-
       vertices.push_back(vertex);
+
+   }
+   std::vector<VertexBoneData> boneData = processMeshBoneData(mesh);
+   
+   std::vector<glm::mat4> boneOffsets;
+   boneOffsets.resize(skeleton.getNumBones());
+   for(int bone = 0; bone < mesh->mNumBones; bone++)
+   {
+      std::string boneName(mesh->mBones[bone]->mName.data);
+      Bone * skelBone = skeleton.getBone(boneName);
+      boneOffsets[skelBone->getIndex()] = glm::transpose(glm::make_mat4(&mesh->mBones[bone]->mOffsetMatrix.a1));
    }
 
    for(GLuint i = 0; i < mesh->mNumFaces; i++)
@@ -148,6 +154,8 @@ std::shared_ptr<Mesh> Model::processMesh(aiMesh * mesh, const aiScene * scene)
       for(GLuint j = 0; j < face.mNumIndices; j++)
          indices.push_back(face.mIndices[j]);
    }
+
+
 
 
 
@@ -161,8 +169,7 @@ std::shared_ptr<Mesh> Model::processMesh(aiMesh * mesh, const aiScene * scene)
       aiTextureType_SPECULAR,TextureType::SPECULAR);
    textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 
-   return std::shared_ptr<Mesh>(new Mesh(vertices, indices, textures));
-
+   return std::shared_ptr<Mesh>(new Mesh(vertices, indices, textures,boneData, boneOffsets));
 }
 
 
@@ -201,6 +208,7 @@ void Model::animate(std::string animName, float time)
          Bone * const boneptr  = skeleton.getBone(i->getBoneName());
          if(boneptr != nullptr)
          {
+            std::cout << "Animating " << i->getBoneName()<< std::endl;
             boneptr->setAnimatedTransform(i->getTransformAtTick(tick).getMatrix());
          }
          else
@@ -216,5 +224,5 @@ void Model::animate(std::string animName, float time)
 
    //Update the bone heiearchy after setting all of the animated transforms.
    skeleton.finalizeAnimation();
-  
+
 }

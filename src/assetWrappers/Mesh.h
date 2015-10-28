@@ -18,9 +18,9 @@ public:
    std::vector<VertexBoneData> boneData;
    std::vector<GLuint> indices;
    std::vector<std::shared_ptr<Texture2D>> textures;
-
    Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<std::shared_ptr<Texture2D>> textures,
-         std::vector<int> boneInds = std::vector<int>(), std::vector<float> boneWeights = std::vector<float>());
+         std::vector<VertexBoneData> bones = std::vector<VertexBoneData>(),
+         std::vector<glm::mat4> meshBoneOffsets = std::vector<glm::mat4>());
    
    ~Mesh();
    void render(Program & prog);
@@ -28,14 +28,15 @@ public:
 
 private:
    VertexBuffer vBuffer;
-   std::unique_ptr<VertexBuffer>  boneIndBuffer;
-   std::unique_ptr<VertexBuffer>  boneWeightBuffer;
-
+   std::vector<glm::mat4> boneOffsets;
+ 
+   std::unique_ptr<VertexBuffer>  boneBuffer;
    ElementBufferObject ebo;
    VertexArrayObject vao;
 
    bool processBones;
    void setupMesh();
+
    
 
 

@@ -19,17 +19,25 @@ void VertexArrayObject::addAttribute(GLuint location, VertexBuffer & bfr, GLint 
    //bind VAO
    glBindVertexArray(vaoID);
    bfr.bind();
+   GL_Logger::LogError("Initialize VAO", glGetError());
+  
    if(type == GL_FLOAT)
+   {
       glVertexAttribPointer(location, size, type, normalized, stride, (const GLvoid *) offset);
+      GL_Logger::LogError("Initialize VAO", glGetError());
+  
+   }
    else if(type == GL_INT)
    {
-      glVertexAttribIPointer(location,size,type,stride,(const GLvoid *) offset);
+      glVertexAttribIPointer(location,size,type,stride,(GLvoid *) offset);
+       GL_Logger::LogError("Initialize VAO", glGetError());
+  
    }
    glEnableVertexAttribArray(location);
+   GL_Logger::LogError("Initialize VAO", glGetError());
+  
    glBindVertexArray(0);
    GL_Logger::LogError("Initialize VAO", glGetError());
-   this->stride = stride;
-   this->normalized = normalized;
    locations.push_back(location);
 }
 
@@ -63,7 +71,7 @@ void VertexArrayObject::disableLocation(GLuint location)
 void VertexArrayObject::bind()
 {
    glBindVertexArray(vaoID);
-   GL_Logger::LogError("Could not bind VAO", glGetError());
+   GL_Logger::LogError("Could not bind VAO at "+std::to_string(vaoID), glGetError());
    
 }
 void VertexArrayObject::unbind()
