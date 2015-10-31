@@ -7,4 +7,6 @@ struct Vertex
    glm::vec3 normal;
    glm::vec2 texCoords;
 };
+
+
 #endif

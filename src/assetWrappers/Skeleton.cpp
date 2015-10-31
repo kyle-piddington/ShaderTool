@@ -4,7 +4,7 @@ Bone::Bone(std::string name, int boneIdx, glm::mat4 offsetTransform):
 name(name),
 offsetTransform(offsetTransform),
 localAnimTransform(1.0),
-bindTransform(offsetTransform),
+
 animTransform(1.0),
 idx(boneIdx),
 parentBoneIdx(-1)
@@ -124,10 +124,7 @@ void Skeleton::finalizeAnimation()
    }
 }
 
-void Skeleton::bindPose(Program * prog)
-{
 
-}
 void Skeleton::bindAnimatedBones(Program & prog)
 {
    Program::UniformArrayInfo boneUniforms = prog.getArray("gBones");

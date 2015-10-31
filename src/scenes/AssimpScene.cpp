@@ -7,11 +7,11 @@ AssimpScene::AssimpScene(Context * ctx):
    CameraScene(ctx),
    light1(glm::vec3(0.05),glm::vec3(1.0),glm::vec3(1.0),50),
    light2(glm::vec3(0.05),glm::vec3(1.0),glm::vec3(1.0),50),
-   mat(glm::vec3(0.0),glm::vec3(0.0),glm::vec3(0.0),0),
+   mat(glm::vec3(0.4),glm::vec3(0.0),glm::vec3(0.0),0),
    plane(3,3)
 
    {
-      model = new Model("assets/models/nanosuit/nanosuit.obj");
+      model = new Model("assets/models/movecube/movecube.obj");
       assimpProg = createProgram("Assimp model viewer");
       camera.setPosition(glm::vec3(0,0,2));
       light1.transform.setPosition(glm::vec3(2.3f, -1.6f, -3.0f));

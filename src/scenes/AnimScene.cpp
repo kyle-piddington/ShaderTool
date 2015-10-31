@@ -5,13 +5,13 @@
 
 AnimScene::AnimScene(Context * ctx):
    CameraScene(ctx),
-   light1(glm::vec3(0.05),glm::vec3(1.0),glm::vec3(1.0),50),
-   light2(glm::vec3(0.05),glm::vec3(1.0),glm::vec3(1.0),50),
+   light1(glm::vec3(0.15),glm::vec3(1.0),glm::vec3(1.0),50),
+   light2(glm::vec3(0.15),glm::vec3(1.0),glm::vec3(1.0),50),
    mat(glm::vec3(0.0),glm::vec3(0.0),glm::vec3(0.0),0),
    plane(3,3)
 
    {
-      model = new Model("assets/models/movecube/movecube.dae");
+      model = new Model("assets/models/guard/boblampclean.md5mesh");
       animProg = createProgram("Animation viewer");
       debugProg = createProgram("Debug program");
       camera.setPosition(glm::vec3(0,0,2));

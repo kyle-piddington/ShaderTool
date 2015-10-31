@@ -208,7 +208,6 @@ void Model::animate(std::string animName, float time)
          Bone * const boneptr  = skeleton.getBone(i->getBoneName());
          if(boneptr != nullptr)
          {
-            std::cout << "Animating " << i->getBoneName()<< std::endl;
             boneptr->setAnimatedTransform(i->getTransformAtTick(tick).getMatrix());
          }
          else
