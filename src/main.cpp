@@ -55,7 +55,7 @@ int main()
 
    Context * ctx = new Context(window);
    //Init scene of choice here
-   Scene * scene = new AnimScene(ctx);
+   Scene * scene = new MotionBlurScene(ctx);
    scene->setContext(ctx);
 
    //Create a window for the program to run in

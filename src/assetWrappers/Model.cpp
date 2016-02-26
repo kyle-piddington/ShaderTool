@@ -10,7 +10,10 @@ skelRenderer(skeleton)
 }
 void Model::render(Program & prog)
 {
-   skeleton.bindAnimatedBones(prog);
+   if(hasSkeleton)
+   {
+      skeleton.bindAnimatedBones(prog);
+   }
    for (std::vector<std::shared_ptr<Mesh> >::iterator mesh = meshes.begin(); mesh != meshes.end(); ++mesh)
    {
       (*mesh)->render(prog);
@@ -19,7 +22,7 @@ void Model::render(Program & prog)
    {
       prog.getUniform("numDiffuseTextures").bind(0);
    }
-   
+
    if(prog.hasAddedUniform("numSpecularTextures"))
    {
       prog.getUniform("numSpecularTextures").bind(0);
@@ -45,7 +48,16 @@ void Model::loadModel(std::string path)
       //Set the binding matricies of the skeleton
       skeleton.finalize();
       skeleton.finalizeAnimation();
-  
+
+      if(skeleton.getNumBones() > 0)
+      {
+         this->hasSkeleton = true;
+      }
+      else
+      {
+         this->hasSkeleton = false;
+      }
+
       for(int anims = 0; anims < scene->mNumAnimations; anims++)
       {
          SkeletalAnimation anim = SkeletalAnimation::importFromAssimp(scene->mAnimations[anims]);
@@ -108,7 +120,7 @@ std::shared_ptr<Mesh> Model::processMesh(aiMesh * mesh, const aiScene * scene)
    std::vector<Vertex> vertices;
    std::vector<GLuint> indices;
    std::vector<std::shared_ptr<Texture2D>> textures;
-  
+
    for(GLuint i = 0; i < mesh->mNumVertices; i++)
    {
       Vertex vertex;
@@ -138,7 +150,7 @@ std::shared_ptr<Mesh> Model::processMesh(aiMesh * mesh, const aiScene * scene)
 
    }
    std::vector<VertexBoneData> boneData = processMeshBoneData(mesh);
-   
+
    std::vector<glm::mat4> boneOffsets;
    boneOffsets.resize(skeleton.getNumBones());
    for(int bone = 0; bone < mesh->mNumBones; bone++)

@@ -23,7 +23,7 @@ public:
     * @param size     size of the array
     * @param usage    Enum for drawing. use GL_STATIC_DRAW, GL_DYNAMIC_DRAW, or GL_STREAM_DRAW depending on needs.
     */
-   void setData(const float * vertices, int size, GLenum usage = GL_STATIC_DRAW);
+   void setData(const GLfloat * vertices, int size, GLenum usage = GL_STATIC_DRAW);
    /**
     * set the data of this buffer from a standard vector (xyz organized)
     * @param vertices The vertices to send to the GPU

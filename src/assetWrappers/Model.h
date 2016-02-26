@@ -36,7 +36,7 @@ private:
    Skeleton skeleton;
    SkeletonRenderer skelRenderer;
    //Animate the model with a loaded animation.
-
+   bool hasSkeleton;
 
 //Load this somewhere else so it's not duplicated per model
    std::unordered_map<std::string, SkeletalAnimation> animations;

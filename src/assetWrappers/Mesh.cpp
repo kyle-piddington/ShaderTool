@@ -32,11 +32,11 @@ void Mesh::setupMesh()
    //way to do this later...
 
    vao.addAttribute(0,vBuffer,sizeof(Vertex));
-   vao.addAttribute(1,vBuffer,sizeof(Vertex),offsetof(Vertex, normal));
+   vao.addAttribute(1,vBuffer,sizeof(Vertex) ,offsetof(Vertex, normal));
    vao.addAttribute(2, vBuffer,sizeof(Vertex),offsetof(Vertex,texCoords),2);
    if(processBones)
    {
-      
+
       vao.addAttribute(3,*boneBuffer,sizeof(VertexBoneData),offsetof(VertexBoneData,boneIds),4,GL_FALSE,GL_INT);
       vao.addAttribute(4,*boneBuffer,sizeof(VertexBoneData),offsetof(VertexBoneData,boneWeights),4);
    }
@@ -50,7 +50,7 @@ void Mesh::render(Program & program)
    vao.bind();
    int numDiffuseTextures = 0;
    int numSpecularTextures = 0;
-   
+
    Program::UniformArrayInfo diffuseTextures = program.getArray("diffuseTextures");
    Program::UniformArrayInfo specularTextures = program.getArray("specularTextures");
    Program::UniformArrayInfo boneOffsetUniforms = program.getArray("gBinds");
@@ -72,6 +72,7 @@ void Mesh::render(Program & program)
          }
       }
    }
+
    for(int i = 0; i < boneOffsets.size(); i++)
    {
       glUniformMatrix4fv(boneOffsetUniforms[i],1,GL_FALSE,glm::value_ptr(boneOffsets[i]));

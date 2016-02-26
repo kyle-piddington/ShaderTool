@@ -1,5 +1,5 @@
 #include "Texture2D.h"
-#include <SOIL.h>
+#include <SOIL/SOIL.h>
 #include "../logger/GL_Logger.h"
 #include <easyLogging++.h>
 #include "../util/FileUtils.h"

@@ -1,5 +1,5 @@
 #include "CubeMap.h"
-#include <SOIL.h>
+#include <SOIL/SOIL.h>
 #include <easylogging++.h>
 #include "../util/FileUtils.h"
 

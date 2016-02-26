@@ -22,9 +22,9 @@ glm::vec3 ParalaxMappingScene::getTangent(Point & pa, Point & pb, Point & pc)
 }
 ParalaxMappingScene::ParalaxMappingScene(Context * ctx):
 CameraScene(ctx),
-diffuseMat("assets/textures/bricks2.jpg",32),
-normalMap("assets/textures/bricks2_normal.jpg"),
-displacementMap("assets/textures/bricks2_disp.jpg"),
+diffuseMat("assets/textures/toy_box_diffuse.png",32),
+normalMap("assets/textures/toy_box_normal.png"),
+displacementMap("assets/textures/toy_box_disp.png"),
 light(glm::vec3(0.1),glm::vec3(0.6),glm::vec3(0.8),50)
 {
    light.transform.setPosition(glm::vec3(1.0));

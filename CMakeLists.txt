@@ -2,10 +2,11 @@ cmake_minimum_required (VERSION 3.0)
 
 project (GraphicsEngine)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -O3")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g  -O3")
 option(test "Build all tests." ON) # Makes boolean 'test' available.
 
-
+include_directories(/usr/local/include)
+link_directories(/usr/local/lib /usr/lib)
 #Get Source variables
 include_directories ("${PROJECT_SOURCE_DIR}/lib")
 SET( EIGEN3_INCLUDE_DIR "$ENV{EIGEN3_INCLUDE_DIR}" )
@@ -55,12 +56,14 @@ ENDIF()
 
 list(REMOVE_ITEM GraphicsEngine_SOURCES ${PROJECT_SOURCE_DIR}/src/main.cpp)
 
-add_library(GraphicsEngine_lib ${GraphicsEngine_SOURCES})
+add_library(GraphicsEngine_lib STATIC ${GraphicsEngine_SOURCES})
+
+
 #Add C++ 11
 add_executable(GraphicsEngine ${PROJECT_SOURCE_DIR}/src/main.cpp)
 
-target_link_libraries(GraphicsEngine GraphicsEngine_lib)
-target_link_libraries(GraphicsEngine ${EXTRA_LIBS})
+
+target_link_libraries(GraphicsEngine GraphicsEngine_lib ${EXTRA_LIBS})
 if (APPLE)
     target_link_libraries(GraphicsEngine "-framework OpenGL -framework CoreFoundation -framework CoreServices")
 endif()

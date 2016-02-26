@@ -18,10 +18,6 @@
 #include "ParalaxMappingScene.h"
 #include "InstancingScene.h"
 #include "AnimScene.h"
-
-
-
-
-
+#include "MotionBlurScene.h"
 
 #endif

@@ -265,8 +265,10 @@ void SSAOScene::renderDeferred()
    gBuffer.enableTexture("color",finalPassProgram->getUniform("albedo_specTexture").getID());
    ssaoBlurBuffer.enableTexture("occlusion",finalPassProgram->getUniform("ambient").getID());
    glm::vec3 viewPos = camera.transform.getPosition();
+   
    finalPassProgram->getUniform("viewPos").bind(viewPos);
    finalPassProgram->getUniform("time").bind((float)glfwGetTime());
+   
    renderPlane.render();
    finalPassProgram->disable();
 }
