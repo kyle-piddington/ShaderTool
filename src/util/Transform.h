@@ -70,6 +70,13 @@ public:
    void lookAt(glm::vec3 target,glm::vec3 up = World::Up);
 
    /**
+    * Orient the transform to point along a vector
+    * @param forward the new forward vector
+    * @param up      the world's up direction.
+    */
+   void lookAlong(glm::vec3 forward, glm::vec3 up = World::Up);
+
+   /**
     * Scale the transform
     */
    void setScale(glm::vec3 scale);
@@ -98,20 +105,22 @@ public:
    /**
     * Get the local up facing vector
     */
-   glm::vec3 up() const;
+   glm::vec3 up(Space::spaceType space = Space::LOCAL) const;
    /**
     * Get the local right facing vector
     */
-   glm::vec3 right() const;
+   glm::vec3 right(Space::spaceType space = Space::LOCAL) const;
    /**
     * Get the local forward facing vector
     */
-   glm::vec3 forward() const;
+   glm::vec3 forward(Space::spaceType space = Space::LOCAL) const;
 
    void setParent(Transform * parent)
    {
      this->parent = parent;
    }
+
+   void setIdentity();
 
 private:
    void updateFrame();
@@ -123,7 +132,7 @@ private:
    bool isDirty;
    glm::mat4 currentMatrix;
    glm::quat rotation;
-  Transform * parent;
+   Transform * parent;
 
 };
 #endif

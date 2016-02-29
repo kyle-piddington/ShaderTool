@@ -17,6 +17,9 @@ private:
    float radius;
    Transform centerPoint;
    glm::vec3 mouseDownPt;
+   glm::vec2 transMouseLockPoint;
+   glm::vec3 transLockPoint;
+   bool isTranslating;
 
 };
 #endif

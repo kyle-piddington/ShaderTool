@@ -26,3 +26,9 @@ void GLFWHandler::update()
    Keyboard::update();
    Mouse::update();
 }
+void GLFWHandler::scrollWheelCallback(GLFWwindow * window, double xOffset, double yOffset)
+{
+
+   Mouse::setScrollStatus(xOffset, yOffset);
+
+}

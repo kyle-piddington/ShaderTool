@@ -30,6 +30,7 @@ void Transform::setRotation(const glm::vec3 & eulerAngles)
    isDirty = true;
    updateFrame();
 }
+
 void Transform::setRotation(float angle, const glm::vec3 & axis)
 {
    //Assert axis greater than zero
@@ -171,6 +172,31 @@ void Transform::lookAt(glm::vec3 target, glm::vec3 upVec)
 
 
 }
+void Transform::lookAlong(glm::vec3 forward, glm::vec3 upVec)
+{
+   /*Vector forward = lookAt.Normalized();
+   Vector right = Vector::Cross(up.Normalized(), forward);
+   Vector up = Vector::Cross(forward, right);*/
+   
+   glm::vec3 up = glm::orthonormalize(upVec, forward); // Keeps up the same, make forward orthogonal to up
+   glm::vec3 right = glm::normalize(glm::cross(forward, up));
+
+   glm::mat4 rotMat;
+   rotMat[0] = glm::vec4(right.x,right.y,right.z,0);
+   rotMat[1] = glm::vec4(up.x, up.y, up.z, 0);
+   rotMat[2] = glm::vec4(-forward.x, -forward.y, -forward.z, 0);
+   rotMat[3] = glm::vec4(0,0,0,1);
+   //Create a quaternion from the three vectors above.
+   glm::quat ret = glm::quat_cast(rotMat);
+
+
+   this->rotation = glm::normalize(ret);
+   isDirty = true;
+   updateFrame();
+
+
+
+}
 
 void Transform::setScale(glm::vec3 scale)
 {
@@ -178,19 +204,34 @@ void Transform::setScale(glm::vec3 scale)
    isDirty = true;
 }
 
-glm::vec3 Transform::up() const
+glm::vec3 Transform::up(Space::spaceType type) const
 {
-   return glm::vec3(localUp);
+   glm::vec3 vec =  glm::vec3(localUp);
+   if(type == Space::WORLD)
+   {
+      vec = glm::vec3(parent->getMatrix() * glm::vec4(vec,0.0));
+   }
+   return vec;
 }
 
-glm::vec3 Transform::right() const
+glm::vec3 Transform::right(Space::spaceType type) const
 {
-   return glm::vec3(localRight);
+   glm::vec3 vec =  glm::vec3(localRight);
+   if(type == Space::WORLD)
+   {
+      vec = glm::vec3(parent->getMatrix() * glm::vec4(vec,0.0));
+   }
+   return vec;
 }
 
-glm::vec3 Transform::forward() const
+glm::vec3 Transform::forward(Space::spaceType type) const
 {
-   return glm::vec3(localForward);
+   glm::vec3 vec =  glm::vec3(localForward);
+   if(type == Space::WORLD)
+   {
+      vec = glm::vec3(parent->getMatrix() * glm::vec4(vec,0.0));
+   }
+   return vec;
 }
 
 glm::vec3 Transform::getScale() const
@@ -209,4 +250,16 @@ void Transform::updateFrame()
    localForward = glm::normalize(rotMtx * wFw);
 
 
+}
+
+void Transform::setIdentity()
+{
+   position = (glm::vec3(0));
+   rotation = glm::quat(glm::vec3(0.0));
+   scale = (glm::vec3(1.0));
+   localUp = (glm::vec4(World::Up,0.0));
+   localRight = (glm::vec4(World::Right,0.0));
+   localForward = (glm::vec4(World::Forward,0.0));
+   currentMatrix= (glm::mat4(1.0));
+   isDirty = (true);
 }

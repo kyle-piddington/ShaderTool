@@ -23,7 +23,6 @@ Program::~Program()
    if(created)
    {
       glDeleteProgram(shaderProgram);
-
    }
 
 }

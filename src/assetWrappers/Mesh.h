@@ -15,26 +15,17 @@
 class Mesh{
 public:
    std::vector<Vertex> vertices;
-   std::vector<VertexBoneData> boneData;
    std::vector<GLuint> indices;
-   std::vector<std::shared_ptr<Texture2D>> textures;
-   Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices, std::vector<std::shared_ptr<Texture2D>> textures,
-         std::vector<VertexBoneData> bones = std::vector<VertexBoneData>(),
-         std::vector<glm::mat4> meshBoneOffsets = std::vector<glm::mat4>());
-   
+
+   Mesh(std::vector<Vertex> vertices, std::vector<GLuint> indices);
    ~Mesh();
    void render(Program & prog);
 
 
 private:
    VertexBuffer vBuffer;
-   std::vector<glm::mat4> boneOffsets;
- 
-   std::unique_ptr<VertexBuffer>  boneBuffer;
    ElementBufferObject ebo;
    VertexArrayObject vao;
-
-   bool processBones;
    void setupMesh();
 
    

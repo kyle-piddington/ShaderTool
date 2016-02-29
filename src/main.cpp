@@ -9,7 +9,7 @@
 #include "AppleLiveReloadManager.h"
 #include "GL_Logger.h"
 #include <GLFW/glfw3.h>
-#include "scenes/Scenes.h"
+#include "ToolScene.h"
 
 INITIALIZE_EASYLOGGINGPP
 
@@ -48,6 +48,8 @@ int main()
    glfwSetKeyCallback(window, GLFWHandler::key_callback);
    glfwSetCursorPosCallback(window, GLFWHandler::mousePositionCallback);
    glfwSetMouseButtonCallback(window, GLFWHandler::mouseButtonCallback);
+   glfwSetScrollCallback(window, GLFWHandler::scrollWheelCallback);
+   
 
    FileSystem::ReloadLocator::Initialize();
    FileSystem::ReloadLocator::provide(new AppleReloadManager());
@@ -55,7 +57,7 @@ int main()
 
    Context * ctx = new Context(window);
    //Init scene of choice here
-   Scene * scene = new MotionBlurScene(ctx);
+   Scene * scene = new ToolScene(ctx);
    scene->setContext(ctx);
 
    //Create a window for the program to run in

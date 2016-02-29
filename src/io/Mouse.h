@@ -13,6 +13,15 @@ public:
    //Get the last Y position of the mouse
    static int getLastY();
    //Update the mouse coordinates
+   
+   static double getScrollXAmount();
+
+   static double getScrollYAmount();
+
+   static double getScrollXDelta();
+
+   static double getScrollYDelta();
+
    static void updateMousePos(int nextX, int nextY);
 
    //Check to see if a button was clicked
@@ -27,10 +36,13 @@ public:
    //Update the mouse click position
    static void setButtonStatus(int button, int action);
 
+   static void setScrollStatus(double xOffset, double yOffset);
    //Update the mouse button status
    static void update();
 private:
    static int x, y, lastX, lastY, bfrX, bfrY;
+   static double xScrollOffset, yScrollOffset, deltXOffset, deltYOffset;
+   static double deltXBuffer, deltYBuffer;
    static short mouseButtons[GLFW_MOUSE_BUTTON_LAST];
    static short bufferButtons[GLFW_MOUSE_BUTTON_LAST];
 

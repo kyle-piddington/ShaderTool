@@ -1,4 +1,3 @@
-#include "ErrorScene.h"
 #include "Window.h"
 
 #include <easyLogging++.h>
@@ -8,21 +7,15 @@
 Window::Window(GLFWwindow * window):
    currentWindow(window)
 {
-   errorScene = new ErrorScene();
-   errorScene->initPrograms();
-   errorScene->compilePrograms();
-   errorScene->initialBind();
+  
 }
 
 Window::~Window()
 {
-   delete errorScene;
 }
 void Window::loadScene(Scene * scene)
 {
    currentScene = scene;
-   //Copy context pointer
-   errorScene->setContext(currentScene->getContext());
 }
 void Window::run()
 {
@@ -59,10 +52,6 @@ void Window::run()
             //currentScene->updateGlobalUniforms();
             currentScene->update();
             currentScene->render();
-         }
-         else
-         {
-            errorScene->render();
          }
          glfwSwapBuffers(currentWindow);
       }
