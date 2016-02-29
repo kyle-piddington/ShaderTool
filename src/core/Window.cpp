@@ -3,7 +3,8 @@
 #include <easyLogging++.h>
 #include "ReloadLocator.h"
 #include "GLFWHandler.h"
-
+#include "imgui.h"
+#include "imgui_impl_glfw_gl3.h"
 Window::Window(GLFWwindow * window):
    currentWindow(window)
 {
@@ -31,6 +32,8 @@ void Window::run()
       //While not esc pressed
       while(!glfwWindowShouldClose(currentWindow))
       {
+         ImGui_ImplGlfwGL3_NewFrame();
+       
          //Check for any file changes
          FileSystem::ReloadLocator::getService()->processEvents();
 
@@ -53,6 +56,7 @@ void Window::run()
             currentScene->update();
             currentScene->render();
          }
+         ImGui::Render();
          glfwSwapBuffers(currentWindow);
       }
    }

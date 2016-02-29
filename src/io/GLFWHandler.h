@@ -10,8 +10,8 @@ struct GLFWHandler
 {
    /**
     * Provide a callback for handling key inputs.
-    * @param 	window	the sending window of this event.
-    * @param	key     the GLFW_Key code 
+    * @param  window  the sending window of this event.
+    * @param  key     the GLFW_Key code 
     * @param   scancode  the ASCII code
     * @param   action    PRESS, RELEASE, or REPEAT.
     * @param   mode      the status of Ctrl, Shift, and alt.
@@ -20,20 +20,25 @@ struct GLFWHandler
 
    /**
     * Forward any mouse position changes to the app
-    * @param	window	the sending window of this event
-    * @param	x		the current x position of the mouse
-    * @param	y		the current y position of the mouse.
+    * @param  window  the sending window of this event
+    * @param  x   the current x position of the mouse
+    * @param  y   the current y position of the mouse.
     */
    static void mousePositionCallback(GLFWwindow * window, double x, double y);
 
    /**
     * Forward any mouse input events to the rest of the app
-    * @param	window	the sending window of this event
-    * @param	button  the mouse button pressed.
-    * @param	action	PRESS or RELEASE events
-    * @param	mods	any modification keys that were pressed.
+    * @param  window  the sending window of this event
+    * @param  button  the mouse button pressed.
+    * @param  action  PRESS or RELEASE events
+    * @param  mods  any modification keys that were pressed.
     */
    static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+   /**
+    * Update any input handlers. (Mouse/Keyboard)
+    */
+   static void update();
+
    /**
     * Forward any scroll wheel changes to the application
     * @param window  the sending window
@@ -46,11 +51,6 @@ struct GLFWHandler
     * Forward any character presses directly to the keyboard
     */
    static void characterCallback(GLFWwindow * window, unsigned int c);
-
-   /**
-    * Update any input handlers. (Mouse/Keyboard)
-    */
-   static void update();
 };
 
 

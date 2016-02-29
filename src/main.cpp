@@ -10,6 +10,8 @@
 #include "GL_Logger.h"
 #include <GLFW/glfw3.h>
 #include "ToolScene.h"
+#include "imgui.h"
+#include "imgui_impl_glfw_gl3.h"
 
 INITIALIZE_EASYLOGGINGPP
 
@@ -44,6 +46,8 @@ int main()
       return -1;
    }
    GL_Logger::LogError("Error in GLEW startup (Safe to ignore)", glGetError());
+
+   ImGui_ImplGlfwGL3_Init(window,false); //Initialize ImGui
 
    glfwSetKeyCallback(window, GLFWHandler::key_callback);
    glfwSetCursorPosCallback(window, GLFWHandler::mousePositionCallback);
