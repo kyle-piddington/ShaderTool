@@ -29,12 +29,13 @@ if [ ! -d thirdparty/glew ] ; then
    git clone https://github.com/nigels-com/glew.git thirdparty/glew
    make -C thirdparty/glew extensions
    make -C thirdparty/glew 
-   ln -s   $PATH/thirdparty/glew/lib/libGLEW.a lib/libGLEW.a
-   ln -s   $PATH/thirdparty/glew/include/GL include/GL
+   ln -s   $CDIR/thirdparty/glew/lib/libGLEW.a lib/libGLEW.a
+   ln -s   $CDIR/thirdparty/glew/include/GL include/GL
 fi
 
 if [ ! -d thirdparty/glfw ] ; then
    git clone https://github.com/glfw/glfw.git thirdparty/glfw
+   ln -s $CDIR/thirdparty/glfw/include/GLFW include/GLFW
 fi
 
 if [ ! -d thirdparty/glm ] ; then

@@ -6,6 +6,7 @@
 #include <unordered_map>
 /**
  * GL_Structure maps a GLSL structure to a series of attribute names, allowing for easy querying.
+ * Though it needs to support arrays....
  */
 class GL_Structure
 {
@@ -27,6 +28,7 @@ public:
     * @return               -1 if not found, GLint otherwise
     */
    const GLint get(std::string attributeName) const;
+
 
    /**
     * Get all names in the strucutre

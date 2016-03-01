@@ -243,6 +243,8 @@ private:
     */
    ProgCreationInfo createProgram();
 
+   void introspectionTest();
+
    std::string name;
    bool created;
 

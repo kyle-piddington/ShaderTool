@@ -8,7 +8,6 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g  -O3")
 include_directories(include)
 add_subdirectory(thirdparty/glfw)
 
-
 #Get Source variables
 include_directories ("${PROJECT_SOURCE_DIR}/lib")
 
