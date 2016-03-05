@@ -65,5 +65,13 @@ add_custom_command(TARGET ShaderTool POST_BUILD
                        ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:ShaderTool>/assets)
 
 
+#Tests!
+file(GLOB_RECURSE ShaderTool_test_sources "test/*.cpp")
+add_executable(ShaderTool_test ${ShaderTool_test_sources})
+target_link_libraries(ShaderTool_test ShaderTool_lib ${EXTRA_LIBS} glfw)
+if (APPLE)
+    target_link_libraries(ShaderTool_test "-framework OpenGL -framework CoreFoundation -framework CoreServices")
+endif()
+
 
 

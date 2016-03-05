@@ -43,3 +43,8 @@ if [ ! -d thirdparty/glm ] ; then
    ln -s $CDIR/thirdparty/glm/glm include/glm
 fi
 
+if [ ! -d thirdparty/catch ] ; then
+   git clone https://github.com/philsquared/Catch.git thirdparty/Catch
+   mkdir include/catch
+   ln -s $CDIR/thirdparty/Catch/single_include/catch.hpp include/catch/catch.hpp
+fi

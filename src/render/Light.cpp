@@ -70,53 +70,53 @@ void Light::setRange(float range)
    currentAttenuation = getAttenuationForDist(fmax(range,1.0));
 }
 
-/**
- * Get a GLStruct representing this light
- * names are degined in phong_frag
- */
-GL_Structure Light::getStruct()
-{
-   GL_Structure template_light;
-   template_light.addAttribute("position");
-   template_light.addAttribute("ambient");
-   template_light.addAttribute("diffuse");
-   template_light.addAttribute("specular");
-   template_light.addAttribute("constant");
-   template_light.addAttribute("linear");
-   template_light.addAttribute("quadratic");
-   return template_light;
-}
-void Light::bind(GLint posLoc, GLint ambLoc, GLint diffLoc, GLint specLoc, GLint constAtten, GLint linearAtten, GLint quadAtten)
+void Light::bind(const UniformObject &  posLoc,
+                 const UniformObject &  ambLoc,
+                 const UniformObject &  diffLoc,
+                 const UniformObject &  specLoc,
+                 const UniformObject &  constAtten,
+                 const UniformObject &  linearAtten,
+                 const UniformObject &  quadAtten)
+
 {
    position = transform.getPosition();
-   glUniform3fv(posLoc,1,glm::value_ptr(position));
-   glUniform3fv(ambLoc,1,glm::value_ptr(ambient));
-   glUniform3fv(diffLoc,1,glm::value_ptr(diffuse));
-   glUniform3fv(specLoc,1,glm::value_ptr(specular));
+   posLoc.bind(position);
+   ambLoc.bind(ambient);
+   diffLoc.bind(diffuse);
+   specLoc.bind(specular);
 
-   if(constAtten > -1)
+   if(constAtten.isValid())
    {
-      glUniform1f(constAtten,1.0);
+      constAtten.bind(1.0);
    }
-   if(linearAtten > -1)
+   if(linearAtten.isValid())
    {
-      glUniform1f(linearAtten,currentAttenuation.linear);
+      linearAtten.bind(currentAttenuation.linear);
    }
-   if(quadAtten > -1)
+   if(quadAtten.isValid())
    {
-     glUniform1f(quadAtten,currentAttenuation.quadratic);
+      quadAtten.bind(currentAttenuation.quadratic);
    }
 
 }
 
-void Light::bind(const GL_Structure & lightStruct)
+void Light::bind(const UniformObject & lightObj)
 {
-   this->bind(
-      lightStruct["position"],
-      lightStruct["ambient"],
-      lightStruct["diffuse"],
-      lightStruct["specular"],
-      lightStruct["constant"],
-      lightStruct["linear"],
-      lightStruct["quadratic"]);
+   lightObj["position"].bind(position);
+   lightObj["ambient"].bind(ambient);
+   lightObj["diffuse"].bind(diffuse);
+   lightObj["specular"].bind(specular);
+   
+   if(lightObj["constant"].isValid())
+   {
+      lightObj["constant"].bind(1.0);
+   }
+   if(lightObj["linear"].isValid())
+   {
+      lightObj["linear"].bind(currentAttenuation.linear);
+   }
+   if(lightObj["quadratic"].isValid())
+   {
+      lightObj["quadratic"].bind(currentAttenuation.quadratic);
+   }
 }

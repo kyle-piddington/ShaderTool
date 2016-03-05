@@ -3,6 +3,7 @@
 
 #include "Program.h"
 #include "Context.h"
+#include <vector>
 class Scene
 {
   /**

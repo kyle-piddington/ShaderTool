@@ -4,10 +4,9 @@
 //#include <GL/glew.h>
 //#include <GLFW/glfw3.h>
 #include <iostream>
-#include "GL_Structure.h"
 #include "Shader.h"
 #include <unordered_map>
-#include "GLSLParser.h"
+#include "UniformObject.h"
 namespace ProgramStatus
 {
   enum CreateStatus
@@ -28,25 +27,6 @@ namespace ProgramStatus
 class Program
 {
 public:
-
-   struct UniformArrayInfo
-   {
-      std::string baseName;
-      std::vector<GLint> locations;
-      GLint operator[](std::size_t idx){return locations[idx];}
-      size_t size() const {return locations.size();}
-      bool isValid;
-   };
-   struct UniformStructArrayInfo
-   {
-      std::string baseName;
-      std::vector<GL_Structure> structs;
-      GL_Structure const &operator[](std::size_t idx) const{return structs[idx];}
-      size_t size() const {return structs.size();}
-      bool isValid;
-
-   };
-
 
    /**
     * Initialize the program object
@@ -101,51 +81,14 @@ public:
     * @return         >0  if exists, -1 otherwise.
     */
    bool hasUniform(std::string uniform);
-  
+
    /**
     * See if the programmer has added a unifrom
     * @param  uniform uniform to check
     * @return         true if "addUniform" has been called
     */
    bool hasAddedUniform(std::string uniform);
-  
-   /**
-    * Add a GLStruct uniform to the program
-    * @param  name   name of the instance in the program
-    * @param  struct struct to bind the instance to
-    * @return        0 if OK, -1 otherwise
-    */
-   int addUniformStruct(std::string name, GL_Structure  glStruct);
 
-   /**
-    * Add a uniform array to the program
-    * @param arr the array base name
-    * @param len the maximum length
-    */
-    int addUniformArray(std::string base, int len);
-
-    /**
-     * Add a uniform array of structs to the program
-     * @param arr the array base name
-     * @param len the maximum length
-     * @param struct the structure
-     * @return 0 if OK
-     */
-    int addStructArray(std::string arrName, int len, GL_Structure  glStruct);
-
-    /**
-     * Get an array from the program
-     * @param  name name of the array
-     * @return      reference to the array
-     */
-    const UniformArrayInfo  & getArray(std::string name);
-
-    /**
-     * Get an array of structs from the program
-     * @param  name the name of the array
-     * @return      reference to the array
-     */
-    const UniformStructArrayInfo  & getStructArray(std::string name);
 
    /**
     * Get an attribute from the program
@@ -159,26 +102,16 @@ public:
     * @param name the attribute name
     * @return the GLint of the attribute, -1 if not found.
     */
-   GLSLParser::UniformObject getUniform(std::string name);
+   const UniformObject & getUniform(std::string name);
 
 
-   /**
-    * Get a uniform from the program
-    * @param name the attribute name
-    * @return the GLint of the attribute, -1 if not found.
-    */
-   GL_Structure getUniformStruct(std::string name);
 
    /**
     * Create the program. Call one of the above methods before doing this. Programs with no shaders attached will throw errors.
     */
    int create();
 
-   /**
-    * Check to see if all declared uniforms and attributes are bound.
-    */
-   bool checkBoundVariables();
-
+  
    /**
     * Enable the program as the active GLFW program
     */
@@ -235,7 +168,7 @@ private:
    /**
     * Retrieve the type of a uniform in the program.
     */
-   GLSLParser::GLSLType getUniformType(GLuint id);
+   GLSLType::GLSLType getUniformType(GLuint id);
 
    /**
     * Create and link a shader program.
@@ -243,7 +176,10 @@ private:
     */
    ProgCreationInfo createProgram();
 
-   void introspectionTest();
+   /**
+    * Create queryable uniform objects.
+    */
+   void generateUniforms();
 
    std::string name;
    bool created;
@@ -256,18 +192,9 @@ private:
    std::shared_ptr<Shader> tessalationShader;
 
    std::unordered_map<std::string, GLuint> attributes;
-   std::unordered_map<std::string, GLSLParser::UniformObject> uniforms;
-   std::unordered_map<std::string, GL_Structure> uniformStructs;
 
-   std::unordered_map<std::string, bool> boundAttributes;
-   std::unordered_map<std::string, bool> boundUniforms;
-
-   std::unordered_map<std::string, UniformArrayInfo> arrays;
-   std::unordered_map<std::string, UniformStructArrayInfo> structArrays;
-
-
-   UniformArrayInfo emptyUniformArray;
-   UniformStructArrayInfo emptyStructUniformArray;
+   /*Uniform Objects represent all uniforms, as well as structures*/
+   std::unordered_map<std::string, std::shared_ptr<UniformObject> > uniforms;
 
 
 };

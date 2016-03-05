@@ -97,7 +97,7 @@ void Scene::updateGlobalUniforms()
    {
       if((*i)->hasUniform("iGlobalTime"))
       {
-         GLSLParser::UniformObject timeObj = (*i)->getUniform("iGlobalTime");
+         UniformObject timeObj = (*i)->getUniform("iGlobalTime");
          if(timeObj.isValid())
          {
 

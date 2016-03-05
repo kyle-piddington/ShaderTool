@@ -1,6 +1,6 @@
 #ifndef __LIGHT_H__
 #define __LIGHT_H__
-#include "GL_Structure.h"
+#include "UniformObject.h"
 #include <glm/glm.hpp>
 #include "../util/Transform.h"
 #include <glfw/glfw3.h>
@@ -12,10 +12,17 @@ struct Light
 {
    Light();
    Light(glm::vec3 amb, glm::vec3 diff, glm::vec3 specular, float dist);
-   void bind(GLint posLoc, GLint ambLoc, GLint diffLoc, GLint specLoc, GLint constAttenLoc = -1, GLint linAttenLoc = -1, GLint quadAttenLoc = -1);
-   void bind(const GL_Structure & lightStruct);
+   void bind(const UniformObject &  posLoc,
+             const UniformObject &  ambLoc,
+             const UniformObject &  diffLoc,
+             const UniformObject &  specLoc,
+             const UniformObject &  constAttenLoc = UniformObject::InvalidObject,
+             const UniformObject &  linAttenLoc   = UniformObject::InvalidObject, 
+             const UniformObject &  quadAttenLoc  = UniformObject::InvalidObject);
+   
+   void bind(const UniformObject & lightStruct);
+   
    void setRange(float range);
-   static GL_Structure getStruct();
    glm::vec3 ambient;
    glm::vec3 diffuse;
    glm::vec3 specular;

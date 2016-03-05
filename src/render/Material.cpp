@@ -11,27 +11,22 @@ shininess(shininess)
 
 }
 
-void Material::bind(GLint ambLoc, GLint diffLoc, GLint specLoc, GLint shininessLoc)
+void Material::bind(const UniformObject &  ambLoc,
+                    const UniformObject &  diffLoc,
+                    const UniformObject &  specLoc,
+                    const UniformObject &  shininessLoc)
 {
-   glUniform3fv(ambLoc,1,glm::value_ptr(ambient));
-   glUniform3fv(diffLoc,1,glm::value_ptr(diffuse));
-   glUniform3fv(specLoc,1,glm::value_ptr(specular));
-   glUniform1f(shininessLoc,shininess);
+   ambLoc.bind(ambient);
+   diffLoc.bind(diffuse);
+   specLoc.bind(specular);
+   shininessLoc.bind(shininess);
 }
 
-void Material::bind(const GL_Structure & matStruct)
+void Material::bind(const UniformObject & material)
 {
-   bind(matStruct["ambient"],
-        matStruct["diffuse"],
-        matStruct["specular"],
-        matStruct["shininess"]);
-}
-GL_Structure Material::getStruct()
-{
-   GL_Structure template_material;
-   template_material.addAttribute("ambient");
-   template_material.addAttribute("diffuse");
-   template_material.addAttribute("specular");
-   template_material.addAttribute("shininess");
-   return template_material;
+   material["ambient"].bind(ambient);
+   material["diffuse"].bind(diffuse);
+   material["specular"].bind(specular);
+   material["shininess"].bind(shininess);
+
 }

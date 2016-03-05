@@ -1,5 +1,7 @@
 #ifndef __TEXTURED_MATERIAL_H__
 #define __TEXTURED_MATERIAL_H__
+//@TODO: Add bind support for textures
+/*
 #include <glm/glm.hpp>
 #include "Texture2D.h"
 #include "GL_Structure.h"
@@ -30,4 +32,5 @@ private:
    Texture2D emissionMap;
 
 };
+*/
 #endif

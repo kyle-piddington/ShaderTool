@@ -10,29 +10,21 @@ specular(specular)
 }
 
 
-void DirectionalLight::bind(GLint dirLoc, GLint ambLoc, GLint diffLoc, GLint specLoc)
+void DirectionalLight::bind(const UniformObject & dirLoc,
+                            const UniformObject & ambLoc,
+                            const UniformObject & diffLoc,
+                            const UniformObject & specLoc)
 {
-   glUniform3fv(dirLoc,1,glm::value_ptr(direction));
-   glUniform3fv(ambLoc,1,glm::value_ptr(ambient));
-   glUniform3fv(diffLoc,1,glm::value_ptr(diffuse));
-   glUniform3fv(specLoc,1,glm::value_ptr(specular));
+   dirLoc.bind(direction);
+   ambLoc.bind(ambient);
+   diffLoc.bind(diffuse);
+   specLoc.bind(specular);
 }
 
-void DirectionalLight::bind(const GL_Structure & dirStruct)
+void DirectionalLight::bind(const UniformObject & dirLight)
 {
-   bind(dirStruct["direction"],
-        dirStruct["ambient"],
-        dirStruct["diffuse"],
-        dirStruct["specular"]);
-}
-
-//Constants named in phong_frag_textured.fs
-GL_Structure DirectionalLight::getStruct()
-{
-   GL_Structure glStruct;
-   glStruct.addAttribute("direction");
-   glStruct.addAttribute("ambient");
-   glStruct.addAttribute("diffuse");
-   glStruct.addAttribute("specular");
-   return glStruct;
+   dirLight["direction"].bind(direction);
+   dirLight["ambient"].bind(ambient);
+   dirLight["diffuse"].bind(diffuse);
+   dirLight["specualr"].bind(specular);
 }

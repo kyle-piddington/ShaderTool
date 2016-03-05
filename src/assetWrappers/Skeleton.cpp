@@ -127,11 +127,17 @@ void Skeleton::finalizeAnimation()
 
 void Skeleton::bindAnimatedBones(Program & prog)
 {
-   Program::UniformArrayInfo boneUniforms = prog.getArray("gBones");
-   for(int i = 0; i < bones.size(); i++)
+   const UniformObject & boneUniforms = prog.getUniform("gBones");
+   /*
+   if(boneUniforms.isArray())
    {
-      glUniformMatrix4fv(boneUniforms[i],1,GL_FALSE,glm::value_ptr(bones[i].getAnimMatrix()));
+      const ArrayUniformObject & unifs = (const ArrayUniformObject &)boneUniforms;
+      for(int i = 0; i < unifs.size(); i++)
+      {
+         unifs[i].bind(bones[i].getAnimMatrix());
+      }
    }
+   */
 
 }
 

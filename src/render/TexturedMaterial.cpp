@@ -1,6 +1,7 @@
 #include "TexturedMaterial.h"
 #include <glm/gtc/type_ptr.hpp>
 
+/*
 TexturedMaterial::TexturedMaterial(std::string diffTexture, float shininess, std::string specTexture, std::string emissionTexture):
 diffuseMap(diffTexture),
 specularMap(specTexture),
@@ -49,3 +50,4 @@ void TexturedMaterial::unbind()
    specularMap.disable();
    emissionMap.disable();
 }
+*/

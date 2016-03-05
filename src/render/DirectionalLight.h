@@ -1,16 +1,14 @@
 #ifndef __DIRECTIONALLIGHT_H__
 #define __DIRECTIONALLIGHT_H__ 
-#include "GL_Structure.h"
+#include "UniformObject.h"
 #include <glm/glm.hpp>
 #include <glfw/glfw3.h>
 
 struct DirectionalLight
 {
    DirectionalLight(glm::vec3 direction, glm::vec3 amb, glm::vec3 spec, glm::vec3 specular);
-   void bind(GLint dirLoc, GLint ambLoc, GLint diffLoc, GLint specLoc);
-   void bind(const GL_Structure & dirStruct);
-   
-   static GL_Structure getStruct();
+   void bind(const UniformObject & dirLoc, const UniformObject & ambLoc, const UniformObject & diffLoc, const UniformObject & specLoc);
+   void bind(const UniformObject & dirStruct);
 
    glm::vec3 direction;
    glm::vec3 ambient;

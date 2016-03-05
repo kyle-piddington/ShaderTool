@@ -1,7 +1,6 @@
 #ifndef __TOOLSCENE_PROGRAM_MGR_H__
 #define __TOOLSCENE_PROGRAM_MGR_H__
 #include "Program.h"
-#include "GLSLParser.h"
 class ToolSceneProgramManager
 {
 
@@ -36,12 +35,6 @@ public:
     */
    bool reload();
 
-   /**
-    * Get a list of the current uniform objects in the
-    * active program.
-    */
-   const std::vector<GLSLParser::UniformObject>
-       & getUniformObjects();
 
 private:
 
