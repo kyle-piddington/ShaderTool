@@ -19,24 +19,13 @@ struct PointLight{
    vec3 ambient;
    vec3 diffuse;
    vec3 specular;
-
-   float constant;
-   float linear;
-   float quadratic;
 };
 
-struct DirectionalLight{
-   vec3 direction;
-
-   vec3 ambient;
-   vec3 diffuse;
-   vec3 specular
-};
 
 
 
 uniform Material material;
-uniform Light light;
+uniform PointLight light;
 
 
 
@@ -57,16 +46,10 @@ void main()
    vec3 reflectDir = reflect(-lightDir, nor);
    //Viewing is along the -Z axis
    vec3 viewDir = normalize(vec3(0,0,1) - fragPos);
-   float spec = pow(max(dot(reflectDir,viewDir),0.0),32);
+   float spec = pow(max(dot(reflectDir,viewDir),0.0),material.shininess);
    vec3 specular = spec * material.specular * light.specular;
-   //Compute final result
-   //
 
-   float dist    = length(light.position - FragPos);
-   float attenuation = 1.0f / (light.constant + light.linear * dist +
-             light.quadratic * (dist * dist));
-
-   vec3 result = (diffuse + ambient + specular) * attenuation;
+   vec3 result = (diffuse + ambient + specular);
 
    color = vec4(result,1.0);
 }

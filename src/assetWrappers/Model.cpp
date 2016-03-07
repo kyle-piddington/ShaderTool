@@ -43,7 +43,6 @@ std::shared_ptr<Mesh> Model::processMesh(tinyobj::mesh_t & mesh)
 {
    std::vector<Vertex> vertices;
    std::vector<GLuint> indices;
-   std::vector<std::shared_ptr<Texture2D>> textures;
    bool meshHasNorms = mesh.normals.size() == mesh.positions.size();
    bool meshHasTexCoords = mesh.texcoords.size()/2 == mesh.positions.size()/3;
    for(GLuint i = 0; i < mesh.positions.size()/3; i++)

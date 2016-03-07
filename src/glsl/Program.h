@@ -7,6 +7,8 @@
 #include "Shader.h"
 #include <unordered_map>
 #include "UniformObject.h"
+#include <vector>
+
 namespace ProgramStatus
 {
   enum CreateStatus
@@ -135,6 +137,16 @@ public:
     * @return true if the program has compiled at least once.
     */
    bool isCreated();
+
+   GLuint getProgramID() const
+   {
+      return shaderProgram;
+   }
+
+   /**
+    * Get a vector of all the current uniform objects.
+    */
+   std::vector< std::shared_ptr<UniformObject> > getAllActiveUniforms();
 private:
 
 

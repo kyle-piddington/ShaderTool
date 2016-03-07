@@ -133,6 +133,11 @@ void UniformObject::setID(GLint id)
    this->id = id;
 }
 
+GLSLType::GLSLType UniformObject::getType() const
+{
+   return this->type;
+}
+
 bool UniformObject::isArray() const
 {
    return this->type == GLSLType::GLSLArray;

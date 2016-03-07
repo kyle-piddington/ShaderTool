@@ -1,24 +1,14 @@
 #version 330 core
 
 layout (location = 0) in vec3 position;
-
-
-uniform mat4 M;
-uniform mat4 V;
+layout (location = 1) in vec3 normal;
 uniform mat4 P;
-uniform vec3 arr[10];
+uniform mat4 V;
+uniform mat4 M;
 
-struct blarp
-{
-   float ex;
-   float ey;
-   float ez;
-};
-uniform blarp vicVectr;
-
+out vec3 fragNor;
 void main()
 {
-   vec3 sum;
-   sum+= arr[0] + arr[4] + arr[9];
-   gl_Position = P * V * M *  vec4(position + sum + vicVectr.ex + vicVectr.ey + vicVectr.ez, 1.0);
+   gl_Position = P * V * M *  vec4(position, 1.0);
+   fragNor = normal;
 }

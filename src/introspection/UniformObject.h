@@ -96,10 +96,11 @@ public:
     */
    bool isStruct() const;
 
+   GLSLType::GLSLType getType() const;
    /**
-    * Get the name of this unifrom
+    * Get the name of this uniforms
     */
-   const std::string & getName()
+   const std::string & getName() const
    {
       return name;
    }

@@ -6,7 +6,6 @@ Mesh::Mesh(std::vector<Vertex> vertices,
    vertices(vertices),
    indices(indices)
    {
-      
       setupMesh();
    }
 Mesh::~Mesh()
@@ -19,7 +18,6 @@ void Mesh::setupMesh()
    ebo.setData(indices);
    //Layout numbers chosen from Layouts in shader, should provide a better
    //way to do this later...
-
    vao.addAttribute(0,vBuffer,sizeof(Vertex));
    vao.addAttribute(1,vBuffer,sizeof(Vertex) ,offsetof(Vertex, normal));
    vao.addAttribute(2, vBuffer,sizeof(Vertex),offsetof(Vertex,texCoords),2);
@@ -29,9 +27,7 @@ void Mesh::setupMesh()
 
 void Mesh::render(Program & program)
 {
-
    vao.bind();
    glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);
    vao.unbind();
-  
 }

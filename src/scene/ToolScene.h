@@ -7,6 +7,7 @@
 #include "ToolSceneProgramManager.h"
 #include "ModelManager.h"
 #include "Grid.h"
+#include "ProgramManagerWindow.h"
 /**
  * The Toolscene is the main activity scene
  * for the ShaderTool app. The Toolscene acts as the
@@ -35,6 +36,10 @@ private:
    ToolSceneProgramManager programMgr;
    ModelManager modelMgr;
    Grid grid;
+
+   //View
+   ProgramManagerWindow managerWindow;
+   
 
 
 

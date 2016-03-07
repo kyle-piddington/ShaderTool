@@ -15,7 +15,7 @@ bool ToolSceneProgramManager::setProgram(Program * program)
    return false;
 }
 
-std::string ToolSceneProgramManager::getVertexName()
+std::string ToolSceneProgramManager::getVertexName() const
 {
    if(activeProgram == nullptr)
    {
@@ -23,7 +23,7 @@ std::string ToolSceneProgramManager::getVertexName()
    }
    return "TODO";
 }
-std::string ToolSceneProgramManager::getFragmentName()
+std::string ToolSceneProgramManager::getFragmentName() const
 {
    if(activeProgram == nullptr)
    {
@@ -32,7 +32,7 @@ std::string ToolSceneProgramManager::getFragmentName()
    return "TODO";
 }
 
-const std::shared_ptr<Program> ToolSceneProgramManager::getActiveProgram()
+const std::shared_ptr<Program> ToolSceneProgramManager::getActiveProgram() const
 {
    return activeProgram;
 }

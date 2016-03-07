@@ -17,17 +17,17 @@ public:
     * Get the name of the vertex shader
     * @return the shader name
     */
-   std::string getVertexName();
+   std::string getVertexName() const;
    /**
     * Get the name of the fragment shader
     * @return the fragment shader name.
     */
-   std::string getFragmentName();
+   std::string getFragmentName() const;
 
    /**
     * Get the active program
     */
-   const std::shared_ptr<Program> getActiveProgram();
+   const std::shared_ptr<Program> getActiveProgram() const;
 
    /**
     * Reload the active program (If possible).

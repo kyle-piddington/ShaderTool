@@ -5,6 +5,7 @@
 #include <easyLogging++.h>
 #include "ShaderManager.h"
 #include <GL/glew.h>
+#include "UniformExtractor.h"
 
 Program::Program(std::string name):
    name(name),
@@ -95,7 +96,11 @@ int Program::create()
          }
          shaderProgram = programStatus.program;
          created = true;
-         //introspectionTest();
+         generateUniforms();
+         /**
+          * auto generate uniforms
+          */
+        
          return 0;
       }
       else
@@ -316,25 +321,12 @@ void Program::generateUniforms()
    }
    else
    {
-      GLint numUnis;
-      glGetProgramiv(this->shaderProgram,GL_ACTIVE_UNIFORMS,&numUnis);
-      GL_Logger::LogError("Could not get num uniforms");
-      /*
-         Get uniform names
-       */
-      std::vector<GLuint> idxArrs;
-      idxArrs.resize(numUnis);
-      /**
-       * Populate index array
-       */
-      char unifName[1024];
-      for(int i = 0; i < numUnis; i++)
+      UniformExtractor extractor;
+      std::vector<std::shared_ptr<UniformObject> > objects = extractor.extract(shaderProgram);
+      for (auto i = objects.begin(); i != objects.end(); ++i)
       {
-         glGetActiveUniformName( this->shaderProgram, i, 1024, NULL, unifName);
-         std::cout << i  << ":" << unifName << std::endl;
+         uniforms.emplace((*i)->getName(),*i);
       }
-
-
    }
 }
 
@@ -371,6 +363,17 @@ bool Program::hasAddedUniform(std::string name)
 bool Program::isCreated()
 {
    return created;
+}
+
+
+std::vector < std::shared_ptr <UniformObject> > Program::getAllActiveUniforms()
+{
+   std::vector< std::shared_ptr < UniformObject > > retUnifs;
+   for(auto unif : uniforms)
+   {
+      retUnifs.push_back(unif.second);
+   }
+   return retUnifs;
 }
 
 GLSLType::GLSLType Program::getUniformType(GLuint id)
