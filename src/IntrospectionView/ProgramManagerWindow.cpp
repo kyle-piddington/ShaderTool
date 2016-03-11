@@ -54,6 +54,14 @@ void ProgramManagerWindow::render()
       ImGui::Begin("Program Management");
       ImGui::Text(("Current shader program: " + manager->getVertexName()).c_str());
       ImGui::Text(("Current fragment program: " + manager->getFragmentName()).c_str());
+      if(ImGui::Button("Recompile"))
+      {
+        if(manager->reload())
+        {
+          refresh();
+        };
+
+      }
       for(auto element : elements)
       {
          element->render();

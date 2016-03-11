@@ -35,10 +35,18 @@ public:
     */
    bool reload();
 
+   void bindDefaultVariables(glm::mat4 M, glm::mat4 V, glm::mat4 P, float iGlobalTime);
+
 
 private:
 
    std::shared_ptr<Program> activeProgram;
+   glm::mat4 currM;
+   glm::mat4 currV;
+   glm::mat4 currP;
+   glm::mat4 currN;
+   float iCurrGlobalTime;
+
 
 };
 #endif

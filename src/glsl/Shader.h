@@ -61,7 +61,10 @@ public:
     */
    int deleteFromGPU();
 
-
+   const std::string getName() const
+   {
+      return path;
+   }
 private:
    std::string path;
    GLuint shaderID;

@@ -9,7 +9,7 @@ ToolScene::ToolScene(Context * ctx):
    camera = std::unique_ptr<TabletopCamera>( new TabletopCamera(
          ctx->getWindowWidth(),
          ctx->getWindowHeight()));
-   modelMgr.load("assets/models/suzanne.obj");
+   modelMgr.load("assets/models/bunny.obj");
    glEnable(GL_CULL_FACE);
    glEnable(GL_DEPTH_TEST);
    glCullFace(GL_BACK);
@@ -68,26 +68,10 @@ void ToolScene::render()
    std::shared_ptr<Program> prog = programMgr.getActiveProgram();
    //If MVP, bind.
    prog->enable();
-   if(prog->hasUniform("P"))
-   {
-      prog->getUniform("P").bind(camera->getPerspectiveMatrix());
-   }
-   if(prog->hasUniform("V"))
-   {
-      prog->getUniform("V").bind(camera->getViewMatrix());
-   }
-   if(prog->hasUniform("M"))
-   {
-      prog->getUniform("M").bind(glm::mat4(1.0));
-   }
-   if(prog->hasUniform("N"))
-   {
-      prog->getUniform("N").bind(glm::transpose(glm::inverse(camera->getViewMatrix())));
-   }
-   if(prog->hasUniform("iGlobalTime"))
-   {
-      prog->getUniform("iGlobalTime").bind(glfwGetTime());
-   }
+  programMgr.bindDefaultVariables(glm::mat4(1.0),
+                                  camera->getViewMatrix(),
+                                  camera->getPerspectiveMatrix(),
+                                  glfwGetTime());
    modelMgr.render(prog);
    managerWindow.render();
    prog->disable();

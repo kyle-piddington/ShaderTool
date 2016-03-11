@@ -21,7 +21,7 @@ std::string ToolSceneProgramManager::getVertexName() const
    {
       return "NULL";
    }
-   return "TODO";
+   return activeProgram->getVertexShaderName();
 }
 std::string ToolSceneProgramManager::getFragmentName() const
 {
@@ -29,7 +29,7 @@ std::string ToolSceneProgramManager::getFragmentName() const
    {
       return "NULL";
    }
-   return "TODO";
+   return activeProgram->getFragmentShaderName();
 }
 
 const std::shared_ptr<Program> ToolSceneProgramManager::getActiveProgram() const
@@ -39,14 +39,44 @@ const std::shared_ptr<Program> ToolSceneProgramManager::getActiveProgram() const
 
 bool ToolSceneProgramManager::reload()
 {
-   if(activeProgram->shouldProgramRecompile())
+   /**
+    * Recreate the program
+    */
+   if(activeProgram->create())
    {
-      if(activeProgram->create())
-      {
          return false;
-      }
-      return true;
    }
+   bindDefaultVariables(currM,currV,currP,iCurrGlobalTime);
    return true;
-
 }
+
+void ToolSceneProgramManager::bindDefaultVariables(glm::mat4 M, glm::mat4 V, glm::mat4 P, float iGlobalTime)
+{
+   currM = M;
+   currV = V;
+   currP = P;
+   currN = glm::transpose(glm::inverse(V*M));
+   iCurrGlobalTime = iGlobalTime;
+   if(activeProgram->hasUniform("P"))
+   {
+      activeProgram->getUniform("P").bind(currP);
+   }
+   if(activeProgram->hasUniform("V"))
+   {
+      activeProgram->getUniform("V").bind(currV);
+   }
+   if(activeProgram->hasUniform("M"))
+   {
+      //activeProgram->getUniform("M").bind(currM);
+   }
+   if(activeProgram->hasUniform("N"))
+   {
+      activeProgram->getUniform("N").bind(currN);
+   }
+   if(activeProgram->hasUniform("iGlobalTime"))
+   {
+      activeProgram->getUniform("iGlobalTime").bind(iCurrGlobalTime);
+   }
+}
+
+

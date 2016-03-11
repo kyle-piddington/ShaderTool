@@ -21,7 +21,10 @@ void Model::loadModel(std::string path)
 {
    std::vector<tinyobj::shape_t> shapes;
    std::vector<tinyobj::material_t> materials;
-   std::string err = LoadObj(shapes,materials, path.c_str());
+
+   std::string err;
+   LoadObj(shapes,materials, err, path.c_str());
+
    if(!err.empty())
    {
       LOG(ERROR) << "Could not load model: " + err;
@@ -29,10 +32,11 @@ void Model::loadModel(std::string path)
    /**
     * Process all the meshes
     */
-   else
+   
    {
       for (std::vector<tinyobj::shape_t>::iterator i = shapes.begin(); i != shapes.end(); ++i)
       {
+
          meshes.push_back(processMesh(i->mesh));
       }
    }
@@ -84,6 +88,7 @@ std::shared_ptr<Mesh> Model::processMesh(tinyobj::mesh_t & mesh)
    }
    /* Copy the idx array*/
    indices = std::vector<unsigned int>(mesh.indices);
+   std::cout << "Loading with " << vertices.size() << " Verts " << std::endl;
    return std::shared_ptr<Mesh>(new Mesh(vertices, indices));
 }
 

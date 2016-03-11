@@ -138,6 +138,14 @@ public:
     */
    bool isCreated();
 
+   std::string getVertexShaderName() const;
+
+   std::string getFragmentShaderName() const;
+
+   std::string getGeometryShaderName() const;
+
+   std::string getTessalationShaderName() const;
+
    GLuint getProgramID() const
    {
       return shaderProgram;
@@ -192,6 +200,9 @@ private:
     * Create queryable uniform objects.
     */
    void generateUniforms();
+
+
+   std::string getShaderName(std::shared_ptr<Shader> shader) const;
 
    std::string name;
    bool created;

@@ -39,6 +39,29 @@ int Program::addGeometryShader(std::string shaderSrc)
    return addShader(geomShader, shaderSrc, GL_GEOMETRY_SHADER);
 }
 
+std::string Program::getVertexShaderName() const
+{
+   return getShaderName(vertShader);
+}
+
+std::string Program::getFragmentShaderName() const
+{
+   return getShaderName(fragShader);
+}
+std::string Program::getGeometryShaderName() const
+{
+   return getShaderName(geomShader);
+}
+std::string Program::getTessalationShaderName() const
+{
+   return getShaderName(tessalationShader);
+}
+
+std::string Program::getShaderName(std::shared_ptr<Shader> shader) const
+{
+   return shader->getName();
+}
+
 int Program::addShader(std::shared_ptr<Shader> & shader, std::string shaderName, GLenum shaderType)
 {
    shader = ShaderManager::getShader(shaderName,shaderType);
