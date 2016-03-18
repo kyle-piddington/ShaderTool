@@ -29,13 +29,17 @@ void ProgramManagerWindow::refresh()
    if(this->manager != nullptr)
    {
       auto uniforms = manager->getActiveProgram()->getAllActiveUniforms();
+
       for(auto uniformObject : uniforms)
       {
+         /*
          std::shared_ptr<ProgramManagerElement> element = ProgramManagerElementFactory::Create(uniformObject);
          if(element != nullptr)
          {
             elements.push_back(element);
+
          }
+         */
       }
    }
    /**

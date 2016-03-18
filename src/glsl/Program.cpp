@@ -89,10 +89,36 @@ int Program::compileAllShaders()
 
 }
 
+
 /**
- * Create a program. report all ok if
+ * Force a program to be re-created.
+ */
+int Program::forceProgramRecompile()
+{
+   if(vertShader != nullptr)
+   {
+      vertShader->forceReload();
+   }
+   if(fragShader != nullptr)
+   {
+      fragShader->forceReload();
+   }
+   if(geomShader != nullptr)
+   {
+      geomShader->forceReload();
+   }
+   if(tessalationShader != nullptr)
+   {
+      tessalationShader->forceReload();
+   }
+   return create();
+   
+}
+/**
+ * Create a program. report 1 if OK
  * @return [description]
  */
+
 int Program::create()
 {
    ProgCreationInfo programStatus = createProgram();
@@ -137,6 +163,7 @@ int Program::create()
    }
    return -1;
 }
+
 
 Program::ProgCreationInfo Program::createProgram()
 {

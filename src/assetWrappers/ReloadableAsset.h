@@ -14,6 +14,7 @@ class ReloadableAsset
       void init(std::string path);
       virtual ~ReloadableAsset() = 0;
       virtual void reload() = 0; //Reload this asset
+      void forceReload();
       virtual std::string getPath() const;
    private:
       std::string path;

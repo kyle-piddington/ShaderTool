@@ -30,4 +30,8 @@ std::string ReloadableAsset::getPath() const
    return path;
 }
 
+void ReloadableAsset::forceReload()
+{
+   this->reload();
+}
 

@@ -1,8 +1,8 @@
 #include "FloatElement.h"
 #include <imgui.h>
-FloatElement::FloatElement(std::shared_ptr<UniformObject> obj):
-   ProgramManagerElement(obj->getName()),
-   boundObject(obj),
+FloatElement::FloatElement(std::shared_ptr<UniformObjectController> controller):
+   ProgramManagerElement(controller->getName()),
+   ctrl(controller),
    flt(0.0)
 {
 
@@ -10,8 +10,8 @@ FloatElement::FloatElement(std::shared_ptr<UniformObject> obj):
 
 void FloatElement::render()
 {
-   if(ImGui::DragFloat(boundObject->getName().c_str(),&flt,0.01))
+   if(ImGui::DragFloat(ctrl->getName().c_str(),&flt,0.01))
    {
-      boundObject->bind(flt);
+      ctrl->bind(flt);
    }
 }

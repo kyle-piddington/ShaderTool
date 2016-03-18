@@ -132,6 +132,11 @@ public:
    bool shouldProgramRecompile();
 
    /**
+    * Force a recompile of the program
+    */
+   int forceProgramRecompile();
+
+   /**
     * Check to see if the program exists on the GPU (Has been created once).
     * After an initial compile, this function will return true for the remainder of the program's lifetime
     * @return true if the program has compiled at least once.

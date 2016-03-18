@@ -42,12 +42,17 @@ bool ToolSceneProgramManager::reload()
    /**
     * Recreate the program
     */
-   if(activeProgram->create())
+
+   if(!activeProgram->forceProgramRecompile())
    {
-         return false;
+      return false;
    }
-   bindDefaultVariables(currM,currV,currP,iCurrGlobalTime);
-   return true;
+   else
+   {
+      bindDefaultVariables(currM,currV,currP,iCurrGlobalTime);
+      return false;
+
+   }
 }
 
 void ToolSceneProgramManager::bindDefaultVariables(glm::mat4 M, glm::mat4 V, glm::mat4 P, float iGlobalTime)

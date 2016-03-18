@@ -3,7 +3,7 @@
 #include "ProgramManagerElement.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "UniformObject.h"
+#include "UniformObjectController.h"
 #include "Transform.h"
 /**
  * An Unkown element displays a GLSL element's name,
@@ -12,7 +12,7 @@
 class TransformMatrixElement : public ProgramManagerElement
 {
 public:
-   TransformMatrixElement(std::shared_ptr<UniformObject> object);
+   TransformMatrixElement(std::shared_ptr<UniformObjectController> controller);
    void render();
 private:
    glm::vec3 pos;
@@ -20,6 +20,6 @@ private:
    glm::vec3 scl;
    Transform t;
    bool dirty;
-   std::shared_ptr<UniformObject> boundObject;
+   std::shared_ptr<UniformObjectController> ctrl;
 };
 #endif
