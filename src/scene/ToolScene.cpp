@@ -68,7 +68,7 @@ void ToolScene::render()
    std::shared_ptr<Program> prog = programMgr.getActiveProgram();
    //If MVP, bind.
    prog->enable();
-  programMgr.bindDefaultVariables(glm::mat4(1.0),
+  programMgr.bindDefaultVariables(
                                   camera->getViewMatrix(),
                                   camera->getPerspectiveMatrix(),
                                   glfwGetTime());

@@ -19,6 +19,14 @@ public:
    const std::string & getName() const ;
    GLSLType::GLSLType getType() const;
 
+   void assignObject(std::shared_ptr<UniformObject> object)
+   {
+      this->object = object;
+   }
+
+   virtual void refresh()
+   {
+   }
 
    template <class T>
    void bind(const T value)

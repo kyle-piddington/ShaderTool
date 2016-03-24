@@ -15,8 +15,22 @@ Transform::Transform():
    isDirty(false),
    parent(nullptr)
    {
-
    }
+
+Transform::Transform(const Transform & other):
+   position(other.position),
+   rotation(other.rotation),
+   scale(other.scale),
+   localUp(other.localUp),
+   localRight(other.localRight),
+   localForward(other.localForward),
+   currentMatrix(other.currentMatrix),
+   isDirty(other.isDirty),
+   parent(other.parent)
+   {
+   }
+
+
 void Transform::setPosition(const glm::vec3 & position)
 {
    this->position = position;
@@ -120,10 +134,15 @@ glm::quat Transform::getRotation() const
 {
    return rotation;
 }
+
+glm::vec3 Transform::getRotationEuler() const
+{
+   return glm::eulerAngles(rotation);
+}
 const glm::mat4 & Transform::getMatrix()
 {
    if(isDirty)
-   {
+   { 
 
 
       glm::mat4 s =    glm::mat4(this->scale.x,0,0,0,

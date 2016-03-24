@@ -2,6 +2,7 @@
 #define __PROGRAM_MANAGER_WINDOW_H__
 #include "ToolSceneProgramManager.h"
 #include "ProgramManagerElement.h"
+#include "TransformMatrixElement.h"
 class ProgramManagerWindow
 {
 public:
@@ -15,6 +16,7 @@ public:
 
 private:
    ToolSceneProgramManager * manager;
+   std::shared_ptr<TransformMatrixElement> modelElement;
    std::vector< std::shared_ptr<ProgramManagerElement> > elements;
 
 };

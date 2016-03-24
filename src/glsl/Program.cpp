@@ -124,6 +124,7 @@ int Program::create()
    ProgCreationInfo programStatus = createProgram();
    if(programStatus.status == ProgramStatus::NOCHANGE)
    {
+      LOG(ERROR) << " No changes detected in the current program.  The progam will not be replaced.";
       return 0;
    }
    if(programStatus.status == ProgramStatus::LINK_ERR)
@@ -131,10 +132,11 @@ int Program::create()
       glDeleteProgram(programStatus.program);
       if(created)
       {
-         LOG(WARNING) << "Program could not be created, but is already running. The progam will not be replaced.";
+         LOG(ERROR) << "Program could not be created, but is already running. The progam will not be replaced.";
          return 0;
       }
    }
+
    else
    {
       if(programStatus.status == ProgramStatus::OK)
@@ -150,15 +152,22 @@ int Program::create()
           * auto generate uniforms
           */
         
-         return 0;
+         return 1;
       }
+      
       else
       {
          //Program could not compile, but is not going to fail
          if (created)
+         {
+            LOG(ERROR) << "Program having issues finishing compiling...";
             return 0;
+         }
          else
+         {
+
             return -1;
+         }
       }
    }
    return -1;

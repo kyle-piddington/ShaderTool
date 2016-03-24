@@ -28,7 +28,6 @@ std::vector < std::shared_ptr < UniformObject > > UniformExtractor::extract(GLui
   {
     indicies.push_back(i);
   }
-  std::cout << "Generating " << numUniforms << " Uniforms" << std::endl;
 
   //Generate uniofrm arrays
   std::vector<int> blockInds(numUniforms);
@@ -37,7 +36,6 @@ std::vector < std::shared_ptr < UniformObject > > UniformExtractor::extract(GLui
 
   glGetActiveUniformsiv(pid, numUniforms, &(indicies[0]), GL_UNIFORM_NAME_LENGTH, &(nameLens[0]));
   glGetActiveUniformsiv(pid, numUniforms, &(indicies[0]), GL_UNIFORM_TYPE, &(types[0]));
-   std::cout << "Got parameters" << std::endl;
 
   /**
    * Get the uniforms that aren't in a block.
@@ -49,8 +47,7 @@ std::vector < std::shared_ptr < UniformObject > > UniformExtractor::extract(GLui
 
     GLint nameLength = nameLens[unif];
     GLint type = types[unif];
-    std::cout << "Name lenth of " << blockIdx << std::endl;
-
+   
 
 
     //Get name

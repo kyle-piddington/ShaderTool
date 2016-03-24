@@ -15,6 +15,7 @@ class Transform
 {
 public:
    Transform();
+   Transform(const Transform & other);
    /**
     * Set the position of the transform
     * @param pos position to go to
@@ -90,6 +91,12 @@ public:
     * @return [description]
     */
    glm::quat getRotation() const;
+
+   /**
+    * Get the rotation expressed as euler angles
+    * @return euler angle rotation
+    */
+   glm::vec3 getRotationEuler() const;
 
    /**
     * Get the scale of the transform
