@@ -118,7 +118,7 @@ void ToolSceneProgramManager::refreshControllers()
 
    exposedControlers.clear();
    internalControllers.clear();
-
+   activeProgram->enable();
    if(activeProgram)
    {
       std::vector <std::shared_ptr <UniformObject> > uniforms = activeProgram->getAllActiveUniforms();
@@ -127,7 +127,7 @@ void ToolSceneProgramManager::refreshControllers()
          assignController(unif,oldControllers);
       }
    }
-   activeProgram->enable();
+
    for(auto internalController : internalControllers)
    {
       internalController.second->refresh();

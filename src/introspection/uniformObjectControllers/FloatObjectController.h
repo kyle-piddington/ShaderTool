@@ -6,7 +6,8 @@ class FloatObjectController : public UniformObjectController
 {
 public:
    FloatObjectController(std::shared_ptr<UniformObject> other):
-      UniformObjectController(other)
+      UniformObjectController(other),
+      internalFloatValue(0.0)
       {
 
       }
@@ -19,6 +20,10 @@ public:
       }
 
 
+   float getFloat()
+   {
+      return internalFloatValue;
+   }
 
    void bind(const float value)
    {

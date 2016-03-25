@@ -380,6 +380,7 @@ void Program::generateUniforms()
    }
    else
    {
+      uniforms.clear();
       UniformExtractor extractor;
       std::vector<std::shared_ptr<UniformObject> > objects = extractor.extract(shaderProgram);
       for (auto i = objects.begin(); i != objects.end(); ++i)

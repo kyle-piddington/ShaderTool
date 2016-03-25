@@ -1,6 +1,6 @@
 #include "Vec3Element.h"
 #include "imgui.h"
-Vec3Element::Vec3Element(std::shared_ptr<UniformObjectController> controller):
+Vec3Element::Vec3Element(std::shared_ptr<Vec3ObjectController> controller):
    ProgramManagerElement(controller->getName()),
    ctrl(controller)
 {
@@ -8,8 +8,9 @@ Vec3Element::Vec3Element(std::shared_ptr<UniformObjectController> controller):
 }
 void Vec3Element::render()
 {
-   if(ImGui::DragFloat3(ctrl->getName().c_str(),glm::value_ptr(this->vector),0.01f))
+   glm::vec3 val = ctrl->getVec3();
+   if(ImGui::DragFloat3(ctrl->getName().c_str(),glm::value_ptr(val),0.01f))
    {
-      ctrl->bind(vector);
+      ctrl->bind(val);
    }
 }

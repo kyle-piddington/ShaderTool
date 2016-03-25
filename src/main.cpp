@@ -15,11 +15,12 @@
 
 INITIALIZE_EASYLOGGINGPP
 
-int main()
+int main(int argC, char ** argV)
 {
    /**
     * Setup the current environment
     */
+   START_EASYLOGGINGPP(argC, argV);
    glfwInit();
    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);

@@ -7,7 +7,8 @@ class Vec3ObjectController : public UniformObjectController
 {
 public:
    Vec3ObjectController(std::shared_ptr<UniformObject> other):
-      UniformObjectController(other)
+      UniformObjectController(other),
+      internalVec3Value(0.0)
       {
 
       }
@@ -17,6 +18,11 @@ public:
       {
          UniformObjectController::bind(internalVec3Value);
       }
+
+   glm::vec3 getVec3()
+   {
+      return internalVec3Value;
+   }
 
    void bind(const glm::vec3 value)
    {

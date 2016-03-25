@@ -1,17 +1,17 @@
 #include "FloatElement.h"
 #include <imgui.h>
-FloatElement::FloatElement(std::shared_ptr<UniformObjectController> controller):
+FloatElement::FloatElement(std::shared_ptr<FloatObjectController> controller):
    ProgramManagerElement(controller->getName()),
-   ctrl(controller),
-   flt(0.0)
+   ctrl(controller)
 {
 
 }
 
 void FloatElement::render()
 {
-   if(ImGui::DragFloat(ctrl->getName().c_str(),&flt,0.01))
+   float val = ctrl->getFloat();
+   if(ImGui::DragFloat(ctrl->getName().c_str(),&val,0.01))
    {
-      ctrl->bind(flt);
+      ctrl->bind(val);
    }
 }
