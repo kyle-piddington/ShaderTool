@@ -7,7 +7,7 @@ class ToolSceneProgramManager
 {
 
 public:
-   ToolSceneProgramManager();
+   ToolSceneProgramManager(std::string shaderPath);
 
    /**
     * Set the program to a new program
@@ -40,6 +40,29 @@ public:
     * return true if the reload was successful.
     */
    bool reload();
+   
+   /**
+    * get a list of avaliable vertex shaders. (Marked with the .vs extension)
+    */
+   const std::vector<std::string> & getVertexShaderNames() const;
+
+   /**
+    * Set the vertex shader of the active program.
+    */
+   void setVertexShader(std::string path);
+    /**
+    * get a list of avaliable fragment shaders. (Marked with the .fs extension)
+    */
+   const std::vector<std::string> & getFragmentShaderNames() const;
+
+   /**
+    * set the fragment shader of the program.
+    * The program will not be refreshed until reload()
+    * is calld.
+    */
+   void setFragmentShader(std::string path);
+
+   
 
    void bindDefaultVariables(glm::mat4 V, glm::mat4 P, float iGlobalTime);
 
@@ -68,6 +91,12 @@ private:
    void populateReservedNames();
 
    /**
+    * Load shader names from a directory.
+    */
+   void loadShaderNames(std::string path);
+   
+
+   /**
     * Bind an old controller to an updated uniform object if the name and type matches.
     * Otherwise, return nullptr if no match.
     */
@@ -76,6 +105,11 @@ private:
          std::vector<std::shared_ptr<UniformObjectController>>  & oldControllers);
    
    std::shared_ptr<Program> activeProgram;
+
+   std::vector<std::string> vShaderNames;
+   std::vector<std::string> fShaderNames;
+   
+   std::string pathName;
 
    glm::mat4 currM;
    glm::mat4 currV;

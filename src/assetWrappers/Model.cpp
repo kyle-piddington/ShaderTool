@@ -4,7 +4,8 @@
 #include <glm/gtc/type_ptr.hpp>
 
 
-Model::Model(std::string path)
+Model::Model(std::string path):
+name(path)
 {
    loadModel(path);
 }

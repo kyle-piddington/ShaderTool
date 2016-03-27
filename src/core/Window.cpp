@@ -56,6 +56,7 @@ void Window::run()
             currentScene->update();
             currentScene->render();
          }
+         //ImGui::ShowTestWindow();
          ImGui::Render();
          glfwSwapBuffers(currentWindow);
       }

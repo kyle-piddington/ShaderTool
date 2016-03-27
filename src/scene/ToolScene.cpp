@@ -2,7 +2,9 @@
 
 ToolScene::ToolScene(Context * ctx):
    Scene(ctx),
-   grid(4.f,4.f,6,6)
+   grid(4.f,4.f,6,6),
+   modelMgr("assets/models"),
+   programMgr("assets/shaders")
 
 {
    /**Create the camera*/
@@ -24,16 +26,17 @@ ToolScene::ToolScene(Context * ctx):
 void ToolScene::initPrograms()
 {
    Program * defaultProg = new Program("Default Render");
-   defaultProg->addVertexShader("assets/shaders/phong_vert.vs");
-   defaultProg->addFragmentShader("assets/shaders/phong_frag.fs");
-   defaultProg->create();
    programMgr.setProgram(defaultProg);
+   programMgr.setVertexShader("assets/shaders/phong_vert.vs");
+   programMgr.setFragmentShader("assets/shaders/phong_frag.fs");
+   programMgr.reload();
    //Create the base grid program.
    baseRenderProgram = createProgram("Grid Renderer");
    baseRenderProgram->addVertexShader("assets/shaders/debug_vert.vs");
    baseRenderProgram->addFragmentShader("assets/shaders/debug_frag.fs");
 
    managerWindow.setProgramManager(&(this->programMgr));
+   managerWindow.setModelManager(&(this->modelMgr));
 
 }
 

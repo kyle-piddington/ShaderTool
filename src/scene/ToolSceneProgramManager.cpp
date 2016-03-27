@@ -1,20 +1,28 @@
+#include "GL_Logger.h"
 #include "ToolSceneProgramManager.h"
 #include "UniformObjectControllerFactory.h"
-ToolSceneProgramManager::ToolSceneProgramManager():
-currM(1.0)
+#include "DirectoryHandler.h"
+
+ToolSceneProgramManager::ToolSceneProgramManager(std::string shaderPath):
+currM(1.0),
+pathName(shaderPath)
 {
+   assert(pathName.size() > 0);
+   
+   
+   loadShaderNames(pathName);
    populateReservedNames();
 }
 
 bool ToolSceneProgramManager::setProgram(Program * program)
 {
+   this->activeProgram = std::shared_ptr<Program>(program);
    if(program->isCreated())
    {
-      this->activeProgram = std::shared_ptr<Program>(program);
       refreshControllers();
-      return true;
    }
-   return false;
+   return true;
+
 }
 
 std::string ToolSceneProgramManager::getVertexName() const
@@ -34,9 +42,30 @@ std::string ToolSceneProgramManager::getFragmentName() const
    return activeProgram->getFragmentShaderName();
 }
 
+
 const std::shared_ptr<Program> ToolSceneProgramManager::getActiveProgram() const
 {
    return activeProgram;
+}
+
+const std::vector<std::string> & ToolSceneProgramManager::getVertexShaderNames() const
+{
+   return vShaderNames;
+}
+
+
+const std::vector<std::string> & ToolSceneProgramManager::getFragmentShaderNames() const
+{
+   return fShaderNames;
+}
+
+void ToolSceneProgramManager::setVertexShader(std::string shader)
+{
+   activeProgram->addVertexShader(shader);
+}
+void ToolSceneProgramManager::setFragmentShader(std::string shader)
+{
+   activeProgram->addFragmentShader(shader);
 }
 
 bool ToolSceneProgramManager::reload()
@@ -57,6 +86,7 @@ bool ToolSceneProgramManager::reload()
       refreshControllers();
       updateModelMatrix(currM);
       bindDefaultVariables(currV,currP,iCurrGlobalTime);
+      GL_Logger::LogError("Errors setting up managed program");
       return true;
 
    }
@@ -206,6 +236,32 @@ std::shared_ptr<UniformObjectController> ToolSceneProgramManager::bindOldControl
    }
    return nullptr;
 }
+
+std::vector<std::string> appendPath(std::string path, std::vector<std::string> rawNames)
+{
+   std::vector<std::string> returnVec;
+   std::string pathName = path;
+   if(path[pathName.size() - 1] != '/')
+   {
+      pathName += '/';
+   }
+   for (std::vector<std::string>::iterator i = rawNames.begin(); i != rawNames.end(); ++i)
+   {
+      returnVec.push_back(pathName + *i);
+   }
+   return returnVec;
+}
+
+void ToolSceneProgramManager::loadShaderNames(std::string path)
+{
+   if(path.size() > 0)
+   {
+      vShaderNames = appendPath(path,DirectoryHandler::listDirectory(path,"vs"));
+      fShaderNames = appendPath(path,DirectoryHandler::listDirectory(path,"fs"));      
+   }
+   
+}
+
 
 
 

@@ -92,6 +92,7 @@ int Program::compileAllShaders()
 
 /**
  * Force a program to be re-created.
+ * 0 = error, because i'm bad.
  */
 int Program::forceProgramRecompile()
 {
@@ -111,6 +112,7 @@ int Program::forceProgramRecompile()
    {
       tessalationShader->forceReload();
    }
+   
    return create();
    
 }
@@ -181,6 +183,7 @@ Program::ProgCreationInfo Program::createProgram()
    prog.status = ProgramStatus::OK;
    int err = 0;
    //Already created case
+
    if(created && !shouldProgramRecompile())
    {
       LOG(WARNING) << "Program has already been created, and no changes are detected";
@@ -188,7 +191,7 @@ Program::ProgCreationInfo Program::createProgram()
       return prog;
    }
    //Reloading case
-   else if(created && shouldProgramRecompile())
+   else if(shouldProgramRecompile())
    {
       if(compileAllShaders() != 0)
       {
@@ -196,6 +199,7 @@ Program::ProgCreationInfo Program::createProgram()
          return prog;
       }
    }
+
    if(vertShader!= nullptr && vertShader->isCompiled() && fragShader!=nullptr && fragShader->isCompiled())
    {
 
