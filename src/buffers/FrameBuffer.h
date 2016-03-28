@@ -50,6 +50,12 @@ public:
     * Get the width of this framebuffer
     * @return the width, in px.
     */
+   
+   /** 
+    * Retrieve the ID of a texture unit.
+    */
+   GLuint getTextureID(std::string texName);
+
    int getWidth(){return width;}
    /**
     * Get the height of the framebuffer

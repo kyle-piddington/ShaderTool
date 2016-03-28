@@ -23,7 +23,6 @@ struct PointLight{
 
 
 
-
 uniform Material material;
 uniform PointLight light;
 

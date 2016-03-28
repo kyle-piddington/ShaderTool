@@ -9,6 +9,8 @@ public:
    ModelManager(std::string modelPath);
    void setModel(std::shared_ptr<Model> mdl);
    void render(std::shared_ptr<Program> program);
+   void render(Program * program);
+
    void load(std::string model);
    const std::vector<std::string>  & getModelNames() const;
    std::string getActiveModelName();

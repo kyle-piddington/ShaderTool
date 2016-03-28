@@ -69,6 +69,14 @@ void ModelManager::render(std::shared_ptr<Program> program)
    }
 }
 
+void ModelManager::render(Program * program)
+{
+   if(mdl != nullptr)
+   {
+      mdl->render(*program);
+   }
+}
+
 const std::vector<std::string> & ModelManager::getModelNames() const
 {
    return modelNames;

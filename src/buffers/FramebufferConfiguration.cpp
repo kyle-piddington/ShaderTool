@@ -183,6 +183,9 @@ void TextureAttachment::cleanup()
    glDeleteTextures(1,&tbo);
 }
 
-
+GLuint TextureAttachment::getTextureID() const
+{
+   return this->tbo;
+}
 
 

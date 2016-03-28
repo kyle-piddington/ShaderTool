@@ -7,6 +7,7 @@
 #include "ToolSceneProgramManager.h"
 #include "ModelManager.h"
 #include "Grid.h"
+#include "Framebuffer.h"
 #include "ProgramManagerWindow.h"
 /**
  * The Toolscene is the main activity scene
@@ -33,13 +34,17 @@ public:
 private:
    std::unique_ptr<TabletopCamera> camera;
    Program * baseRenderProgram;
+   //The deferred render program exports a model's
+   //positions, normals, depth, and texture coordinates to
+   //a set of textures.
+   Program * deferredRenderProgram;
    ToolSceneProgramManager programMgr;
    ModelManager modelMgr;
    Grid grid;
 
    //View
    ProgramManagerWindow managerWindow;
-   
+   Framebuffer gBuffer;
 
 
 

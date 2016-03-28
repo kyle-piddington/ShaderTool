@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include "TextureUnitManager.h"
 #include "TextureConfig.h"
+#include <imgui.h>
 /**
  * A FramebufferAttachment can either be a renderbuffer or texturebuffer
  * and are attached to the framebuffer when it is being configured
@@ -80,8 +81,10 @@ struct TextureAttachment : FramebufferAttachment
    {}
    void attach();
    void cleanup();
+   GLuint getTextureID() const;
    void enableTexture(GLuint id);
    void disableTexture();
+
 private:
    GLuint tbo;
    std::shared_ptr<TextureUnit> texUnit;

@@ -8,8 +8,6 @@ currM(1.0),
 pathName(shaderPath)
 {
    assert(pathName.size() > 0);
-   
-   
    loadShaderNames(pathName);
    populateReservedNames();
 }
@@ -94,6 +92,7 @@ bool ToolSceneProgramManager::reload()
 
 void ToolSceneProgramManager::updateModelMatrix(glm::mat4 M)
 {
+
    currM = M;
    currN = glm::transpose(glm::inverse(currV*M));
    if(internalControllers.find("M") != internalControllers.end())
@@ -102,6 +101,7 @@ void ToolSceneProgramManager::updateModelMatrix(glm::mat4 M)
    }
    if(internalControllers.find("N") != internalControllers.end())
    {
+   
       internalControllers["N"]->bind(currN);
    }
 
