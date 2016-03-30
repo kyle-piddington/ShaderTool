@@ -15,7 +15,7 @@ public:
     * Uniform objects are considered equal if the name and type of a
     * shared object is equal.
     */
-   bool operator== (const UniformObjectController & other) const;
+   virtual bool operator== (const UniformObjectController & other) const;
    const std::string & getName() const ;
    GLSLType::GLSLType getType() const;
 

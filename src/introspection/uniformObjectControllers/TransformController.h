@@ -1,19 +1,20 @@
 #ifndef __TransformController_h__
 #define __TransformController_h__
 #include "UniformObjectController.h"
+#include "MatrixObjectController.h"
 #include "Transform.h"
 #include <glm/glm.hpp>
 #include <iostream>
-class TransformController : public UniformObjectController
+class TransformController : public Matrix4ObjectController
 {
 public:
    TransformController(std::shared_ptr<UniformObject> obj):
-      UniformObjectController(obj)
+      Matrix4ObjectController(obj)
       {
          std::cout << "Creating transform controller" << std::endl;
       }
    TransformController(const TransformController & other):
-      UniformObjectController(other),
+      Matrix4ObjectController(other),
       transform(other.transform)
       {
          UniformObjectController::bind(transform.getMatrix());
@@ -33,6 +34,11 @@ public:
    Transform getTransform() const
    {
       return transform;
+   }
+
+   glm::mat4 getMatrix()
+   {
+      return transform.getMatrix();
    }
 
 private:

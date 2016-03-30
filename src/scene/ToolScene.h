@@ -8,6 +8,7 @@
 #include "ModelManager.h"
 #include "Grid.h"
 #include "Framebuffer.h"
+#include "RenderInfoController.h"
 #include "ProgramManagerWindow.h"
 /**
  * The Toolscene is the main activity scene
@@ -32,6 +33,9 @@ public:
    virtual void cleanup();
 
 private:
+
+   void renderDeferred();
+   void extractRenderInfo(RenderInfoController & ctrl);
    std::unique_ptr<TabletopCamera> camera;
    Program * baseRenderProgram;
    //The deferred render program exports a model's
@@ -40,6 +44,7 @@ private:
    Program * deferredRenderProgram;
    ToolSceneProgramManager programMgr;
    ModelManager modelMgr;
+   RenderInfoController renderInfoController;
    Grid grid;
 
    //View

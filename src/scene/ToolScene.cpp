@@ -1,6 +1,6 @@
 #include "ToolScene.h"
 #include "FramebufferConfiguration.h"
-
+#include "Mouse.h"
 ToolScene::ToolScene(Context * ctx):
    Scene(ctx),
    grid(4.f,4.f,6,6),
@@ -13,10 +13,8 @@ ToolScene::ToolScene(Context * ctx):
          ctx->getWindowWidth(),
          ctx->getWindowHeight()));
    modelMgr.load("assets/models/bunny.obj");
-   glEnable(GL_CULL_FACE);
    glEnable(GL_DEPTH_TEST);
-   glCullFace(GL_BACK);
-
+   
    /**
     * Initialize the G-Buffer + depth map for
     * easy querying.
@@ -45,6 +43,10 @@ ToolScene::ToolScene(Context * ctx):
             GL_DEPTH_ATTACHMENT));
 
    gBuffer.init(cfg);
+   gBuffer.bindFrameBuffer();
+   glEnable(GL_DEPTH_TEST);
+   gBuffer.unbindFrameBuffer();
+
 
 
    //Set the default renderer
@@ -101,17 +103,9 @@ void ToolScene::initialBind()
    glClearColor(0.2,0.2,0.2,1.0);
 
 }
-void ToolScene::render()
+
+void ToolScene::renderDeferred()
 {
-   glClearColor(0.2,0.2,0.2,1.0);
-   glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
-   //Render grid
-   baseRenderProgram->enable();
-   baseRenderProgram->getUniform("V").bind(camera->getViewMatrix());
-
-   grid.render(*baseRenderProgram);
-   baseRenderProgram->disable();
-
    //Render the defferred parts of the program.
    deferredRenderProgram->enable();
    deferredRenderProgram->getUniform("V").bind(camera->getViewMatrix());
@@ -127,7 +121,7 @@ void ToolScene::render()
       {
          mMtx = glm::mat4(1.0);
       }
-      nMtx = glm::transpose(glm::inverse(camera->getViewMatrix() * mMtx));
+      nMtx = glm::transpose(glm::inverse(mMtx));
       deferredRenderProgram->getUniform("M").bind(mMtx);
       deferredRenderProgram->getUniform("N").bind(nMtx);
    }
@@ -142,7 +136,49 @@ void ToolScene::render()
    GL_Logger::LogError("Error Rendering deferred program");
    gBuffer.unbindFrameBuffer();
    deferredRenderProgram->disable();
+}
+void ToolScene::extractRenderInfo(RenderInfoController & ctrl)
+{
+   glm::vec3 position;
+   glm::vec3 normal;
+   glm::vec3 texCoord;
+   gBuffer.bindFrameBuffer();
+   glReadBuffer(GL_COLOR_ATTACHMENT0);
+   int mouseX = Mouse::getX();
+   int mouseY = getContext()->getWindowHeight() - Mouse::getY();
+   glReadPixels(mouseX, mouseY, 1, 1, GL_RGB, GL_FLOAT, glm::value_ptr(position));
+   GL_Logger::LogError("Read pixels from GBuffer Position");
+   glReadBuffer(GL_COLOR_ATTACHMENT1);
+   glReadPixels(mouseX, mouseY, 1, 1, GL_RGB, GL_FLOAT, glm::value_ptr(normal));
+   GL_Logger::LogError("Read pixels from GBuffer Normals");
+   
+   glReadBuffer(GL_COLOR_ATTACHMENT2);
+   glReadPixels(mouseX, mouseY, 1, 1, GL_RGB, GL_FLOAT, glm::value_ptr(texCoord));
+   GL_Logger::LogError("Read pixels from GBuffer TexCoords");
+   
+   gBuffer.unbindFrameBuffer();
+   glReadBuffer(GL_BACK);
+   
+   ctrl.setPosition(position);
+   ctrl.setNormal(normal);
+   ctrl.setTexCoord(texCoord);
 
+}
+void ToolScene::render()
+{
+   glClearColor(0.2,0.2,0.2,1.0);
+   glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
+   //Render grid
+   baseRenderProgram->enable();
+   baseRenderProgram->getUniform("V").bind(camera->getViewMatrix());
+
+   grid.render(*baseRenderProgram);
+   baseRenderProgram->disable();
+
+   
+   renderDeferred();
+   extractRenderInfo(renderInfoController);
+   
 
    std::shared_ptr<Program> prog = programMgr.getActiveProgram();
    //If MVP, bind.
@@ -152,20 +188,30 @@ void ToolScene::render()
                                   camera->getPerspectiveMatrix(),
                                   glfwGetTime());
    modelMgr.render(prog);
-
-
    managerWindow.render();
-
+   
    ImGui::Begin("Buffers");
-   ImGui::Image((void *)gBuffer.getTextureID("position"),ImVec2(128,128),ImVec2(0,1), ImVec2(1,0));
+   ImGui::Image((void *)gBuffer.getTextureID("position"),ImVec2(128,128), ImVec2(0,1), ImVec2(1,0));
    ImGui::Image((void *)gBuffer.getTextureID("normal"),ImVec2(128,128),ImVec2(0,1), ImVec2(1,0));
    ImGui::Image((void *)gBuffer.getTextureID("texCoords"),ImVec2(128,128),ImVec2(0,1), ImVec2(1,0));
    ImGui::Image((void *)gBuffer.getTextureID("depth"),ImVec2(128,128),ImVec2(0,1), ImVec2(1,0));
    
    ImGui::End();
 
+   ImGui::Begin("Info");
+   ImGui::Text("Position:\t<%f %f %f>\nNormal:\t<%f %f %f>\nTexCoord:\t<%f %f>",
+         renderInfoController.getPosition().x, renderInfoController.getPosition().y, renderInfoController.getPosition().z,
+         renderInfoController.getNormal().x, renderInfoController.getNormal().y, renderInfoController.getNormal().z,
+         renderInfoController.getTexCoord().x, renderInfoController.getTexCoord().y);
+   ImGui::End();
+         
+
 
 }
+
+
+
+
 void ToolScene::update()
 {
    camera->update(getContext());

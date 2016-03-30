@@ -2,6 +2,7 @@
 #include "ToolSceneProgramManager.h"
 #include "UniformObjectControllerFactory.h"
 #include "DirectoryHandler.h"
+#include "MatrixObjectController.h"
 
 ToolSceneProgramManager::ToolSceneProgramManager(std::string shaderPath):
 currM(1.0),
@@ -66,6 +67,23 @@ void ToolSceneProgramManager::setFragmentShader(std::string shader)
    activeProgram->addFragmentShader(shader);
 }
 
+void ToolSceneProgramManager::findModelCtrl()
+{
+   if(internalControllers.find("M") != internalControllers.end())
+   {
+      auto modelCtrl = internalControllers["M"];
+      if(modelCtrl->getType() == GLSLType::GLSLmat4)
+      {
+         mCtrl = std::static_pointer_cast<Matrix4ObjectController>(modelCtrl);
+         currM = mCtrl->getMatrix();
+         
+      }
+   }
+   else
+   {
+      mCtrl = nullptr;
+   }
+}
 bool ToolSceneProgramManager::reload()
 {
    /**
@@ -82,6 +100,7 @@ bool ToolSceneProgramManager::reload()
    {
       std::cout <<  "Should have   " << exposedControlers.size()  + internalControllers.size() << " existing controllers" << std::endl;
       refreshControllers();
+      findModelCtrl();
       updateModelMatrix(currM);
       bindDefaultVariables(currV,currP,iCurrGlobalTime);
       GL_Logger::LogError("Errors setting up managed program");
@@ -95,14 +114,22 @@ void ToolSceneProgramManager::updateModelMatrix(glm::mat4 M)
 
    currM = M;
    currN = glm::transpose(glm::inverse(currV*M));
-   if(internalControllers.find("M") != internalControllers.end())
+   if(mCtrl != nullptr)
    {
-      internalControllers["M"]->bind(currM);
+      mCtrl->bind(currM);
    }
    if(internalControllers.find("N") != internalControllers.end())
    {
-   
-      internalControllers["N"]->bind(currN);
+      auto ctrl = internalControllers["N"];
+      if(ctrl->getType() == GLSLType::GLSLmat4)
+      {
+         internalControllers["N"]->bind(currN);
+      }
+      else if(ctrl->getType() == GLSLType::GLSLmat3)
+      {
+         glm::mat3 N(currN);
+         ctrl->bind(N);
+      }
    }
 
 }
@@ -126,10 +153,12 @@ void ToolSceneProgramManager::bindDefaultVariables(glm::mat4 V, glm::mat4 P, flo
    {
       activeProgram->getUniform("iGlobalTime").bind(iCurrGlobalTime);
    }
-   if(internalControllers.find("N") != internalControllers.end())
+   if(mCtrl != nullptr)
    {
-      internalControllers["N"]->bind(currN);
+      updateModelMatrix(mCtrl->getMatrix());
    }
+  
+   
 
 }
 

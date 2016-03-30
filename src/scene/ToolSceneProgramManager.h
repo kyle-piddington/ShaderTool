@@ -2,6 +2,7 @@
 #define __TOOLSCENE_PROGRAM_MGR_H__
 #include "Program.h"
 #include "UniformObjectController.h"
+#include "MatrixObjectController.h"
 #include <set>
 class ToolSceneProgramManager
 {
@@ -95,6 +96,11 @@ private:
     */
    void loadShaderNames(std::string path);
    
+   /**
+    * Search active uniforms for a model controller, and
+    * cache it for performance.
+    */
+   void findModelCtrl();
 
    /**
     * Bind an old controller to an updated uniform object if the name and type matches.
@@ -105,6 +111,8 @@ private:
          std::vector<std::shared_ptr<UniformObjectController>>  & oldControllers);
    
    std::shared_ptr<Program> activeProgram;
+
+   std::shared_ptr<Matrix4ObjectController> mCtrl;
 
    std::vector<std::string> vShaderNames;
    std::vector<std::string> fShaderNames;
