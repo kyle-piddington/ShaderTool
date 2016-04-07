@@ -27,8 +27,6 @@ uniform Material material;
 uniform PointLight light;
 
 
-uniform vec3 emmision;
-
 void main()
 {
    //Move lightpos to view space
@@ -48,7 +46,7 @@ void main()
    float spec = pow(max(dot(reflectDir,viewDir),0.0),material.shininess);
    vec3 specular = spec * material.specular * light.specular;
 
-   vec3 result = (diffuse + ambient + specular + emmision);
+   vec3 result = (diffuse + ambient + specular );
 
    color = vec4(result,1.0);
 }

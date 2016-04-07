@@ -286,7 +286,7 @@ void ToolSceneProgramManager::loadShaderNames(std::string path)
    if(path.size() > 0)
    {
       vShaderNames = appendPath(path,DirectoryHandler::listDirectory(path,"vs"));
-      fShaderNames = appendPath(path,DirectoryHandler::listDirectory(path,"fs"));      
+      fShaderNames = appendPath(path,DirectoryHandler::listDirectory(path,"fs"));
    }
    
 }
