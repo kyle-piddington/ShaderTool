@@ -123,6 +123,7 @@ void Texture2D::reload()
 
 }
 
+
 TextureType::type Texture2D::textureType()
 {
    return texType;
@@ -131,4 +132,9 @@ TextureType::type Texture2D::textureType()
 void Texture2D::setTextureType(TextureType::type tType)
 {
    texType = tType;
+}
+
+GLuint Texture2D::getTextureID() const
+{
+   return bfr.getTextureID();
 }

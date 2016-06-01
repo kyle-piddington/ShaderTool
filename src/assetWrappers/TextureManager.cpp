@@ -16,3 +16,4 @@ std::shared_ptr<Texture2D> TextureManager::getTexture(std::string name)
    }
    return ret;
 }
+

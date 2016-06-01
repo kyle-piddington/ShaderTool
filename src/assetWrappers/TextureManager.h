@@ -6,6 +6,7 @@ class TextureManager
 {
 public:
   static std::shared_ptr<Texture2D> getTexture(std::string path);
+  
 private:
   static std::unordered_map<std::string, std::shared_ptr<Texture2D>> textures;
 

@@ -73,6 +73,7 @@ public:
     */
    void unbind();
 
+   GLuint getTextureID() const;
 
 private:
    void bindBorderColor();

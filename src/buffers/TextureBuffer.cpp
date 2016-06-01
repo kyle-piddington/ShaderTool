@@ -125,5 +125,9 @@ void TextureBuffer::bind()
 void TextureBuffer::unbind()
 {
    glBindTexture(textureType, 0);
+}
 
+GLuint TextureBuffer::getTextureID() const
+{
+   return textureID;
 }

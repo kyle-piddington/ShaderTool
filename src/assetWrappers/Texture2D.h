@@ -74,6 +74,11 @@ public:
    void setTextureType(TextureType::type texType);
 
    TextureType::type textureType();
+
+   /** 
+    * Retrieve the internal id of a texture
+    */
+   GLuint getTextureID() const;
    
 
 
